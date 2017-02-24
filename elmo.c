@@ -1586,6 +1586,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rc_keyflow = read32_keyflow(rb); // Need to preserve key data if used in computing address
         rc=read32(rb);
         op1 = read_register(rd); op2 = rc;
+        
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc);
         write_register_keyflow(rd, rc_keyflow);
