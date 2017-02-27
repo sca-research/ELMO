@@ -1472,13 +1472,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         
         rc_keyflow = read_register_keyflow(rm);
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        write_register_keyflow(rd, rc_keyflow);
         
         //if(rd==15) //mov handles the high registers like r15
         //{
             //rc&=~1;
             //rc+=2; //The program counter is special
         //}
-        write_register_keyflow(rd, rc_keyflow);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cpy r%u,r%u\n",rd,rm);
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
         return(0);
@@ -1522,14 +1522,15 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 op1 = 0; op2 = 0;
                 
                 op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(sp);
-                write_register_keyflow(ra, read32_keyflow(sp));
+                write_register_keyflow(ra, op2_keyflow);
 
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
                 sp+=4;
             }
         }
         //there is a write back exception.
         if((inst&(1<<rn))==0) write_register(rn,sp);
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES))
         {
             fprintf(stderr,"ldmia r%u!,{",rn);
@@ -1544,8 +1545,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
             }
             fprintf(asmoutput,"}\n");
         }
-        op1 = 0; op2 = 0;
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+
         return(0);
     }
 
@@ -1590,6 +1590,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc);
         write_register_keyflow(rd, rc_keyflow);
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldr r%u,[r%u,r%u]\n",rd,rn,rm);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -1612,10 +1613,12 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         //if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,";@ 0x%X ",rb);
         rc=read32(rb);
         rc_keyflow = read32_keyflow(rb);
-        op1 = read_register(rd); op2 = rc;
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc);
+        op1 = read_register(rd); op2 = rc;
+
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register_keyflow(rd, rc_keyflow);
+
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldr r%u,[PC+#0x%X]\n",rd,rb);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -1637,11 +1640,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         //ra&=~3;
         rb+=ra;
         rc=read32(rb);
-        rc_keyflow = read32_keyflow(rb);
-        op1 = read_register(rd); op2 = rc;
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc);
+        op1 = read_register(rd); op2 = rc;
+        
+        rc_keyflow = read32_keyflow(rb);
         write_register_keyflow(rd, rc_keyflow);
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldr r%u,[SP+#0x%X]\n",rd,rb);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -1660,20 +1665,22 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb=(inst>>6)&0x1F;
         rb=read_register(rn)+rb;
         rc=read16(rb&(~1));
-         rc_keyflow=read16_keyflow(rb&(~1));
+        rc_keyflow=read16_keyflow(rb&(~1));
         if(rb&1)
         {
             rc>>=8;
-             rc_keyflow = bit8tobit16(rc_keyflow, true);
+            rc_keyflow = bit8tobit16(rc_keyflow, true);
         }
         else
         {
-             rc_keyflow = bit8tobit16(rc_keyflow, false);
+            rc_keyflow = bit8tobit16(rc_keyflow, false);
         }
-        op1 = read_register(rd); op2 = rc&0xFF;
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc&0xFF);
+        op1 = read_register(rd); op2 = rc&0xFF;
+        
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register_keyflow(rd, rc_keyflow);
+        
         //if(registerdataflow) print32(read_register_keyflow(rd));
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrb r%u,[r%u,#0x%X]\n",rd,rn,rb);
             if(CYCLEACCURATE){
@@ -1693,6 +1700,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>6)&0x7;
         rb=read_register(rn)+read_register(rm);
         rc=read16(rb&(~1));
+        
         rc_keyflow = read16_keyflow(rb&(~1));
         if(rb&1)
         {
@@ -1704,10 +1712,12 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
              rc_keyflow = bit8tobit16(rc_keyflow, false);
         }
         //rc_keyflow = compute_keyflow(rc_keyflow, read_register_keyflow(rm), 0, 0);
-        op1 = read_register(rd); op2 = rc&0xFF;
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc&0xFF);
+        op1 = read_register(rd); op2 = rc&0xFF;
+        
         write_register_keyflow(rd, rc_keyflow);
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrb r%u,[r%u,r%u]\n",rd,rn,rm);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -1726,12 +1736,15 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb=(inst>>6)&0x1F;
         rb<<=1;
         rb=read_register(rn)+rb;
+        
         rc=read16(rb);
-        rc_keyflow = read16_keyflow(rb);
-        op1 = read_register(rd); op2 = rc&0xFFFF;
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc&0xFFFF);
+        op1 = read_register(rd); op2 = rc&0xFFFF;
+        
+        rc_keyflow = read16_keyflow(rb);
         write_register_keyflow(rd, rc_keyflow);
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrh r%u,[r%u,#0x%X]\n",rd,rn,rb);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -1750,11 +1763,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>6)&0x7;
         rb=read_register(rn)+read_register(rm);
         rc=read16(rb);
-        rc_keyflow = compute_keyflow(read16_keyflow(rb), read_register_keyflow(rm), 0, 0);
-        op1 = read_register(rd); op2 = rc&0xFFFF;
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register(rd,rc&0xFFFF);
+        op1 = read_register(rd); op2 = rc&0xFFFF;
+        
+        rc_keyflow = compute_keyflow(read16_keyflow(rb), read_register_keyflow(rm), 0, 0);
         write_register_keyflow(rd, rc_keyflow);
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrh r%u,[r%u,r%u]\n",rd,rn,rm);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
