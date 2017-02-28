@@ -104,12 +104,20 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     else
         indexno++;
     
+#ifdef SAMETRACELENGTH
+    
     if(t==1)
         item = create_dataflow(item);
     else{
         item = item->next;
         initialise_dataflow(item);
     }
+    
+#else
+    
+    item = create_dataflow(item);
+    
+#endif
     
     return item;
 }
@@ -183,6 +191,8 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     else
         indexno++;
     
+#ifdef SAMETRACELENGTH
+    
     if(t==1)
         item = create_dataflow(item);
     else{
@@ -190,6 +200,12 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
         initialise_dataflow(item);
     }
     
+#else
+    
+    item = create_dataflow(item);
+    
+#endif
+
     return item;
 }
 
@@ -403,7 +419,11 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                     if(registerdataflow){
                         if(t%PRINTTRACENOINTERVAL == 0)
                             printf("TRACE NO: %010d\n", t);
+#ifdef SAMETRACELENGTH
                         dataptr = start;
+#else
+                        dataptr = create_dataflow(start);
+#endif
                         if(t==1 || PRINTALLASMTRACES){
                             strcpy(str, ASMOUTPUTFOLDER);
                             strcat(str, ASMOUTPUTFILE);
@@ -981,7 +1001,6 @@ if(output_vcd)
         rc=ra+rb;
         
         write_register(rd,rc);
-        
         
 #ifdef KEYFLOW
         ra_keyflow = read_register_keyflow(rd);
@@ -3893,8 +3912,13 @@ int main ( int argc, char *argv[] )
 
 	start = malloc(sizeof(dataflow));
 	dataptr = malloc(sizeof(dataflow));
+    
+#ifdef SAMETRACELENGTH
+
     dataptr = create_dataflow(start);
 
+#endif
+    
     if(argc<2)
     {
         fprintf(stderr,"bin file not specified\n");
