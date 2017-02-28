@@ -407,9 +407,10 @@ void fixedvsrandom(void){
     printf("\n########################################\n\nSTARTING SECOND ORDER FIXED VS RANDOM T-TEST...\n\n");
     
     no_masks = 0;
+#ifdef KEYFLOW
     while(getmasklen(no_masks+1)!=0)
         no_masks++;
-
+#endif
     if(no_masks == 0){
         printf("NO MASKS TO ANALYSE\n\n");
         return;
