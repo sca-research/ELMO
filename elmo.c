@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "elmodefines.h"
 
