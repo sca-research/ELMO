@@ -29,6 +29,8 @@
 
 //-------------------------------------------------------------------
 
+// Linked list functions for KeyFlow
+
 #ifdef KEYFLOW
 
 dataflow *create_dataflow(dataflow *item){
@@ -48,28 +50,19 @@ dataflow *create_dataflow(dataflow *item){
     
 }
 
-#else
-
-dataflow *create_dataflow(dataflow *item){
+void initialise_dataflow(dataflow *item){
     
     int i;
     
-    item -> next = malloc(sizeof(dataflow));
-    item = item -> next;
     item -> op1 = 0;
     item -> op2 = 0;
     for(i=0;i<6;i++)
         item -> instruction_type[i] = 0;
-    item -> next = NULL;
-    return item;
+    item -> op1_keyflow = zero_keyflow32();
+    item -> op2_keyflow = zero_keyflow32();
     
 }
 
-#endif
-
-//-------------------------------------------------------------------
-
-#ifdef KEYFLOW
 
 dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, unsigned int instruction_type, bit32_keyflow op1_keyflow, bit32_keyflow op2_keyflow){
     
@@ -87,13 +80,13 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     
     item->instruction_type[instruction_type] = 1;
     item->instruction_typedec = instruction_type;
-
+    
     item->op1_keyflow = op1_keyflow;
     item->op2_keyflow = op2_keyflow;
     
     // printf("%ud ", item->op1_keyflow);
     // printf("%ud\n", item->op2_keyflow);
-
+    
     /*
      for(i=31;i>=0;i--)
      printf("%d", item->op1_keyflow[i]);
@@ -103,20 +96,56 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
      printf("%d", item->op2_keyflow[i]);
      printf("\n");
      */
-
+    
     if(instruction_type == 2 | instruction_type == 3){
         indexno += 2;
         item->op1_keyflow = zero_keyflow32();
     }
     else
         indexno++;
-
-    item = create_dataflow(item);
+    
+    if(t==1)
+        item = create_dataflow(item);
+    else{
+        item = item->next;
+        initialise_dataflow(item);
+    }
     
     return item;
 }
 
+//-------------------------------------------------------------------
+
+// Linked list functions for no KeyFlow
+
 #else
+
+dataflow *create_dataflow(dataflow *item){
+    
+    int i;
+    
+    item -> next = malloc(sizeof(dataflow));
+    item = item -> next;
+    item -> op1 = 0;
+    item -> op2 = 0;
+    for(i=0;i<6;i++)
+        item -> instruction_type[i] = 0;
+    item -> next = NULL;
+    return item;
+    
+}
+
+
+void initialise_dataflow(dataflow *item){
+    
+    int i;
+    
+    item -> op1 = 0;
+    item -> op2 = 0;
+    for(i=0;i<6;i++)
+        item -> instruction_type[i] = 0;
+    
+}
 
 dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, unsigned int instruction_type){
     
@@ -154,7 +183,12 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     else
         indexno++;
     
-    item = create_dataflow(item);
+    if(t==1)
+        item = create_dataflow(item);
+    else{
+        item = item->next;
+        initialise_dataflow(item);
+    }
     
     return item;
 }
@@ -369,7 +403,7 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                     if(registerdataflow){
                         if(t%PRINTTRACENOINTERVAL == 0)
                             printf("TRACE NO: %010d\n", t);
-                        dataptr = create_dataflow(start);
+                        dataptr = start;
                         if(t==1 || PRINTALLASMTRACES){
                             strcpy(str, ASMOUTPUTFOLDER);
                             strcat(str, ASMOUTPUTFILE);
@@ -379,11 +413,10 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                     }
                     else{
                         createpowermodel();
-                        //printf("%d\n", t);
 #ifdef KEYFLOW
                         if (t==1) keyflowfailtest();
 #endif
-                        freedataflow();
+                        //freedataflow();
                         indexno = 1;
                         if(t==1 || PRINTALLASMTRACES) fclose(asmoutput);
                         t++;
@@ -810,9 +843,9 @@ if(output_vcd)
         if(rb)
         {
             ra=read_register(rn);
+            op1=ra; op2=rb;
             rc=ra+rb;
             write_register(rd,rc);
-            op1=ra; op2=rb;
 
             do_nflag(rc);
             do_zflag(rc);
@@ -850,9 +883,9 @@ if(output_vcd)
         rd=(inst>>8)&0x7;
         
         ra=read_register(rd);
+        op1=ra; op2=rb;
         rc=ra+rb;
         write_register(rd,rc);
-        op1=ra; op2=rb;
         
         do_nflag(rc);
         do_zflag(rc);
@@ -886,7 +919,10 @@ if(output_vcd)
         rm=(inst>>6)&0x7;
 
         ra=read_register(rn);
+        op1=ra;
         rb=read_register(rm);
+        op2=rb;
+        
         rc=ra+rb;
         write_register(rd,rc);
         op1=ra; op2=rb;
@@ -927,8 +963,10 @@ if(output_vcd)
         rm=(inst>>3)&0xF;
         
         ra=read_register(rd);
+        op1=ra;
         rb=read_register(rm);
-
+        op2=rb;
+        
         if(rd==15)
         {
             if((rc&1)==0)
@@ -941,9 +979,9 @@ if(output_vcd)
         }
 
         rc=ra+rb;
+        
         write_register(rd,rc);
         
-        op1=ra; op2=rb;
         
 #ifdef KEYFLOW
         ra_keyflow = read_register_keyflow(rd);
@@ -1034,6 +1072,7 @@ if(output_vcd)
         ra=read_register(13);
         rc=ra+rb;
         write_register(13,rc);
+        op1 = 0; op2 = 0;
 
 #ifdef KEYFLOW
         
@@ -1062,10 +1101,11 @@ if(output_vcd)
         rm=(inst>>3)&0x7;
 
         ra=read_register(rd);
+        op1=ra;
         rb=read_register(rm);
+        op2=rb;
         rc=ra&rb;
         write_register(rd,rc);
-        op1=ra; op2=rb;
         
         do_nflag(rc);
         do_zflag(rc);
@@ -1643,8 +1683,8 @@ if(output_vcd)
         rn=(inst>>8)&0x07;
         
         ra=read_register(rn);
-        rc=ra-rb;
         op1=ra; op2=rb;
+        rc=ra-rb;
 
         do_nflag(rc);
         do_zflag(rc);
@@ -1674,9 +1714,12 @@ if(output_vcd)
         rn=(inst>>0)&0x7;
         rm=(inst>>3)&0x7;
         ra=read_register(rn);
+        op1=ra;
         rb=read_register(rm);
+        op2=rb;
         rc=ra-rb;
-        op1=ra; op2=rb;
+        
+        
         do_nflag(rc);
         do_zflag(rc);
         do_cflag(ra,~rb,1);
@@ -1715,9 +1758,10 @@ if(output_vcd)
         rm=(inst>>3)&0xF;
         
         ra=read_register(rn);
+        op1=ra;
         rb=read_register(rm);
+        op2=rb;
         rc=ra-rb;
-        op1=ra; op2=rb;
         
         do_nflag(rc);
         do_zflag(rc);
@@ -3849,7 +3893,8 @@ int main ( int argc, char *argv[] )
 
 	start = malloc(sizeof(dataflow));
 	dataptr = malloc(sizeof(dataflow));
-    
+    dataptr = create_dataflow(start);
+
     if(argc<2)
     {
         fprintf(stderr,"bin file not specified\n");
