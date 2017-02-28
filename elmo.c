@@ -436,7 +436,11 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
 #ifdef KEYFLOW
                         if (t==1) keyflowfailtest();
 #endif
-                        //freedataflow();
+                        
+#ifndef SAMETRACELENGTH
+                        freedataflow();
+#endif
+                        
                         indexno = 1;
                         if(t==1 || PRINTALLASMTRACES) fclose(asmoutput);
                         t++;
