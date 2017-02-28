@@ -17,12 +17,18 @@
 #include "include/debug.h"
 #endif
 
-#include "include/keyflow.h"
+
+#ifdef KEYFLOW
+    #include "include/keyflow.h"
+#endif
+
 #include "include/fixedvsrandom.h"
 #include "include/powermodel.h"
 #include "include/energy.h"
 
 //-------------------------------------------------------------------
+
+#ifdef KEYFLOW
 
 dataflow *create_dataflow(dataflow *item){
     
@@ -40,6 +46,25 @@ dataflow *create_dataflow(dataflow *item){
     return item;
     
 }
+
+#else
+
+dataflow *create_dataflow(dataflow *item){
+    
+    int i;
+    
+    item -> next = malloc(sizeof(dataflow));
+    item = item -> next;
+    item -> op1 = 0;
+    item -> op2 = 0;
+    for(i=0;i<6;i++)
+        item -> instruction_type[i] = 0;
+    item -> next = NULL;
+    return item;
+    
+}
+
+#endif
 
 //-------------------------------------------------------------------
 
@@ -124,7 +149,6 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     
     if(instruction_type == 2 | instruction_type == 3){
         indexno += 2;
-        item->op1_keyflow = zero_keyflow32();
     }
     else
         indexno++;
@@ -355,7 +379,9 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                     else{
                         createpowermodel();
                         //printf("%d\n", t);
+#ifdef KEYFLOW
                         if (t==1) keyflowfailtest();
+#endif
                         freedataflow();
                         indexno = 1;
                         if(t==1 || PRINTALLASMTRACES) fclose(asmoutput);
@@ -396,12 +422,16 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                 }
                 case 0xE0000040:
                 {
+#ifdef KEYFLOW
                     set_mask_dataflow(data, start_mask_dataflow);
+#endif
                     break;
                 }
                 case 0xE0000042:
                 {
+#ifdef KEYFLOW
                     reset_keyflow();
+#endif
                     break;
                 }
                 case 0xE0000044:
@@ -737,36 +767,36 @@ if(output_vcd)
     {
         rd=(inst>>0)&0x07;
         rm=(inst>>3)&0x07;
+        
         ra=read_register(rd);
-
         rb=read_register(rm);
         rc=ra+rb;
+        if(cpsr&CPSR_C) rc++;
         write_register(rd,rc);
-        op1=ra; op2=rb;
+        op1 = 0; op2 = 0;
+        
+        do_nflag(rc);
+        do_zflag(rc);
+        
+        if(cpsr&CPSR_C) { do_cflag(ra,rb,1); do_vflag(ra,rb,1); }
+        else            { do_cflag(ra,rb,0); do_vflag(ra,rb,0); }
         
 #ifdef KEYFLOW
-        
         ra_keyflow = read_register_keyflow(rd);
         rb_keyflow = read_register_keyflow(rm);
         rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
         write_register_keyflow(rd, rc_keyflow);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
 #endif
         
-        if(cpsr&CPSR_C) rc++;
-        
-        do_nflag(rc);
-        do_zflag(rc);
-        if(cpsr&CPSR_C) { do_cflag(ra,rb,1); do_vflag(ra,rb,1); }
-        else            { do_cflag(ra,rb,0); do_vflag(ra,rb,0); }
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adc r%u,r%u\n",rd,rm);
-        op1 = 0; op2 = 0;
+
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
+        
         return(0);
     }
 
@@ -782,6 +812,11 @@ if(output_vcd)
             rc=ra+rb;
             write_register(rd,rc);
             op1=ra; op2=rb;
+
+            do_nflag(rc);
+            do_zflag(rc);
+            do_cflag(ra,rb,0);
+            do_vflag(ra,rb,0);
             
 #ifdef KEYFLOW
             
@@ -793,15 +828,11 @@ if(output_vcd)
             
 #endif
 
-            do_nflag(rc);
-            do_zflag(rc);
-            do_cflag(ra,rb,0);
-            do_vflag(ra,rb,0);
-            if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,r%u,#0x%X\n",rd,rn,rb);
-    #ifdef KEYFLOW
+        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,r%u,#0x%X\n",rd,rn,rb);
+#ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
         }
@@ -822,26 +853,27 @@ if(output_vcd)
         write_register(rd,rc);
         op1=ra; op2=rb;
         
-#ifdef KEYFLOW
+        do_nflag(rc);
+        do_zflag(rc);
+        do_cflag(ra,rb,0);
+        do_vflag(ra,rb,0);
         
+#ifdef KEYFLOW
         ra_keyflow = read_register_keyflow(rd);
         rb_keyflow = zero_keyflow32();
         rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
         write_register_keyflow(rd, rc_keyflow);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
-        do_cflag(ra,rb,0);
-        do_vflag(ra,rb,0);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,#0x%02X\n",rd,rb);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
+
         return(0);
     }
 
@@ -858,26 +890,27 @@ if(output_vcd)
         write_register(rd,rc);
         op1=ra; op2=rb;
 
-#ifdef KEYFLOW
+        do_nflag(rc);
+        do_zflag(rc);
+        do_cflag(ra,rb,0);
+        do_vflag(ra,rb,0);
         
+#ifdef KEYFLOW
         ra_keyflow = read_register_keyflow(rn);
         rb_keyflow = read_register_keyflow(rm);
         rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
         write_register_keyflow(rd,rc_keyflow);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
-        do_cflag(ra,rb,0);
-        do_vflag(ra,rb,0);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,r%u,r%u\n",rd,rn,rm);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
+
         return(0);
     }
 
@@ -894,9 +927,7 @@ if(output_vcd)
         
         ra=read_register(rd);
         rb=read_register(rm);
-        rc=ra+rb;
-        op1=ra; op2=rb;
-        
+
         if(rd==15)
         {
             if((rc&1)==0)
@@ -907,25 +938,28 @@ if(output_vcd)
             rc&=~1; //write_register may do this as well
             rc+=2; //The program counter is special
         }
-//fprintf(stderr,"0x%08X = 0x%08X + 0x%08X\n",rc,ra,rb);
+
+        rc=ra+rb;
         write_register(rd,rc);
         
+        op1=ra; op2=rb;
+        
 #ifdef KEYFLOW
-
         ra_keyflow = read_register_keyflow(rd);
         rb_keyflow = read_register_keyflow(rm);
         rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
         write_register_keyflow(rd,rc_keyflow);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"add r%u,r%u\n",rd,rm);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
+        
         return(0);
     }
 
@@ -1032,6 +1066,9 @@ if(output_vcd)
         write_register(rd,rc);
         op1=ra; op2=rb;
         
+        do_nflag(rc);
+        do_zflag(rc);
+        
 #ifdef KEYFLOW
         
         ra_keyflow = read_register_keyflow(rd);
@@ -1042,13 +1079,11 @@ if(output_vcd)
         
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ands r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -1084,8 +1119,10 @@ if(output_vcd)
             }
         }
         write_register(rd,rc);
-        op1=rc; op2=rb;
-
+        op1 = 0; op2 = 0;
+        
+        do_nflag(rc);
+        do_zflag(rc);
 #ifdef KEYFLOW
         
         rc_keyflow = read_register_keyflow(rm);
@@ -1096,10 +1133,8 @@ if(output_vcd)
         
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
+
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"asrs r%u,r%u,#0x%X\n",rd,rm,rb);
-        op1 = 0; op2 = 0;
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
@@ -1145,7 +1180,10 @@ if(output_vcd)
         }
 
         write_register(rd,rc);
-        op1=rc; op2=rb;
+        op1 = 0; op2 = 0;
+        
+        do_nflag(rc);
+        do_zflag(rc);
         
 #ifdef KEYFLOW
         
@@ -1157,10 +1195,7 @@ if(output_vcd)
         
 #endif
 
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"asrs r%u,r%u\n",rd,rs);
-        op1 = 0; op2 = 0;
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
@@ -1185,56 +1220,56 @@ if(output_vcd)
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"beq 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"beq 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x1: //b ne  z clear
                 if(!(cpsr&CPSR_Z))
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bne 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bne 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x2: //b cs c set
                 if(cpsr&CPSR_C)
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bcs 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bcs 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x3: //b cc c clear
                 if(!(cpsr&CPSR_C))
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bcc 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bcc 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x4: //b mi n set
                 if(cpsr&CPSR_N)
@@ -1242,22 +1277,22 @@ if(output_vcd)
                     write_register(15,rb);
                 }
                 
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bmi 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bmi 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x5: //b pl n clear
                 if(!(cpsr&CPSR_N))
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bpl 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bpl 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
@@ -1270,8 +1305,8 @@ if(output_vcd)
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bvs 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bvs 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
@@ -1285,28 +1320,28 @@ if(output_vcd)
                     write_register(15,rb);
                 }
                 
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bvc 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bvc 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x8: //b hi c set z clear
                 if((cpsr&CPSR_C)&&(!(cpsr&CPSR_Z)))
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bhi 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bhi 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0x9: //b ls c clear or z set
                 if((cpsr&CPSR_Z)||(!(cpsr&CPSR_C)))
@@ -1314,14 +1349,14 @@ if(output_vcd)
                     write_register(15,rb);
                 }
                 
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bls 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bls 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0xA: //b ge N == V
                 ra=0;
@@ -1331,14 +1366,14 @@ if(output_vcd)
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bge 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bge 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0xB: //b lt N != V
                 ra=0;
@@ -1349,14 +1384,14 @@ if(output_vcd)
                     write_register(15,rb);
                 }
                 
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"blt 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"blt 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0xC: //b gt Z==0 and N == V
                 ra=0;
@@ -1368,14 +1403,14 @@ if(output_vcd)
                     write_register(15,rb);
                 }
                 
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bgt 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bgt 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0xD: //b le Z==1 or N != V
                 ra=0;
@@ -1386,14 +1421,14 @@ if(output_vcd)
                 {
                     write_register(15,rb);
                 }
-        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ble 0x%08X\n",rb-3);
-        op1 = 0; op2 = 0;
+                if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ble 0x%08X\n",rb-3);
+                op1 = 0; op2 = 0;
 #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+                return(0);
 
             case 0xE:
                 //undefined instruction
@@ -1464,12 +1499,12 @@ if(output_vcd)
             write_register(14,rb);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bl\n");
             op1 = 0; op2 = 0;
-    #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+            return(0);
         }
         else
         if((inst&0x1800)==0x1800) //H=b11
@@ -1483,12 +1518,12 @@ if(output_vcd)
             write_register(15,rb);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bl 0x%08X\n",rb-3);
             op1 = 0; op2 = 0;
-    #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+            return(0);
         }
         else
         if((inst&0x1800)==0x0800) //H=b01
@@ -1505,12 +1540,12 @@ if(output_vcd)
                 write_register(15,rb);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bl 0x%08X\n",rb-3);
             op1 = 0; op2 = 0;
-    #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+            return(0);
 
         }
     }
@@ -1528,12 +1563,12 @@ if(output_vcd)
             rc&=~1;
             write_register(15,rc);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"blx r%u\n",rm);
-    #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+            return(0);
         }
         else
         {
@@ -1555,12 +1590,12 @@ if(output_vcd)
             write_register(15,rc);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bx r%u\n",rm);
             op1 = 0; op2 = 0;
-    #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
-        return(0);
+            return(0);
         //}
         //else
         //{
@@ -1580,11 +1615,9 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         
 #ifdef KEYFLOW
-
         ra_keyflow=read_register_keyflow(rn);
         rb_keyflow = read_register_keyflow(rm);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
 #endif
 
         do_nflag(rc);
@@ -1592,11 +1625,13 @@ if(output_vcd)
         do_cflag(ra,rb,0);
         do_vflag(ra,rb,0);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmns r%u,r%u\n",rn,rm);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
+        
         return(0);
     }
 
@@ -1609,26 +1644,26 @@ if(output_vcd)
         ra=read_register(rn);
         rc=ra-rb;
         op1=ra; op2=rb;
-        
-#ifdef KEYFLOW
-        
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = zero_keyflow32();
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
-#endif
-        
-//fprintf(stderr,"0x%08X 0x%08X\n",ra,rb);
+
         do_nflag(rc);
         do_zflag(rc);
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
+        
+#ifdef KEYFLOW
+        ra_keyflow = read_register_keyflow(rn);
+        rb_keyflow = zero_keyflow32();
+        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#endif
+
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmp r%u,#0x%02X\n",rn,rb);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
+
         return(0);
     }
 
@@ -1641,26 +1676,25 @@ if(output_vcd)
         rb=read_register(rm);
         rc=ra-rb;
         op1=ra; op2=rb;
-        
-#ifdef KEYFLOW
-        
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        
-#endif
-        
-//fprintf(stderr,"0x%08X 0x%08X\n",ra,rb);
         do_nflag(rc);
         do_zflag(rc);
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
+        
+#ifdef KEYFLOW
+        ra_keyflow = read_register_keyflow(rn);
+        rb_keyflow = read_register_keyflow(rm);
+        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#endif
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmps r%u,r%u\n",rn,rm);
+
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
+
         return(0);
     }
 
@@ -1684,6 +1718,11 @@ if(output_vcd)
         rc=ra-rb;
         op1=ra; op2=rb;
         
+        do_nflag(rc);
+        do_zflag(rc);
+        do_cflag(ra,~rb,1);
+        do_vflag(ra,~rb,1);
+        
 #ifdef KEYFLOW
         
         ra_keyflow = read_register_keyflow(rn);
@@ -1692,15 +1731,11 @@ if(output_vcd)
         
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
-        do_cflag(ra,~rb,1);
-        do_vflag(ra,~rb,1);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmps r%u,r%u\n",rn,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -1708,7 +1743,7 @@ if(output_vcd)
     //CPS
     if((inst&0xFFE8)==0xB660)
     {
-if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\n");
+        if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\n");
         return(1);
     }
 
@@ -1721,8 +1756,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>3)&0x7; //mov handles the high registers
         
         rc=read_register(rm);
-        write_register(rd,rc);
         op1=read_register(rd); op2=rc;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -1737,11 +1772,12 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
             //rc&=~1;
             //rc+=2; //The program counter is special
         //}
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cpy r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -1757,6 +1793,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1=ra; op2=rb;
         write_register(rd,rc);
         
+        do_nflag(rc);
+        do_zflag(rc);
+        
 #ifdef KEYFLOW
         
         ra_keyflow = read_register_keyflow(rd);
@@ -1767,13 +1806,11 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"eors r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -1787,9 +1824,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         {
             if(inst&rb)
             {
-                
-                write_register(ra,read32(sp));
+
                 op1 = 0; op2 = 0;
+                write_register(ra,read32(sp));
                 
 #ifdef KEYFLOW
                 
@@ -1799,9 +1836,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #endif
 
 #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
                 sp+=4;
             }
@@ -1853,10 +1890,11 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 fprintf(asmoutput,"ldr r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
         return(0);
     }
@@ -1869,16 +1907,14 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>6)&0x7;
         rb=read_register(rn)+read_register(rm);
         //rc_keyflow = compute_keyflow(read32_keyflow(rb), read_register_keyflow(rm), 0, 0); // Need to preserve key data if used in computing address
-        rc_keyflow = read32_keyflow(rb); // Need to preserve key data if used in computing address
         rc=read32(rb);
         op1 = read_register(rd); op2 = rc;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
-        
+        rc_keyflow = read32_keyflow(rb); // Need to preserve key data if used in computing address
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register(rd,rc);
         write_register_keyflow(rd, rc_keyflow);
-        
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldr r%u,[r%u,r%u]\n",rd,rn,rm);
@@ -1890,7 +1926,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
         return(0);
     }
@@ -1906,12 +1942,11 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb+=ra;
         //if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,";@ 0x%X ",rb);
         rc=read32(rb);
-        rc_keyflow = read32_keyflow(rb);
-        write_register(rd,rc);
         op1 = read_register(rd); op2 = rc;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
-
+        rc_keyflow = read32_keyflow(rb);
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
         write_register_keyflow(rd, rc_keyflow);
         
@@ -1923,11 +1958,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 fprintf(asmoutput,"ldr r%u,[PC+#0x%X]\n",rd,rb);
             }
         }
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
+        
         return(0);
     }
 
@@ -1942,8 +1979,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         //ra&=~3;
         rb+=ra;
         rc=read32(rb);
-        write_register(rd,rc);
         op1 = read_register(rd); op2 = rc;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -1962,7 +1999,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
         return(0);
     }
@@ -2004,8 +2041,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #endif
             
         }
-        write_register(rd,rc&0xFF);
+        
         op1 = read_register(rd); op2 = rc&0xFF;
+        write_register(rd,rc&0xFF);
         
 #ifdef KEYFLOW
         
@@ -2024,7 +2062,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
         return(0);
     }
@@ -2039,9 +2077,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rc=read16(rb&(~1));
         
 #ifdef KEYFLOW
-        
         rc_keyflow = read16_keyflow(rb&(~1));
-        
 #endif
         
         if(rb&1)
@@ -2061,8 +2097,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
             
         }
         //rc_keyflow = compute_keyflow(rc_keyflow, read_register_keyflow(rm), 0, 0);
-        write_register(rd,rc&0xFF);
         op1 = read_register(rd); op2 = rc&0xFF;
+        write_register(rd,rc&0xFF);
         
 #ifdef KEYFLOW
         write_register_keyflow(rd, rc_keyflow);
@@ -2078,7 +2114,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
         return(0);
     }
@@ -2093,15 +2129,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb=read_register(rn)+rb;
         
         rc=read16(rb);
-        write_register(rd,rc&0xFFFF);
         op1 = read_register(rd); op2 = rc&0xFFFF;
+        write_register(rd,rc&0xFFFF);
         
 #ifdef KEYFLOW
-        
         rc_keyflow = read16_keyflow(rb);
         write_register_keyflow(rd, rc_keyflow);
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrh r%u,[r%u,#0x%X]\n",rd,rn,rb);
@@ -2110,11 +2144,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 fprintf(asmoutput,"ldrh r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
+        
         return(0);
     }
 
@@ -2126,15 +2162,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>6)&0x7;
         rb=read_register(rn)+read_register(rm);
         rc=read16(rb);
-        write_register(rd,rc&0xFFFF);
         op1 = read_register(rd); op2 = rc&0xFFFF;
+        write_register(rd,rc&0xFFFF);
         
 #ifdef KEYFLOW
-        
         rc_keyflow = compute_keyflow(read16_keyflow(rb), read_register_keyflow(rm), 0, 0);
         write_register_keyflow(rd, rc_keyflow);
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrh r%u,[r%u,r%u]\n",rd,rn,rm);
@@ -2143,11 +2177,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 fprintf(asmoutput,"ldrh r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
+        
         return(0);
     }
 
@@ -2176,9 +2212,10 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
             rc_keyflow = bit8tobit16(rc_keyflow, false);
 #endif
         }
-        
-        write_register(rd,rc);
+        rc&=0xFF;
+        if(rc&0x80) rc|=((~0)<<8);
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         rc_keyflow = compute_keyflow(rc_keyflow, read_register_keyflow(rm), 0, 0);
@@ -2186,8 +2223,6 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
 #endif
 
-        rc&=0xFF;
-        if(rc&0x80) rc|=((~0)<<8);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ldrsb r%u,[r%u,r%u]\n",rd,rn,rm);
 
 #ifdef KEYFLOW
@@ -2209,8 +2244,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
     
         rc&=0xFFFF;
         if(rc&0x8000) rc|=((~0)<<16);
-        write_register(rd,rc);
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -2239,10 +2274,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1=rc; op2=rb;
         
 #ifdef KEYFLOW
-        
         rc_keyflow = read_register_keyflow(rm);
         op1_keyflow = rc_keyflow; op2_keyflow = zero_keyflow32();
-        
 #endif
         
         if(rb==0)
@@ -2263,16 +2296,24 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
             
         }
         
+        op1 = 0; op2 = 0;
         write_register(rd,rc);
+        
+        do_nflag(rc);
+        do_zflag(rc);
         
 #ifdef KEYFLOW
         write_register_keyflow(rd, rc_keyflow);
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsls r%u,r%u,#0x%X\n",rd,rm,rb);
-        if(registerdataflow) dataptr = update_dataflow(dataptr,0,0, 5, op1_keyflow, op2_keyflow);
+        
+#ifdef KEYFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#else
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+#endif
+        
         return(0);
     }
 
@@ -2286,11 +2327,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1=rc; op2=rb;
         
 #ifdef KEYFLOW
-        
         rc_keyflow = read_register_keyflow(rd);
         rb_keyflow = read_register_keyflow(rs);
         op1_keyflow = rc_keyflow; op2_keyflow = rb_keyflow;
-        
 #endif
         
         rb&=0xFF;
@@ -2320,26 +2359,29 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         {
             do_cflag_bit(0);
             rc=0;
-            
+
 #ifdef KEYFLOW
             rc_keyflow = zero_keyflow32();
 #endif
-            
+
         }
         write_register(rd,rc);
+
+        do_nflag(rc);
+        do_zflag(rc);
         
 #ifdef KEYFLOW
         write_register_keyflow(rd, rc_keyflow);
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsls r%u,r%u\n",rd,rs);
+
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1);
 #endif
+        
         return(0);
     }
 
@@ -2373,16 +2415,24 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #endif
             
         }
+        
+        op1 = 0; op2 = 0;
         write_register(rd,rc);
+        
+        do_nflag(rc);
+        do_zflag(rc);
         
 #ifdef KEYFLOW
         write_register_keyflow(rd, rc_keyflow);
 #endif
-        
-        do_nflag(rc);
-        do_zflag(rc);
+
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsrs r%u,r%u,#0x%X\n",rd,rm,rb);
-        if(registerdataflow) dataptr = update_dataflow(dataptr,0,0, 5, op1_keyflow, op2_keyflow);
+        
+#ifdef KEYFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#else
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+#endif        
         return(0);
     }
 
@@ -2433,18 +2483,18 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         }
 
         write_register(rd,rc);
-
+        do_nflag(rc);
+        do_zflag(rc);
+        
 #ifdef KEYFLOW
         write_register_keyflow(rd, rc_keyflow);
 #endif
-        
-        do_nflag(rc);
-        do_zflag(rc);
+
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsrs r%u,r%u\n",rd,rs);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1);
 #endif
         return(0);
     }
@@ -2455,21 +2505,23 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb=(inst>>0)&0xFF;
         rd=(inst>>8)&0x07;
         
-        write_register(rd,rb);
         op1=read_register(rd); op2=rb;
+        write_register(rd,rb);
+        
+        do_nflag(rb);
+        do_zflag(rb);
 
 #ifdef KEYFLOW
         write_register_keyflow(rd, zero_keyflow32());
         op1_keyflow = read_register_keyflow(rd); op2_keyflow = zero_keyflow32();
 #endif
         
-        do_nflag(rb);
-        do_zflag(rb);
+
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"movs r%u,#0x%02X\n",rd,rb);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -2485,24 +2537,24 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1=ra; op2=rc;
         
 #ifdef KEYFLOW
-        
         ra_keyflow = read_register_keyflow(rd);
         rc_keyflow = read_register_keyflow(rn);
         write_register_keyflow(rd, rc_keyflow);
         op1_keyflow = ra_keyflow; op2_keyflow = rc_keyflow;
 #endif
         
-        
         do_nflag(rc);
         do_zflag(rc);
         do_cflag_bit(0);
         do_vflag_bit(0);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"movs r%u,r%u\n",rd,rn);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
+        
         return(0);
     }
 
@@ -2515,13 +2567,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         ra=read_register(rd);
         rc=read_register(rm);
         op1=ra; op2=rc;
-        
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rc_keyflow;
-#endif
-        
+
         if((rd==14)&&(rm==15))
         {
             //printf("mov lr,pc warning 0x%08X\n",pc-2);
@@ -2541,6 +2587,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         write_register(rd,rc);
         
 #ifdef KEYFLOW
+        ra_keyflow = read_register_keyflow(rd);
+        rc_keyflow = read_register_keyflow(rm);
+        op1_keyflow = ra_keyflow; op2_keyflow = rc_keyflow;
         write_register_keyflow(rd, rc_keyflow);
 #endif
         
@@ -2548,7 +2597,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -2560,10 +2609,15 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>3)&0x7;
         
         ra=read_register(rd);
+        op1=ra;
         rb=read_register(rm);
+        op2=rb;
+        
         rc=ra*rb;
         write_register(rd,rc);
-        op1=ra; op2=rb;
+
+        do_nflag(rc);
+        do_zflag(rc);
         
 #ifdef KEYFLOW
         ra_keyflow = read_register_keyflow(rd);
@@ -2572,16 +2626,15 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         write_register_keyflow(rd, rc_keyflow);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
 #endif
-        
 
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"muls r%u,r%u\n",rd,rm);
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 4, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 4);
 #endif
+        
         return(0);
     }
 
@@ -2593,8 +2646,10 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         
         ra=read_register(rm);
         rc=(~ra);
-        write_register(rd,rc);
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
+        do_nflag(rc);
+        do_zflag(rc);
         
 #ifdef KEYFLOW
         
@@ -2604,8 +2659,6 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"mvns r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
@@ -2623,21 +2676,20 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         
         ra=read_register(rm);
         rc=0-ra;
-        write_register(rd,rc);
         op1 = 0; op2 = 0;
-        
-#ifdef KEYFLOW
-        
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
-        
-#endif
+        write_register(rd,rc);
         
         do_nflag(rc);
         do_zflag(rc);
         do_cflag(0,~ra,1);
         do_vflag(0,~ra,1);
+        
+#ifdef KEYFLOW
+        rc_keyflow = read_register_keyflow(rm);
+        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        write_register_keyflow(rd, rc_keyflow);
+#endif
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"negs r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
@@ -2654,28 +2706,28 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>3)&0x7;
         
         ra=read_register(rd);
+        op1=ra;
         rb=read_register(rm);
+        op2=rb;
         rc=ra|rb;
-        op1=ra; op2=rb;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+        do_nflag(rc);
+        do_zflag(rc);
         
+#ifdef KEYFLOW
         ra_keyflow = read_register_keyflow(rd);
         rb_keyflow = read_register_keyflow(rm);
         rc_keyflow = compute_keyflow(rc_keyflow, rb_keyflow, 0, 0);
         op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
         write_register_keyflow(rd, rc_keyflow);
-        
 #endif
         
-        do_nflag(rc);
-        do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"orrs r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -2689,20 +2741,18 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         {
             if(inst&rb)
             {
-                write_register(ra,read32(sp));
                 op1 = 0; op2 = 0;
+                write_register(ra,read32(sp));
                 
 #ifdef KEYFLOW
-                
                 write_register_keyflow(ra, read32_keyflow(sp));
                 op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(sp);
-                
 #endif
 
-        #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
                 sp+=4;
             }
@@ -2747,7 +2797,6 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
     if((inst&0xFE00)==0xB400)
     {
         sp=read_register(13);
-//fprintf(stderr,"sp 0x%08X\n",sp);
         for(ra=0,rb=0x01,rc=0;rb;rb=(rb<<1)&0xFF,ra++)
         {
             if(inst&rb)
@@ -2763,21 +2812,20 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         {
             if(inst&rb)
             {
-                write32(rd,read_register(ra));
                 op1 = 0; op2 = 0;
+                write32(rd,read_register(ra));
                 
 #ifdef KEYFLOW
-
                 write32_keyflow(rd, read_register_keyflow(ra));
                 op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(rd);
-                
 #endif
 
-        #ifdef KEYFLOW
+#ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
+
                 rd+=4;
             }
         }
@@ -2791,9 +2839,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 fprintf(stderr,"push {lr} with an ARM address pc 0x%08X popped 0x%08X\n",pc,rc);
 //                exit(1);
             }
-
-
         }
+        
         write_register(13,sp);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES))
         {
@@ -2827,8 +2874,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rc|=((ra>> 8)&0xFF)<<16;
         rc|=((ra>>16)&0xFF)<< 8;
         rc|=((ra>>24)&0xFF)<< 0;
-        write_register(rd,rc);
+        
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -2863,8 +2911,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rc|=((ra>> 8)&0xFF)<< 0;
         rc|=((ra>>16)&0xFF)<<24;
         rc|=((ra>>24)&0xFF)<<16;
-        write_register(rd,rc);
+
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
 
@@ -2898,8 +2947,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rc|=((ra>> 8)&0xFF)<< 0;
         if(rc&0x8000) rc|=0xFFFF0000;
         else          rc&=0x0000FFFF;
-        write_register(rd,rc);
+        
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -2931,14 +2981,6 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         op1=rc; op2=ra;
         ra&=0xFF;
         
-#ifdef KEYFLOW
-        
-        rc_keyflow = read_register_keyflow(rd);
-        ra_keyflow = read_register_keyflow(rs);
-        op1_keyflow = rc_keyflow; op2_keyflow = ra_keyflow;
-
-#endif
-        
         if(ra==0)
         {
         }
@@ -2956,24 +2998,26 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 rc>>=ra;
                 rc|=rb;
                 
+#ifdef KEYFLOW
+                rc_keyflow = read_register_keyflow(rd);
+                ra_keyflow = read_register_keyflow(rs);
+                op1_keyflow = rc_keyflow; op2_keyflow = ra_keyflow;
                 rc_keyflow = compute_keyflow(rc_keyflow, ra_keyflow, ra, 4);
+                write_register_keyflow(rd, rc_keyflow);
+#endif
                 
             }
         }
         
         write_register(rd,rc);
-        
-#ifdef KEYFLOW
-        write_register_keyflow(rd, rc_keyflow);
-#endif
-        
         do_nflag(rc);
         do_zflag(rc);
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"rors r%u,r%u\n",rd,rs);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1);
 #endif
         return(0);
     }
@@ -2987,19 +3031,10 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb=read_register(rm);
         rc=ra-rb;
         if(!(cpsr&CPSR_C)) rc--;
-        write_register(rd,rc);
+        
         op1 = 0; op2 = 0;
-        
-#ifdef KEYFLOW
-        
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
-        
-#endif
-        
+        write_register(rd,rc);
+
         do_nflag(rc);
         do_zflag(rc);
         if(cpsr&CPSR_C)
@@ -3012,6 +3047,17 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
             do_cflag(ra,~rb,0);
             do_vflag(ra,~rb,0);
         }
+        
+#ifdef KEYFLOW
+        
+        ra_keyflow = read_register_keyflow(rd);
+        rb_keyflow = read_register_keyflow(rm);
+        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
+        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        write_register_keyflow(rd, rc_keyflow);
+        
+#endif
+        
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"sbc r%u,r%u\n",rd,rm);
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
@@ -3039,9 +3085,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         {
             if(inst&rb)
             {
-                
-                write32(sp,read_register(ra));
                 op1 = 0; op2 = 0;
+                write32(sp,read_register(ra));
                 
 #ifdef KEYFLOW
 
@@ -3051,9 +3096,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #endif
 
 #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif                
                 sp+=4;
             }
@@ -3086,15 +3131,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 
         rb=read_register(rn)+rb;
         rc=read_register(rd);
-        write32(rb,rc);
         op1 = read32(rb); op2 = rc;
+        write32(rb,rc);
         
 #ifdef KEYFLOW
-
         rc_keyflow = read_register_keyflow(rd);
         write32_keyflow(rb, rc_keyflow);
         op1_keyflow = read32_keyflow(rb); op2_keyflow = rc_keyflow;
-        
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"str r%u,[r%u,#0x%X]\n",rd,rn,rb);
@@ -3107,7 +3150,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3122,8 +3165,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         
         rb=read_register(rn)+read_register(rm);
         rc=read_register(rd);
-        write32(rb,rc);
         op1 = read32(rb); op2 = rc;
+        write32(rb,rc);
         
 #ifdef KEYFLOW
         
@@ -3142,7 +3185,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3176,7 +3219,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3224,9 +3267,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #endif
             
         }
-
-        write16(rb&(~1),ra&0xFFFF);
+        
         op1 = read32(rb); op2 = rc;
+        write16(rb&(~1),ra&0xFFFF);
         
 #ifdef KEYFLOW
         
@@ -3244,7 +3287,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3293,9 +3336,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #endif
             
         }
-
-        write16(rb&(~1),ra&0xFFFF);
+        
         op1 = read32(rb); op2 = rc;
+        write16(rb&(~1),ra&0xFFFF);
         
 #ifdef KEYFLOW
 
@@ -3310,10 +3353,11 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
                 fprintf(asmoutput,"strb r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
+        
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3327,8 +3371,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb<<=1;
         rb=read_register(rn)+rb;
         rc=read_register(rd);
-        write16(rb,rc&0xFFFF);
+
         op1 = read32(rb); op2 = rc;
+        write16(rb,rc&0xFFFF);
         
 #ifdef KEYFLOW
         
@@ -3347,7 +3392,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3360,8 +3405,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>6)&0x7;
         rb=read_register(rn)+read_register(rm);
         rc=read_register(rd);
-        write16(rb,rc&0xFFFF);
+
         op1 = read32(rb); op2 = rc;
+        write16(rb,rc&0xFFFF);
         
 #ifdef KEYFLOW
         
@@ -3380,7 +3426,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
         return(0);
     }
@@ -3393,8 +3439,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb=(inst>>6)&7;
         ra=read_register(rn);
         rc=ra-rb;
-        write_register(rd,rc);
         op1=ra; op2=rb;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -3413,7 +3459,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -3425,8 +3471,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rd=(inst>>8)&0x07;
         ra=read_register(rd);
         rc=ra-rb;
-        write_register(rd,rc);
         op1=ra; op2=rb;
+        write_register(rd,rc);
 
 #ifdef KEYFLOW
         
@@ -3446,7 +3492,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -3481,7 +3527,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -3493,13 +3539,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rb<<=2;
         
         ra=read_register(13);
-        ra-=rb;
         op1 = ra; op2 = rb;
-        
+        ra-=rb;
+        write_register(13,ra);
+
 #ifdef KEYFLOW
         
         ra_keyflow = read_register_keyflow(13);
-        write_register(13,ra);
         op1_keyflow = ra_keyflow; op2_keyflow = zero_keyflow32();
         
 #endif
@@ -3508,7 +3554,7 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 #ifdef KEYFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
         return(0);
     }
@@ -3520,13 +3566,13 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
 
         if((inst&0xFF)==0xCC)
         {
+            op1 = 0; op2 = 0;
             write_register(0,cpsr);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"swi 0x%02X\n",rb);
-            op1 = 0; op2 = 0;
-    #ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef KEYFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
 #else
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
             return(0);
         }
@@ -3545,8 +3591,9 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         ra=read_register(rm);
         rc=ra&0xFF;
         if(rc&0x80) rc|=(~0)<<8;
-        write_register(rd,rc);
+        
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
 
 #ifdef KEYFLOW
         
@@ -3574,8 +3621,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         ra=read_register(rm);
         rc=ra&0xFFFF;
         if(rc&0x8000) rc|=(~0)<<16;
-        write_register(rd,rc);
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -3633,8 +3680,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         rm=(inst>>3)&0x7;
         ra=read_register(rm);
         rc=ra&0xFF;
-        write_register(rd,rc);
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -3661,8 +3708,8 @@ if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cps TODO\
         ra=read_register(rm);
         
         rc=ra&0xFFFF;
-        write_register(rd,rc);
         op1 = 0; op2 = 0;
+        write_register(rd,rc);
         
 #ifdef KEYFLOW
         
@@ -3901,8 +3948,12 @@ int main ( int argc, char *argv[] )
     readcoeffs(BitFlip2_bitinteractions,fpcoeffs, 496);
     
     memset(ram,0x00,sizeof(ram));
+    
+#ifdef KEYFLOW
     printf("########################################\n\nINITIALISING KEYFLOW...\n\n");
     reset_keyflow();
+#endif
+    
     printf("########################################\n\nGENERATING TRACES...\n\n");
     run();
     
