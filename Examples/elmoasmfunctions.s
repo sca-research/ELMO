@@ -66,6 +66,43 @@ bx lr
 
 .endfunc
 
+.func getstart
+.global getstart
+
+getstart:
+    push {r0-r7}
+    movs r4, #0xE1
+    lsls r4, #24
+    movs r5, #0x08
+    eors r4, r5
+    ldr r1, [r4, #0]
+    str r1, [r0, #0]
+    pop {r0-r7}
+
+bx lr
+
+.endfunc
+
+
+.func getruncount
+.global getruncount
+
+getruncount:
+    push {r0-r7}
+    movs r4, #0xE1
+    lsls r4, #24
+    movs r5, #0x0C
+    eors r4, r5
+    ldr r1, [r4, #0]
+    str r1, [r0, #0]
+    pop {r0-r7}
+
+bx lr
+
+.endfunc
+
+
+
 .func printhex
 .global printhex
 

@@ -1,4 +1,5 @@
 /* ELMO is based on the Thumblator emmulator which can be found at: https://github.com/dwelch67/thumbulator. The functional correctness
+
  of this code has been tested using a number generic testing methods however we do not garentee this code to be bug free. */
 
 #include <stdio.h>
@@ -614,6 +615,21 @@ if(registerdataflow && DBUG) fprintf(stderr,"read32(0x%08X)=",addr);
                     free(str);
                     return(data);
                 }
+                case 0xE1000008:
+                {
+                    data = t;
+                    free(str);
+                    return(data);
+
+                }
+                case 0xE100000C:
+                {
+                    data = runcount;
+                    free(str);
+                    return(data);
+
+                }
+
             }
         }
     }
@@ -3885,7 +3901,7 @@ int main ( int argc, char *argv[] )
     char *token;
     
     
-    t = 1; registerdataflow = 0; indexno = 1; keyflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1;
+    t = 1; registerdataflow = 0; indexno = 1; keyflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1; runcount = 0; 
     
     mkdir(TRACEFOLDER, 0777);
     mkdir(NONPROFILEDFOLDER, 0777);
@@ -3942,11 +3958,13 @@ int main ( int argc, char *argv[] )
         if(strcmp(argv[ra],"-starttrace")==0){
             sscanf(argv[ra+1], "%d", &t);
         }
+        if(strcmp(argv[ra],"-runcount")==0){
+            sscanf(argv[ra+1], "%d", &runcount);
+        }
         if(strcmp(argv[ra],"-starttraceghost")==0){
             sscanf(argv[ra+1], "%d", &tracestart);
         }
     }
-    
     fp=fopen(argv[1],"rb");
     if(fp==NULL)
     {

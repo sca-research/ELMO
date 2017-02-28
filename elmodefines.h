@@ -74,6 +74,9 @@ unsigned int systick_calibrate;
 
 unsigned int t;
 unsigned int tracestart;
+
+unsigned int runcount;
+
 unsigned int no_masks;
 unsigned int *maskfixedvsrandomfail;
 unsigned int tracelength;
