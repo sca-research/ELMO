@@ -14,19 +14,20 @@
 #include <stdint.h>
 
 #include "elmodefines.h"
+#include "include/powermodel.h"
+#include "include/fixedvsrandom.h"
 
 #ifdef DBUG
 #include "include/debug.h"
 #endif
 
-
 #ifdef KEYFLOW
     #include "include/keyflow.h"
 #endif
 
-#include "include/fixedvsrandom.h"
-#include "include/powermodel.h"
-#include "include/energy.h"
+#ifdef ENERGYMODEL
+    #include "include/energy.h"
+#endif
 
 //-------------------------------------------------------------------
 
@@ -213,7 +214,7 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
 #endif
 
 //-------------------------------------------------------------------
-
+/*
 unsigned int leakagetestfail(void){
 
     unsigned int i, j, len_keyflow, len_fixedvsrandom, leakagetestfailno = 0, *fixedvsrandom, *keyflow;
@@ -255,7 +256,7 @@ unsigned int leakagetestfail(void){
     return leakagetestfailno;
 
 }
-
+*/
 //-------------------------------------------------------------------
 
 void dump_counters ( void )
@@ -379,12 +380,15 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
     {
         case 0xF0000000: //halt
             tracenumber = (t-1);
-            if(FIXEDVSRANDOM){
-                tracenumber = (t-1)/2;
-                fixedvsrandom();
-            }
-            if(ENERGYMODEL)
-                getenergy();
+
+#ifdef FIXEDVSRANDOM
+            tracenumber = (t-1)/2;
+            fixedvsrandom();
+#endif
+            
+#ifdef ENERGYMODEL
+            getenergy();
+#endif
 
             dump_counters();
             exit(0);
