@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define TEST
+//#define TEST
 
 #ifdef TEST
     #include "test/elmodefinestest.h"
