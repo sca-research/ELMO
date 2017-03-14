@@ -183,9 +183,9 @@ END GROUP
                 0x0000000008000c54                _sbrk
                 0x0000000008000c70                . = ALIGN (0x4)
  *(.rodata*)
- .rodata.fixedkey.6053
+ .rodata.fixedinput.6058
                 0x0000000008000c70       0x10 MaskedAES_R1.o
- .rodata.fixedinput.6054
+ .rodata.fixedkey.6057
                 0x0000000008000c80       0x10 MaskedAES_R1.o
  .rodata.str1.4
                 0x0000000008000c90        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
@@ -336,10 +336,10 @@ OUTPUT(MaskedAES_R1.elf elf32-littlearm)
  .debug_line    0x0000000000000000      0x1e2 MaskedAES_R1.o
  .debug_line    0x00000000000001e2       0xf9 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
 
-.debug_str      0x0000000000000000      0x44c
- .debug_str     0x0000000000000000      0x220 MaskedAES_R1.o
-                                        0x26c (size before relaxing)
- .debug_str     0x0000000000000220      0x22c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+.debug_str      0x0000000000000000      0x44b
+ .debug_str     0x0000000000000000      0x21f MaskedAES_R1.o
+                                        0x26b (size before relaxing)
+ .debug_str     0x000000000000021f      0x22c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
                                         0x2be (size before relaxing)
 
 .comment        0x0000000000000000       0xde

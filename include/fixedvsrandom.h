@@ -66,12 +66,15 @@ void gettrace(double *ptr, FILE *fp, int len, int *points){
     
     for(i=0;i<tracelength;i++)
     {
+#ifdef BINARYTRACES
         fread(&value,sizeof(double),1,fp);
-        //fscanf(fp,"%lf",&value);
+#else
+        fscanf(fp,"%lf",&value);
+#endif
         traceptr[i] = value;
     }
     
-    //meancenter(traceptr,tracelength);
+    meancenter(traceptr,tracelength);
     
     j = 0;
     

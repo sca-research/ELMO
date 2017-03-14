@@ -28,14 +28,13 @@ void getenergy(void){
     
     sumaveragepower = 0;
     
-    if(FIXEDVSRANDOM){
-        starttrace = tracenumber+1;
-        endtrace = (tracenumber*2)+1;
-    }
-    else{
-        starttrace = 1;
-        endtrace = tracenumber+1;
-    }
+#ifdef FIXEDVSRANDOM
+    starttrace = tracenumber+1;
+    endtrace = (tracenumber*2)+1;
+#else
+    starttrace = 1;
+    endtrace = tracenumber+1;
+#endif
 
     // Get trace length
     fp = loadtrace(1);

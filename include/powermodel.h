@@ -145,17 +145,17 @@ void createpowermodel(){
             
             for(i=0;i<32;i++){
                 for(j=i+1;j<32;j++){
-                    
+
                     // Input hamming weights
                     Operand1_bitinteractions_data = Operand1_bitinteractions_data + Operand1_bitinteractions[count][instructiontype]*current->op1_binary[i]*current->op1_binary[j];
                     Operand2_bitinteractions_data = Operand2_bitinteractions_data + Operand2_bitinteractions[count][instructiontype]*current->op2_binary[i]*current->op2_binary[j];
-                    
+
                     // Input hamming distance
                     BitFlip1_bitinteractions_data = BitFlip1_bitinteractions_data + BitFlip1_bitinteractions[count][instructiontype]*current->op1_bitflip[i]*current->op1_bitflip[j];
                     BitFlip2_bitinteractions_data = BitFlip2_bitinteractions_data + BitFlip2_bitinteractions[count][instructiontype]*current->op2_bitflip[i]*current->op2_bitflip[j];
-                    
+
                     count++;
-                    
+
                 }
             }
         }
@@ -166,27 +166,43 @@ void createpowermodel(){
         
         // convert from differential voltage to power
         
-        supplycurrent = differentialvoltage/RESISTANCE;
+#ifdef DIFFERENTIALVOLTAGE
         
+        power = differentialvoltage;
+        
+#else
+        
+        supplycurrent = differentialvoltage/RESISTANCE;
         power = supplycurrent*SUPPLYVOLTAGE;
+        
+#endif
 
         if(instructiontype == 2 | instructiontype == 3){
             if(CYCLEACCURATE){
+#ifdef BINARYTRACES
                 fwrite(&power, sizeof(power), 1, fp);
                 fwrite(&power, sizeof(power), 1, fp);
-                //fprintf(fp,"%0.40f\n",power);
-                //fprintf(fp,"%0.40f\n",power);
+#else
+                fprintf(fp,"%0.40f\n",power);
+                fprintf(fp,"%0.40f\n",power);
+#endif
                 index += 2;
             }
             else{
+#ifdef BINARYTRACES
                 fwrite(&power, sizeof(power), 1, fp);
-                //fprintf(fp,"%0.40f\n",power);
+#else
+                fprintf(fp,"%0.40f\n",power);
+#endif
                 index += 1;
             }
         }
         else{
+#ifdef BINARYTRACES
             fwrite(&power, sizeof(power), 1, fp);
-            //fprintf(fp,"%0.40f\n",power);
+#else
+            fprintf(fp,"%0.40f\n",power);
+#endif
             index += 1;
         }
 

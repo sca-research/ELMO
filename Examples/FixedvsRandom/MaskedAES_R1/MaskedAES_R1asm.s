@@ -140,8 +140,8 @@ arrangedatakeymasked:
 AddKeySubBytes:
 
   # Add Key
-  ldr r6, [r0, r4]
-  ldr r7, [r2, r4]
+  ldrb r6, [r0, r4]
+  ldrb r7, [r2, r4]
   eors r6, r7
 
   # SBox

@@ -61,7 +61,7 @@ int main(void) {
     
     U = 0;
  80000da:	2300      	movs	r3, #0
- 80000dc:	4a3a      	ldr	r2, [pc, #232]	; (80001c8 <main+0x108>)
+ 80000dc:	4a39      	ldr	r2, [pc, #228]	; (80001c4 <main+0x104>)
 
     uint8_t *input, *output, *key;
 
@@ -76,11 +76,11 @@ int main(void) {
     U = 0;
  80000e0:	7013      	strb	r3, [r2, #0]
     V = 0;
- 80000e2:	4a3a      	ldr	r2, [pc, #232]	; (80001cc <main+0x10c>)
+ 80000e2:	4a39      	ldr	r2, [pc, #228]	; (80001c8 <main+0x108>)
  80000e4:	9004      	str	r0, [sp, #16]
  80000e6:	7013      	strb	r3, [r2, #0]
     UV = 0;
- 80000e8:	4a39      	ldr	r2, [pc, #228]	; (80001d0 <main+0x110>)
+ 80000e8:	4a38      	ldr	r2, [pc, #224]	; (80001cc <main+0x10c>)
  80000ea:	7013      	strb	r3, [r2, #0]
  80000ec:	0002      	movs	r2, r0
  80000ee:	3210      	adds	r2, #16
@@ -100,203 +100,202 @@ int main(void) {
     for(j=0;j<16;j++){
  80000fa:	4291      	cmp	r1, r2
  80000fc:	d1fa      	bne.n	80000f4 <main+0x34>
- 80000fe:	27fa      	movs	r7, #250	; 0xfa
- 8000100:	00ff      	lsls	r7, r7, #3
+ 80000fe:	4f34      	ldr	r7, [pc, #208]	; (80001d0 <main+0x110>)
     for(i=0;i<NOTRACES;i++){
 
         readdata(&U);
         readdata(&V);
         
         for(j=0;j<16;j++){
- 8000102:	2400      	movs	r4, #0
+ 8000100:	2400      	movs	r4, #0
         output[j] = 0x00;
     }
     
     for(i=0;i<NOTRACES;i++){
 
         readdata(&U);
- 8000104:	4830      	ldr	r0, [pc, #192]	; (80001c8 <main+0x108>)
- 8000106:	f000 f929 	bl	800035c <readdata>
+ 8000102:	4830      	ldr	r0, [pc, #192]	; (80001c4 <main+0x104>)
+ 8000104:	f000 f92a 	bl	800035c <readdata>
         readdata(&V);
- 800010a:	4830      	ldr	r0, [pc, #192]	; (80001cc <main+0x10c>)
- 800010c:	f000 f926 	bl	800035c <readdata>
- 8000110:	9d03      	ldr	r5, [sp, #12]
+ 8000108:	482f      	ldr	r0, [pc, #188]	; (80001c8 <main+0x108>)
+ 800010a:	f000 f927 	bl	800035c <readdata>
+ 800010e:	9d03      	ldr	r5, [sp, #12]
         
         for(j=0;j<16;j++){
             readdata(&input[j]);
- 8000112:	0028      	movs	r0, r5
- 8000114:	f000 f922 	bl	800035c <readdata>
+ 8000110:	0028      	movs	r0, r5
+ 8000112:	f000 f923 	bl	800035c <readdata>
             input[j] = fixedinput[j];
- 8000118:	4b2e      	ldr	r3, [pc, #184]	; (80001d4 <main+0x114>)
+ 8000116:	4b2f      	ldr	r3, [pc, #188]	; (80001d4 <main+0x114>)
             key[j] = fixedkey[j];
- 800011a:	9a02      	ldr	r2, [sp, #8]
+ 8000118:	9a02      	ldr	r2, [sp, #8]
         readdata(&U);
         readdata(&V);
         
         for(j=0;j<16;j++){
             readdata(&input[j]);
             input[j] = fixedinput[j];
- 800011c:	5ce3      	ldrb	r3, [r4, r3]
- 800011e:	702b      	strb	r3, [r5, #0]
+ 800011a:	5ce3      	ldrb	r3, [r4, r3]
+ 800011c:	702b      	strb	r3, [r5, #0]
             key[j] = fixedkey[j];
- 8000120:	4b2d      	ldr	r3, [pc, #180]	; (80001d8 <main+0x118>)
- 8000122:	3501      	adds	r5, #1
- 8000124:	5ce3      	ldrb	r3, [r4, r3]
- 8000126:	5513      	strb	r3, [r2, r4]
+ 800011e:	4b2e      	ldr	r3, [pc, #184]	; (80001d8 <main+0x118>)
+ 8000120:	3501      	adds	r5, #1
+ 8000122:	5ce3      	ldrb	r3, [r4, r3]
+ 8000124:	5513      	strb	r3, [r2, r4]
     for(i=0;i<NOTRACES;i++){
 
         readdata(&U);
         readdata(&V);
         
         for(j=0;j<16;j++){
- 8000128:	3401      	adds	r4, #1
- 800012a:	2c10      	cmp	r4, #16
- 800012c:	d1f1      	bne.n	8000112 <main+0x52>
+ 8000126:	3401      	adds	r4, #1
+ 8000128:	2c10      	cmp	r4, #16
+ 800012a:	d1f1      	bne.n	8000110 <main+0x50>
             readdata(&input[j]);
             input[j] = fixedinput[j];
             key[j] = fixedkey[j];
         }
         
         setmaskdataflowstart(0);
- 800012e:	2000      	movs	r0, #0
- 8000130:	f000 f943 	bl	80003ba <setmaskdataflowstart>
+ 800012c:	2000      	movs	r0, #0
+ 800012e:	f000 f944 	bl	80003ba <setmaskdataflowstart>
         initialisekeyflow(&U);
- 8000134:	4e24      	ldr	r6, [pc, #144]	; (80001c8 <main+0x108>)
- 8000136:	3f01      	subs	r7, #1
- 8000138:	0030      	movs	r0, r6
- 800013a:	f000 f92d 	bl	8000398 <initialisekeyflow>
+ 8000132:	4e24      	ldr	r6, [pc, #144]	; (80001c4 <main+0x104>)
+ 8000134:	3f01      	subs	r7, #1
+ 8000136:	0030      	movs	r0, r6
+ 8000138:	f000 f92e 	bl	8000398 <initialisekeyflow>
         
         setmaskdataflowstart(8);
- 800013e:	2008      	movs	r0, #8
- 8000140:	f000 f93b 	bl	80003ba <setmaskdataflowstart>
+ 800013c:	2008      	movs	r0, #8
+ 800013e:	f000 f93c 	bl	80003ba <setmaskdataflowstart>
         initialisekeyflow(&V);
- 8000144:	4d21      	ldr	r5, [pc, #132]	; (80001cc <main+0x10c>)
- 8000146:	0028      	movs	r0, r5
- 8000148:	f000 f926 	bl	8000398 <initialisekeyflow>
+ 8000142:	4d21      	ldr	r5, [pc, #132]	; (80001c8 <main+0x108>)
+ 8000144:	0028      	movs	r0, r5
+ 8000146:	f000 f927 	bl	8000398 <initialisekeyflow>
         
         //Trigger started in asm file
         acComputeAESMasked(output, input, key);
- 800014c:	9a02      	ldr	r2, [sp, #8]
- 800014e:	9903      	ldr	r1, [sp, #12]
- 8000150:	9801      	ldr	r0, [sp, #4]
- 8000152:	f000 f843 	bl	80001dc <acComputeAESMasked>
+ 800014a:	9a02      	ldr	r2, [sp, #8]
+ 800014c:	9903      	ldr	r1, [sp, #12]
+ 800014e:	9801      	ldr	r0, [sp, #4]
+ 8000150:	f000 f844 	bl	80001dc <acComputeAESMasked>
     
     for(j=0;j<16;j++){
         output[j] = 0x00;
     }
     
     for(i=0;i<NOTRACES;i++){
- 8000156:	2f00      	cmp	r7, #0
- 8000158:	d1d3      	bne.n	8000102 <main+0x42>
+ 8000154:	2f00      	cmp	r7, #0
+ 8000156:	d1d3      	bne.n	8000100 <main+0x40>
         
         //Trigger started in asm file
         acComputeAESMasked(output, input, key);
     }
     
     resetdatafile();
- 800015a:	f000 f936 	bl	80003ca <resetdatafile>
+ 8000158:	f000 f937 	bl	80003ca <resetdatafile>
 
     for(j=0;j<16;j++){
         output[j] = 0x00;
- 800015e:	9b04      	ldr	r3, [sp, #16]
- 8000160:	701f      	strb	r7, [r3, #0]
- 8000162:	3301      	adds	r3, #1
- 8000164:	9304      	str	r3, [sp, #16]
+ 800015c:	9b04      	ldr	r3, [sp, #16]
+ 800015e:	701f      	strb	r7, [r3, #0]
+ 8000160:	3301      	adds	r3, #1
+ 8000162:	9304      	str	r3, [sp, #16]
         acComputeAESMasked(output, input, key);
     }
     
     resetdatafile();
 
     for(j=0;j<16;j++){
- 8000166:	9a04      	ldr	r2, [sp, #16]
- 8000168:	9b05      	ldr	r3, [sp, #20]
- 800016a:	4293      	cmp	r3, r2
- 800016c:	d1f7      	bne.n	800015e <main+0x9e>
- 800016e:	27fa      	movs	r7, #250	; 0xfa
- 8000170:	00ff      	lsls	r7, r7, #3
+ 8000164:	9a04      	ldr	r2, [sp, #16]
+ 8000166:	9b05      	ldr	r3, [sp, #20]
+ 8000168:	4293      	cmp	r3, r2
+ 800016a:	d1f7      	bne.n	800015c <main+0x9c>
+ 800016c:	4f18      	ldr	r7, [pc, #96]	; (80001d0 <main+0x110>)
         output[j] = 0x00;
     }
     
     for(i=0;i<NOTRACES;i++){
         
         readdata(&U);
- 8000172:	0030      	movs	r0, r6
- 8000174:	f000 f8f2 	bl	800035c <readdata>
+ 800016e:	0030      	movs	r0, r6
+ 8000170:	f000 f8f4 	bl	800035c <readdata>
         readdata(&V);
- 8000178:	0028      	movs	r0, r5
- 800017a:	f000 f8ef 	bl	800035c <readdata>
+ 8000174:	0028      	movs	r0, r5
+ 8000176:	f000 f8f1 	bl	800035c <readdata>
         
         for(j=0;j<16;j++){
- 800017e:	2400      	movs	r4, #0
+ 800017a:	2400      	movs	r4, #0
             readdata(&input[j]);
- 8000180:	9b03      	ldr	r3, [sp, #12]
- 8000182:	1918      	adds	r0, r3, r4
- 8000184:	f000 f8ea 	bl	800035c <readdata>
+ 800017c:	9b03      	ldr	r3, [sp, #12]
+ 800017e:	1918      	adds	r0, r3, r4
+ 8000180:	f000 f8ec 	bl	800035c <readdata>
             key[j] = fixedkey[j];
- 8000188:	4b13      	ldr	r3, [pc, #76]	; (80001d8 <main+0x118>)
- 800018a:	9a02      	ldr	r2, [sp, #8]
- 800018c:	5ce3      	ldrb	r3, [r4, r3]
- 800018e:	5513      	strb	r3, [r2, r4]
+ 8000184:	4b14      	ldr	r3, [pc, #80]	; (80001d8 <main+0x118>)
+ 8000186:	9a02      	ldr	r2, [sp, #8]
+ 8000188:	5ce3      	ldrb	r3, [r4, r3]
+ 800018a:	5513      	strb	r3, [r2, r4]
     for(i=0;i<NOTRACES;i++){
         
         readdata(&U);
         readdata(&V);
         
         for(j=0;j<16;j++){
- 8000190:	3401      	adds	r4, #1
- 8000192:	2c10      	cmp	r4, #16
- 8000194:	d1f4      	bne.n	8000180 <main+0xc0>
+ 800018c:	3401      	adds	r4, #1
+ 800018e:	2c10      	cmp	r4, #16
+ 8000190:	d1f4      	bne.n	800017c <main+0xbc>
             readdata(&input[j]);
             key[j] = fixedkey[j];
         }
         
         setmaskdataflowstart(0);
- 8000196:	2000      	movs	r0, #0
- 8000198:	f000 f90f 	bl	80003ba <setmaskdataflowstart>
+ 8000192:	2000      	movs	r0, #0
+ 8000194:	f000 f911 	bl	80003ba <setmaskdataflowstart>
         initialisekeyflow(&U);
- 800019c:	0030      	movs	r0, r6
- 800019e:	f000 f8fb 	bl	8000398 <initialisekeyflow>
+ 8000198:	0030      	movs	r0, r6
+ 800019a:	f000 f8fd 	bl	8000398 <initialisekeyflow>
         
         setmaskdataflowstart(8);
- 80001a2:	2008      	movs	r0, #8
- 80001a4:	f000 f909 	bl	80003ba <setmaskdataflowstart>
+ 800019e:	2008      	movs	r0, #8
+ 80001a0:	f000 f90b 	bl	80003ba <setmaskdataflowstart>
         initialisekeyflow(&V);
- 80001a8:	0028      	movs	r0, r5
- 80001aa:	f000 f8f5 	bl	8000398 <initialisekeyflow>
- 80001ae:	3f01      	subs	r7, #1
+ 80001a4:	0028      	movs	r0, r5
+ 80001a6:	f000 f8f7 	bl	8000398 <initialisekeyflow>
+ 80001aa:	3f01      	subs	r7, #1
         
         //Trigger started in asm file
         acComputeAESMasked(output, input, key);
- 80001b0:	9a02      	ldr	r2, [sp, #8]
- 80001b2:	9903      	ldr	r1, [sp, #12]
- 80001b4:	9801      	ldr	r0, [sp, #4]
- 80001b6:	f000 f811 	bl	80001dc <acComputeAESMasked>
+ 80001ac:	9a02      	ldr	r2, [sp, #8]
+ 80001ae:	9903      	ldr	r1, [sp, #12]
+ 80001b0:	9801      	ldr	r0, [sp, #4]
+ 80001b2:	f000 f813 	bl	80001dc <acComputeAESMasked>
 
     for(j=0;j<16;j++){
         output[j] = 0x00;
     }
     
     for(i=0;i<NOTRACES;i++){
- 80001ba:	2f00      	cmp	r7, #0
- 80001bc:	d1d9      	bne.n	8000172 <main+0xb2>
+ 80001b6:	2f00      	cmp	r7, #0
+ 80001b8:	d1d9      	bne.n	800016e <main+0xae>
         
         //Trigger started in asm file
         acComputeAESMasked(output, input, key);
     }
     
     endprogram();
- 80001be:	f000 f8e4 	bl	800038a <endprogram>
+ 80001ba:	f000 f8e6 	bl	800038a <endprogram>
 
     return 0;
 }
- 80001c2:	0038      	movs	r0, r7
- 80001c4:	b007      	add	sp, #28
- 80001c6:	bdf0      	pop	{r4, r5, r6, r7, pc}
- 80001c8:	20000b4c 	.word	0x20000b4c
- 80001cc:	20000b4d 	.word	0x20000b4d
- 80001d0:	20000b4e 	.word	0x20000b4e
- 80001d4:	08000c80 	.word	0x08000c80
- 80001d8:	08000c70 	.word	0x08000c70
+ 80001be:	0038      	movs	r0, r7
+ 80001c0:	b007      	add	sp, #28
+ 80001c2:	bdf0      	pop	{r4, r5, r6, r7, pc}
+ 80001c4:	20000b4c 	.word	0x20000b4c
+ 80001c8:	20000b4d 	.word	0x20000b4d
+ 80001cc:	20000b4e 	.word	0x20000b4e
+ 80001d0:	00004e20 	.word	0x00004e20
+ 80001d4:	08000c70 	.word	0x08000c70
+ 80001d8:	08000c80 	.word	0x08000c80
 
 080001dc <acComputeAESMasked>:
  80001dc:	b4ff      	push	{r0, r1, r2, r3, r4, r5, r6, r7}
@@ -378,8 +377,8 @@ int main(void) {
  8000268:	4d30      	ldr	r5, [pc, #192]	; (800032c <mix_columnmasked+0x80>)
 
 0800026a <AddKeySubBytes>:
- 800026a:	5906      	ldr	r6, [r0, r4]
- 800026c:	5917      	ldr	r7, [r2, r4]
+ 800026a:	5d06      	ldrb	r6, [r0, r4]
+ 800026c:	5d17      	ldrb	r7, [r2, r4]
  800026e:	407e      	eors	r6, r7
  8000270:	5daf      	ldrb	r7, [r5, r6]
  8000272:	550f      	strb	r7, [r1, r4]
@@ -1641,9 +1640,9 @@ int main(void) {
  8000c68:	20000b84 	.word	0x20000b84
  8000c6c:	20000b8c 	.word	0x20000b8c
 
-08000c70 <fixedkey.6053>:
- 8000c70:	67452301 efcdab89 78563412 f0debc9a     .#Eg.....4Vx....
+08000c70 <fixedinput.6058>:
+ 8000c70:	eea339da 0d4b6b5e efbf5532 90186095     .9..^kK.2U...`..
 
-08000c80 <fixedinput.6054>:
- 8000c80:	eea339da 0d4b6b5e efbf5532 90186095     .9..^kK.2U...`..
+08000c80 <fixedkey.6057>:
+ 8000c80:	67452301 efcdab89 78563412 f0debc9a     .#Eg.....4Vx....
  8000c90:	00000043                                C...

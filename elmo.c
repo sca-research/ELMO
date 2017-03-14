@@ -13,7 +13,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "elmodefines.h"
+#define TEST
+
+#ifdef TEST
+    #include "test/elmodefinestest.h"
+#else
+    #include "elmodefines.h"
+#endif
+
 #include "include/powermodel.h"
 #include "include/fixedvsrandom.h"
 
@@ -3931,7 +3938,7 @@ int main ( int argc, char *argv[] )
     
     if(datafile == NULL)
         fprintf(stderr,"Warning: datafile filepointer NULL\n");
-    
+
     srand((unsigned) time(&timet));
 
 	start = malloc(sizeof(dataflow));
@@ -4049,7 +4056,7 @@ int main ( int argc, char *argv[] )
     printf("########################################\n\nINITIALISING KEYFLOW...\n\n");
     reset_keyflow();
 #endif
-    
+
     printf("########################################\n\nGENERATING TRACES...\n\n");
     run();
     

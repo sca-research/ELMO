@@ -1,4 +1,4 @@
-#define NOTRACES 2000
+#define NOTRACES 20000
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
