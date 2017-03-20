@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-//#define TEST
+#define TEST
 
 #ifdef TEST
     #include "test/elmodefinestest.h"
@@ -2539,7 +2539,7 @@ if(output_vcd)
         rc=read_register(rd);
         rb=read_register(rs);
         op1=rc; op2=rb;
-        
+
 #ifdef KEYFLOW
         
         rc_keyflow = read_register_keyflow(rd);
@@ -2547,7 +2547,7 @@ if(output_vcd)
         op1_keyflow = rc_keyflow; op2_keyflow = rb_keyflow;
         
 #endif
-        
+
         rb&=0xFF;
         if(rb==0)
         {

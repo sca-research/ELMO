@@ -138,9 +138,9 @@ void createpowermodel(){
                 HDOp2SubInstr_data = HDOp2SubInstr_data + HDOp2SubInstr[i][instructiontype]*subsequent->instruction_type[i+1]*hd_op2;
                 
             }
-            
+
             // Higher order bit interactions
-            
+
             count = 0;
             
             for(i=0;i<32;i++){
@@ -158,8 +158,12 @@ void createpowermodel(){
 
                 }
             }
+
         }
-        
+
+#ifdef DEBUGPOWER
+        printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n", constant[instructiontype], PrvInstr_data, SubInstr_data, Operand1_data, Operand2_data, BitFlip1_data, BitFlip2_data, HWOp1PrvInstr_data, HWOp2PrvInstr_data, HDOp1PrvInstr_data, HDOp2PrvInstr_data, HWOp1SubInstr_data, HWOp2SubInstr_data, HDOp1SubInstr_data, HDOp2SubInstr_data, Operand1_bitinteractions_data, Operand2_bitinteractions_data, BitFlip1_bitinteractions_data, BitFlip2_bitinteractions_data);
+#endif
         // power is total of different factors
         
         differentialvoltage = constant[instructiontype] + PrvInstr_data + SubInstr_data + Operand1_data + Operand2_data + BitFlip1_data + BitFlip2_data + HWOp1PrvInstr_data + HWOp2PrvInstr_data + HDOp1PrvInstr_data + HDOp2PrvInstr_data + HWOp1SubInstr_data + HWOp2SubInstr_data + HDOp1SubInstr_data + HDOp2SubInstr_data + Operand1_bitinteractions_data + Operand2_bitinteractions_data + BitFlip1_bitinteractions_data + BitFlip2_bitinteractions_data;

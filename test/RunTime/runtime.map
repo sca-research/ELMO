@@ -91,150 +91,150 @@ LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/armv6-m/
 LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a
 END GROUP
 
-.text           0x0000000008000000      0xd34
+.text           0x0000000008000000      0xcc8
  *(.vectors)
  .vectors       0x0000000008000000       0xc0 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
                 0x0000000008000000                vector_table
  *(.text*)
  .text.startup.main
-                0x00000000080000c0      0x32c runtime.o
+                0x00000000080000c0      0x2c0 runtime.o
                 0x00000000080000c0                main
- .text          0x00000000080003ec        0xa instruction.o
-                0x00000000080003ec                instructions
- .text          0x00000000080003f6       0xa4 ../../Examples/elmoasmfunctions.o
-                0x00000000080003f6                starttrigger
-                0x0000000008000408                endtrigger
-                0x000000000800041a                readdata
-                0x0000000008000428                randdata
-                0x000000000800043a                printhex
-                0x0000000008000448                endprogram
-                0x0000000008000456                initialisekeyflow
-                0x0000000008000466                resetkeyflow
-                0x0000000008000478                setmaskdataflowstart
-                0x0000000008000488                resetdatafile
+ .text          0x0000000008000380        0xa instruction.o
+                0x0000000008000380                instructions
+ .text          0x000000000800038a       0xa4 ../../Examples/elmoasmfunctions.o
+                0x000000000800038a                starttrigger
+                0x000000000800039c                endtrigger
+                0x00000000080003ae                readdata
+                0x00000000080003bc                randdata
+                0x00000000080003ce                printhex
+                0x00000000080003dc                endprogram
+                0x00000000080003ea                initialisekeyflow
+                0x00000000080003fa                resetkeyflow
+                0x000000000800040c                setmaskdataflowstart
+                0x000000000800041c                resetdatafile
  .text.blocking_handler
-                0x000000000800049a        0x2 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
-                0x000000000800049a                exti0_1_isr
-                0x000000000800049a                tim7_isr
-                0x000000000800049a                blocking_handler
-                0x000000000800049a                tsc_isr
-                0x000000000800049a                spi1_isr
-                0x000000000800049a                i2c1_isr
-                0x000000000800049a                tim17_isr
-                0x000000000800049a                i2c2_isr
-                0x000000000800049a                usart1_isr
-                0x000000000800049a                usart3_4_isr
-                0x000000000800049a                tim1_cc_isr
-                0x000000000800049a                exti2_3_isr
-                0x000000000800049a                tim16_isr
-                0x000000000800049a                pvd_isr
-                0x000000000800049a                rcc_isr
-                0x000000000800049a                flash_isr
-                0x000000000800049a                hard_fault_handler
-                0x000000000800049a                tim14_isr
-                0x000000000800049a                spi2_isr
-                0x000000000800049a                usb_isr
-                0x000000000800049a                tim15_isr
-                0x000000000800049a                tim3_isr
-                0x000000000800049a                usart2_isr
-                0x000000000800049a                adc_comp_isr
-                0x000000000800049a                dma1_channel1_isr
-                0x000000000800049a                tim6_dac_isr
-                0x000000000800049a                tim1_brk_up_trg_com_isr
-                0x000000000800049a                dma1_channel2_3_isr
-                0x000000000800049a                exti4_15_isr
-                0x000000000800049a                cec_can_isr
-                0x000000000800049a                wwdg_isr
-                0x000000000800049a                tim2_isr
-                0x000000000800049a                dma1_channel4_5_isr
-                0x000000000800049a                rtc_isr
+                0x000000000800042e        0x2 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x000000000800042e                exti0_1_isr
+                0x000000000800042e                tim7_isr
+                0x000000000800042e                blocking_handler
+                0x000000000800042e                tsc_isr
+                0x000000000800042e                spi1_isr
+                0x000000000800042e                i2c1_isr
+                0x000000000800042e                tim17_isr
+                0x000000000800042e                i2c2_isr
+                0x000000000800042e                usart1_isr
+                0x000000000800042e                usart3_4_isr
+                0x000000000800042e                tim1_cc_isr
+                0x000000000800042e                exti2_3_isr
+                0x000000000800042e                tim16_isr
+                0x000000000800042e                pvd_isr
+                0x000000000800042e                rcc_isr
+                0x000000000800042e                flash_isr
+                0x000000000800042e                hard_fault_handler
+                0x000000000800042e                tim14_isr
+                0x000000000800042e                spi2_isr
+                0x000000000800042e                usb_isr
+                0x000000000800042e                tim15_isr
+                0x000000000800042e                tim3_isr
+                0x000000000800042e                usart2_isr
+                0x000000000800042e                adc_comp_isr
+                0x000000000800042e                dma1_channel1_isr
+                0x000000000800042e                tim6_dac_isr
+                0x000000000800042e                tim1_brk_up_trg_com_isr
+                0x000000000800042e                dma1_channel2_3_isr
+                0x000000000800042e                exti4_15_isr
+                0x000000000800042e                cec_can_isr
+                0x000000000800042e                wwdg_isr
+                0x000000000800042e                tim2_isr
+                0x000000000800042e                dma1_channel4_5_isr
+                0x000000000800042e                rtc_isr
  .text.null_handler
-                0x000000000800049c        0x2 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
-                0x000000000800049c                null_handler
-                0x000000000800049c                sv_call_handler
-                0x000000000800049c                pend_sv_handler
-                0x000000000800049c                sys_tick_handler
-                0x000000000800049c                nmi_handler
- *fill*         0x000000000800049e        0x2 
+                0x0000000008000430        0x2 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x0000000008000430                null_handler
+                0x0000000008000430                sv_call_handler
+                0x0000000008000430                pend_sv_handler
+                0x0000000008000430                sys_tick_handler
+                0x0000000008000430                nmi_handler
+ *fill*         0x0000000008000432        0x2 
  .text.reset_handler
-                0x00000000080004a0       0x7c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
-                0x00000000080004a0                reset_handler
- .text.malloc   0x000000000800051c       0x14 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
-                0x000000000800051c                malloc
+                0x0000000008000434       0x7c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x0000000008000434                reset_handler
+ .text.malloc   0x00000000080004b0       0x14 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+                0x00000000080004b0                malloc
  .text._malloc_r
-                0x0000000008000530      0x554 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
-                0x0000000008000530                _malloc_r
+                0x00000000080004c4      0x554 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x00000000080004c4                _malloc_r
  .text.__malloc_lock
-                0x0000000008000a84        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
-                0x0000000008000a84                __malloc_lock
+                0x0000000008000a18        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                0x0000000008000a18                __malloc_lock
  .text.__malloc_unlock
-                0x0000000008000a88        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
-                0x0000000008000a88                __malloc_unlock
- .text._sbrk_r  0x0000000008000a8c       0x24 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
-                0x0000000008000a8c                _sbrk_r
+                0x0000000008000a1c        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                0x0000000008000a1c                __malloc_unlock
+ .text._sbrk_r  0x0000000008000a20       0x24 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+                0x0000000008000a20                _sbrk_r
  .text._malloc_trim_r
-                0x0000000008000ab0       0xa0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
-                0x0000000008000ab0                _malloc_trim_r
- .text._free_r  0x0000000008000b50      0x1c4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
-                0x0000000008000b50                _free_r
- .text._sbrk    0x0000000008000d14       0x1c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
-                0x0000000008000d14                _sbrk
-                0x0000000008000d30                . = ALIGN (0x4)
+                0x0000000008000a44       0xa0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                0x0000000008000a44                _malloc_trim_r
+ .text._free_r  0x0000000008000ae4      0x1c4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                0x0000000008000ae4                _free_r
+ .text._sbrk    0x0000000008000ca8       0x1c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+                0x0000000008000ca8                _sbrk
+                0x0000000008000cc4                . = ALIGN (0x4)
  *(.rodata*)
  .rodata.str1.4
-                0x0000000008000d30        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+                0x0000000008000cc4        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
                                           0x2 (size before relaxing)
-                0x0000000008000d34                . = ALIGN (0x4)
+                0x0000000008000cc8                . = ALIGN (0x4)
 
-.glue_7         0x0000000008000d34        0x0
- .glue_7        0x0000000008000d34        0x0 linker stubs
+.glue_7         0x0000000008000cc8        0x0
+ .glue_7        0x0000000008000cc8        0x0 linker stubs
 
-.glue_7t        0x0000000008000d34        0x0
- .glue_7t       0x0000000008000d34        0x0 linker stubs
+.glue_7t        0x0000000008000cc8        0x0
+ .glue_7t       0x0000000008000cc8        0x0 linker stubs
 
-.vfp11_veneer   0x0000000008000d34        0x0
- .vfp11_veneer  0x0000000008000d34        0x0 linker stubs
+.vfp11_veneer   0x0000000008000cc8        0x0
+ .vfp11_veneer  0x0000000008000cc8        0x0 linker stubs
 
-.v4_bx          0x0000000008000d34        0x0
- .v4_bx         0x0000000008000d34        0x0 linker stubs
+.v4_bx          0x0000000008000cc8        0x0
+ .v4_bx         0x0000000008000cc8        0x0 linker stubs
 
-.iplt           0x0000000008000d34        0x0
- .iplt          0x0000000008000d34        0x0 runtime.o
+.iplt           0x0000000008000cc8        0x0
+ .iplt          0x0000000008000cc8        0x0 runtime.o
 
-.rel.dyn        0x0000000008000d34        0x0
- .rel.iplt      0x0000000008000d34        0x0 runtime.o
+.rel.dyn        0x0000000008000cc8        0x0
+ .rel.iplt      0x0000000008000cc8        0x0 runtime.o
 
-.preinit_array  0x0000000008000d34        0x0
-                0x0000000008000d34                . = ALIGN (0x4)
-                0x0000000008000d34                __preinit_array_start = .
+.preinit_array  0x0000000008000cc8        0x0
+                0x0000000008000cc8                . = ALIGN (0x4)
+                0x0000000008000cc8                __preinit_array_start = .
  *(.preinit_array)
-                0x0000000008000d34                __preinit_array_end = .
+                0x0000000008000cc8                __preinit_array_end = .
 
-.init_array     0x0000000008000d34        0x0
-                0x0000000008000d34                . = ALIGN (0x4)
-                0x0000000008000d34                __init_array_start = .
+.init_array     0x0000000008000cc8        0x0
+                0x0000000008000cc8                . = ALIGN (0x4)
+                0x0000000008000cc8                __init_array_start = .
  *(SORT(.init_array.*))
  *(.init_array)
-                0x0000000008000d34                __init_array_end = .
+                0x0000000008000cc8                __init_array_end = .
 
-.fini_array     0x0000000008000d34        0x0
-                0x0000000008000d34                . = ALIGN (0x4)
-                0x0000000008000d34                __fini_array_start = .
+.fini_array     0x0000000008000cc8        0x0
+                0x0000000008000cc8                . = ALIGN (0x4)
+                0x0000000008000cc8                __fini_array_start = .
  *(.fini_array)
  *(SORT(.fini_array.*))
-                0x0000000008000d34                __fini_array_end = .
+                0x0000000008000cc8                __fini_array_end = .
 
 .ARM.extab
  *(.ARM.extab*)
 
-.ARM.exidx      0x0000000008000d34        0x0
-                0x0000000008000d34                __exidx_start = .
+.ARM.exidx      0x0000000008000cc8        0x0
+                0x0000000008000cc8                __exidx_start = .
  *(.ARM.exidx*)
-                0x0000000008000d34                __exidx_end = .
-                0x0000000008000d34                . = ALIGN (0x4)
-                0x0000000008000d34                _etext = .
+                0x0000000008000cc8                __exidx_end = .
+                0x0000000008000cc8                . = ALIGN (0x4)
+                0x0000000008000cc8                _etext = .
 
-.data           0x0000000020000000      0x8cc load address 0x0000000008000d34
+.data           0x0000000020000000      0x8cc load address 0x0000000008000cc8
                 0x0000000020000000                _data = .
  *(.data*)
  .data.instructiongroup
@@ -266,12 +266,12 @@ END GROUP
                 0x00000000200008c8                _impure_ptr
                 0x00000000200008cc                . = ALIGN (0x4)
                 0x00000000200008cc                _edata = .
-                0x0000000008000d34                _data_loadaddr = LOADADDR (.data)
+                0x0000000008000cc8                _data_loadaddr = LOADADDR (.data)
 
-.igot.plt       0x00000000200008cc        0x0 load address 0x0000000008001600
+.igot.plt       0x00000000200008cc        0x0 load address 0x0000000008001594
  .igot.plt      0x00000000200008cc        0x0 runtime.o
 
-.bss            0x00000000200008cc       0x48 load address 0x0000000008001600
+.bss            0x00000000200008cc       0x48 load address 0x0000000008001594
  *(.bss*)
  .bss.address1  0x00000000200008cc        0x4 runtime.o
                 0x00000000200008cc                address1
@@ -306,17 +306,17 @@ END GROUP
                 0x0000000020002000                PROVIDE (_stack, (ORIGIN (ram) + LENGTH (ram)))
 OUTPUT(runtime.elf elf32-littlearm)
 
-.debug_info     0x0000000000000000      0x598
- .debug_info    0x0000000000000000      0x2c7 runtime.o
- .debug_info    0x00000000000002c7      0x2d1 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+.debug_info     0x0000000000000000      0x5ac
+ .debug_info    0x0000000000000000      0x2db runtime.o
+ .debug_info    0x00000000000002db      0x2d1 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
 
 .debug_abbrev   0x0000000000000000      0x227
  .debug_abbrev  0x0000000000000000       0xfd runtime.o
  .debug_abbrev  0x00000000000000fd      0x12a /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
 
-.debug_loc      0x0000000000000000      0x2b4
- .debug_loc     0x0000000000000000      0x1c6 runtime.o
- .debug_loc     0x00000000000001c6       0xee /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+.debug_loc      0x0000000000000000      0x2ef
+ .debug_loc     0x0000000000000000      0x201 runtime.o
+ .debug_loc     0x0000000000000201       0xee /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
 
 .debug_aranges  0x0000000000000000       0x50
  .debug_aranges
@@ -328,14 +328,14 @@ OUTPUT(runtime.elf elf32-littlearm)
  .debug_ranges  0x0000000000000000       0x10 runtime.o
  .debug_ranges  0x0000000000000010       0x20 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
 
-.debug_line     0x0000000000000000      0x204
- .debug_line    0x0000000000000000      0x10b runtime.o
- .debug_line    0x000000000000010b       0xf9 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+.debug_line     0x0000000000000000      0x211
+ .debug_line    0x0000000000000000      0x118 runtime.o
+ .debug_line    0x0000000000000118       0xf9 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
 
-.debug_str      0x0000000000000000      0x414
- .debug_str     0x0000000000000000      0x1e8 runtime.o
-                                        0x22c (size before relaxing)
- .debug_str     0x00000000000001e8      0x22c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+.debug_str      0x0000000000000000      0x422
+ .debug_str     0x0000000000000000      0x1f6 runtime.o
+                                        0x23a (size before relaxing)
+ .debug_str     0x00000000000001f6      0x22c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
                                         0x2be (size before relaxing)
 
 .comment        0x0000000000000000       0xde

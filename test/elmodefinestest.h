@@ -8,20 +8,21 @@ unsigned int read_register ( unsigned int );
 #define DISS        0
 #define DBUG        0
 
-//#define FIXEDVSRANDOM
+#define FIXEDVSRANDOM
 //#define KEYFLOW
 #define POWERMODEL
 //#define ENERGYMODEL
+//#define DEBUGPOWER
 
 //#define SAMETRACELENGTH
 //#define BINARYTRACES
 #define DIFFERENTIALVOLTAGE
 
-#define CYCLEACCURATE 0
+#define CYCLEACCURATE 1
 #define KEYFLOWFAIL 80
 #define FIXEDVSRANDOMFAIL 4.5
 #define PRINTTRACENOINTERVAL 1
-#define PRINTALLASMTRACES 0
+#define PRINTALLASMTRACES 1
 #define PRINTALLNONPROFILEDTRACES 0
 
 #define COEFFSFILE "../coeffs.txt"

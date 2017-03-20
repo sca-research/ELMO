@@ -21,7 +21,7 @@
 #define U_8bit unsigned char
 #define NO_BYTES 16
 #define NO_ENC 100
-#define NOTRACES 1
+#define NOTRACES 1000
 
 // Generate instructions in binary.
 
@@ -49,10 +49,10 @@ void create_insts(U_8bit *insts, U_8bit *instselect){
         
 	}
 
-    else if(instselect[0] == 8){
+   /* else if(instselect[0] == 8){
         // 	ldr r1, [r0, #0], mov r11, r1, ldr r7,[r0, #4]
         insts[1] = 0x68; insts[0] = 0x41; insts[3] = 0x46; insts[2] = 0x8b; insts[5] = 0x68; insts[4] = 0x07; insts[7] = 0x46; insts[6] = 0xc0; insts[9] = 0x46; insts[8] = 0xc0; insts[11] = 0x46; insts[10] = 0xc0;
-    }
+    }*/
     
 	else{
 		// 	ldr r1, [r0, #0], mov r11, r1, ldr r7,[r0, #4]
@@ -64,13 +64,14 @@ void create_insts(U_8bit *insts, U_8bit *instselect){
 		insts[13] = 0x68; insts[12] = 0x83; insts[15] = 0x68; insts[14] = 0xc4; insts[17] = 0x46; insts[16] = 0x49; insts[19] = 0x60; insts[18] = 0x0c; insts[21] = 0x46; insts[20] = 0x0c;
 
 	}
-
+/*
 	else if(instselect[1] == 8){
 		// ldr r3, [r0, #8], ldr r4, [r0, #12]
 		insts[13] = 0x68; insts[12] = 0xc3; insts[15] = 0x68; insts[14] = 0x84; insts[17] = 0x46; insts[16] = 0xc0; insts[19] = 0x46; insts[18] = 0xc0; insts[21] = 0x46; insts[20] = 0xc0;
 
 	}
-
+*/
+    
     else{
         // ldr r3, [r0, #8], ldr r4, [r0, #12]
         insts[13] = 0x68; insts[12] = 0x83; insts[15] = 0x68; insts[14] = 0xc4; insts[17] = 0x46; insts[16] = 0xc0; insts[19] = 0x46; insts[18] = 0xc0; insts[21] = 0x46; insts[20] = 0xc0;
@@ -83,12 +84,14 @@ void create_insts(U_8bit *insts, U_8bit *instselect){
 
 	}
 
+/*
 	else if(instselect[2] == 8){
         //	ldr r5, [r0, #16], ldr r6, [r0, #20]
         insts[23] = 0x69; insts[22] = 0x45; insts[25] = 0x69; insts[24] = 0x06; insts[27] = 0x46; insts[26] = 0xc0; insts[29] = 0x46; insts[28] = 0xc0; insts[31] = 0x46; insts[30] = 0xc0;
         
     }
-    
+*/
+ 
 	else{
 		//	ldr r5, [r0, #16], ldr r6, [r0, #20]
 		insts[23] = 0x69; insts[22] = 0x05; insts[25] = 0x69; insts[24] = 0x46; insts[27] = 0x46; insts[26] = 0xc0; insts[29] = 0x46; insts[28] = 0xc0; insts[31] = 0x46; insts[30] = 0xc0;
@@ -128,7 +131,6 @@ void create_insts(U_8bit *insts, U_8bit *instselect){
 
 			insts[57] = instruction3[(instselect[2]*2)]; insts[56] = instruction3[(instselect[2]*2) + 1];
 
-
 		// Stop trigger and branch back
 			// str	r2, [r0, #20], pop {r0-r7}, bx lr
 			//insts[59] = 0x46; insts[58] = 0xc0; insts[61] = 0x46; insts[60] = 0xc0; insts[63] = 0xbc; insts[62] = 0xff; insts[65] = 0x47; insts[64] = 0x70;
@@ -154,10 +156,11 @@ int main(void) {
 	address1 = malloc(4);
 	address2 = malloc(4);
 	address3 = malloc(4);
-
-    for(i=0;i<5;i++)
-        for(j=0;j<5;j++)
-            for(k=0;k<5;k++)
+    
+    for(i=0;i<5;i++){
+        for(j=0;j<5;j++){
+            for(k=0;k<5;k++){
+                resetdatafile();
                 for(l=0;l<NOTRACES;l++){
 
                     instselect[0] = instructiongroup[i];
@@ -169,10 +172,12 @@ int main(void) {
                     }
 
                     create_insts(instad, instselect);
-                    
                     instructions(op, address1, address2, address3, instad);
 
                 }
+            }
+        }
+    }
 
     endprogram();
 

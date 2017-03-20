@@ -29,10 +29,15 @@ int gettracelength(FILE *fp){
     
     while(!feof(fp))
     {
-        
-        ch = fread(&ch, sizeof(double), 1, fp);
+#ifdef BINARYTRACES
+        fread(&ch, sizeof(double), 1, fp);
+#else
+        fscanf(fp,"%lf",&ch);
+#endif
         lines++;
     }
+    
+    printf("%d\n\n", lines);
     
     return lines;
 }
@@ -74,14 +79,15 @@ void gettrace(double *ptr, FILE *fp, int len, int *points){
         traceptr[i] = value;
     }
     
+#ifdef MEANCENTER
     meancenter(traceptr,tracelength);
+#endif
     
     j = 0;
     
     for(i=0;i<tracelength;i++){
         if(points[j] == i){
             ptr[j] = traceptr[i];
-            //printf("%lf\n", ptr[j]);
             j++;
         }
     }
@@ -131,11 +137,11 @@ void getaverage(double *average, int len, int start, int end, int *points, int o
         for(j=0;j<len_final;j++){
             average[j] += finaltrace[j];
         }
-    }
 
+    }
+    
     for(j=0;j<len_final;j++){
         average[j] /= tracenumber;
-       // printf("%0.20f\n", average[j]);
     }
 }
 
@@ -310,12 +316,14 @@ void firstorderfixedvsrandom(void){
     getvariance(randomvariance, tracelength, randomaverage, tracenumber+1, (tracenumber*2)+1, points, 1);
     getttest(ttest, randomaverage, randomvariance, fixedaverage, fixedvariance, tracelength);
     
+    printf("%f %f %f %f %d\n", fixedaverage[0], randomaverage[0], fixedvariance[0], randomvariance[0], tracelength);
+    
     fp = fopen(FIXEDVSRANDOMFILE, "w+");
     
     // Index from 1
     
     for(i=0;i<tracelength;i++){
-        fprintf(fp, "%f\n", ttest[i]);
+        fprintf(fp, "%lf\n", ttest[i]);
         if(ttest[i] < -FIXEDVSRANDOMFAIL | ttest[i] > FIXEDVSRANDOMFAIL){
             leakyinstructionno++;
         }

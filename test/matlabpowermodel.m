@@ -3,12 +3,15 @@
 % values are automatically updated when free variables are changed:
 
 load('testrandomdatamatlab.mat');
-load('CoefficientsExt.mat');
+load('CoefficientsExtEC.mat');
 
 fp = fopen('powermodeltestvectors.txt','w');
 
-number = 1;
+inputs = data;
+data = 0;
 
+number = 1000;
+t = 1;
 % CW: Hmm, hard-coding the indices as you have done looks a bit problematic to 
 % me ... what if something changes in the Coefficients.mat file, or you 
 % make a typo? How about:
@@ -37,27 +40,52 @@ for k = 1:5
     for l = 1:5
         for m = 1:5
             
-            datapoint = 1;
-
+            
+            clear PrvInstr_data SubInstr_data Operand1_data Operand2_data BitFlip1_data BitFlip2_data HWOp1PrvInstr_data HWOp2PrvInstr_data HDOp1PrvInstr_data HDOp2PrvInstr_data HWOp1SubInstr_data HWOp2SubInstr_data HDOp1SubInstr_data HDOp2SubInstr_data
+           
             instructiontype(1) = k;
             instructiontype(2) = l;
             instructiontype(3) = m;
-
-            % instructiontype_bin = zeros(3,4);
-
-            for j = 1:number
-
-                instructiontype_bin = zeros(3,4);
-
+            
+            instructiontype_bin = zeros(3,4);
+            for z = 1:3
+                if instructiontype(z)~=1
+                    instructiontype_bin(z,instructiontype(z)-1) = 1;
+                end
+            end
+            % instructiontype_bin = zeros13,4);
+        
+            t = 1;
+            for n = 1:number
                 for i = 1:3
-                    op1(i) = data(datapoint);
-                    datapoint = datapoint + 1;
-                    op2(i) = data(datapoint);
-                    datapoint = datapoint + 1;
+                    data  = 0;
+                    data = bitxor(bitshift(inputs(t), 0),data);
+                    data = bitxor(bitshift(inputs(t+1), 8),data);
+                    data = bitxor(bitshift(inputs(t+2), 16),data);
+                    data = bitxor(bitshift(inputs(t+3), 24),data);
+                    op1(i) = data;
                     
-                    if instructiontype(i)~=1
-                        instructiontype_bin(i,instructiontype(i)-1) = 1;
+                    dec2hex(data);
+                    
+                    t = t + 4;
+                    
+                    data  = 0;
+                    data = bitxor(bitshift(inputs(t), 0),data);
+                    data = bitxor(bitshift(inputs(t+1), 8),data);
+                    data = bitxor(bitshift(inputs(t+2), 16),data);
+                    data = bitxor(bitshift(inputs(t+3), 24),data);
+                    op2(i) = data;
+                    
+                    dec2hex(data);
+                    
+                    t = t + 4;
+                    
+                    if(instructiontype(i) == 3)
+                        temp = op1(i);
+                        op1(i) = op2(i);
+                        op2(i) = temp;
                     end
+
                 end
 
                 op1binary(1,:) = de2bi(op1(1),32); op1binary(2,:) = de2bi(op1(2),32); op1binary(3,:) = de2bi(op1(3),32);
@@ -115,7 +143,7 @@ for k = 1:5
 
                 % Hamming distance of subsequent
                 HDOp1SubInstr_data = sum(HDOp1SubInstr(instructiontype(2),:).*instructiontype_bin(3,:).*hd_op1);
-                HDOp2SubInstr_data = sum(HDOp2SubInstr(instructiontype(2),:).*instructiontype_bin(3,:).*hd_op1);
+                HDOp2SubInstr_data = sum(HDOp2SubInstr(instructiontype(2),:).*instructiontype_bin(3,:).*hd_op2);
 
                 % Bit interactions individual bits
                 Operand1_bitinteractions_data = sum(Operand1_bitinteractions(instructiontype(2),:).*op1bitinteractions);
@@ -123,7 +151,37 @@ for k = 1:5
 
                 % Bit interactions bitflips
                 BitFlip1_bitinteractions_data = sum(BitFlip1_bitinteractions(instructiontype(2),:).*op1bitinteractions);
-                BitFlip2_bitinteractions_data = sum(BitFlip2_bitinteractions(instructiontype(2),:).*op1bitinteractions);
+                BitFlip2_bitinteractions_data = sum(BitFlip2_bitinteractions(instructiontype(2),:).*op2bitinteractions);
+                
+%                 l
+%                 constant(instructiontype(2))
+%                 PrvInstr_data 
+%                 SubInstr_data 
+%                 Operand1_data 
+%                 Operand2_data 
+%                 BitFlip1_data 
+%                 BitFlip2_data 
+%                 HWOp1PrvInstr_data 
+%                 HWOp2PrvInstr_data 
+%                 HDOp1PrvInstr_data 
+%                 HDOp2PrvInstr_data 
+%                 HWOp1SubInstr_data 
+%                 HWOp2SubInstr_data 
+%                 HDOp1SubInstr_data 
+%                 HDOp2SubInstr_data
+                
+%                 B = nchoosek([1:32],2);
+% 
+%                 A = [1,instructiontype_bin(1,:),instructiontype_bin(3,:),op1binary(2,:),op2binary(2,:),...
+%                     op1_bitflip,op2_bitflip,hw_op1*instructiontype_bin(1,:),hw_op2*instructiontype_bin(1,:),...
+%                     hd_op1*instructiontype_bin(1,:),hd_op2*instructiontype_bin(1,:),...
+%                     hw_op1*instructiontype_bin(3,:),hw_op2*instructiontype_bin(3,:),...
+%                     hd_op1*instructiontype_bin(3,:),hd_op2*instructiontype_bin(3,:),...
+%                     op1binary(2,B(:,1)).*op1binary(2,B(:,2)), op2binary(2,B(:,1)).*op2binary(2,B(:,2)),...
+%                     op1_bitflip(B(:,1)).*op1_bitflip(B(:,2)), op2_bitflip(B(:,1)).*op2_bitflip(B(:,2))];
+%                 
+%                 beta = coeffs(:,instructiontype(2));
+%                 power = A*beta;
 
                 % Sum total of values is leakage
                 power = constant(instructiontype(2)) + PrvInstr_data + SubInstr_data + Operand1_data + Operand2_data...
@@ -131,48 +189,9 @@ for k = 1:5
                     + HDOp2PrvInstr_data + HWOp1SubInstr_data + HWOp2SubInstr_data + HDOp1SubInstr_data + HDOp2SubInstr_data...
                     + Operand1_bitinteractions_data + Operand2_bitinteractions_data + BitFlip1_bitinteractions_data + BitFlip2_bitinteractions_data;
 
-                fprintf(fp, '%0.20f\n',power);
+                fprintf(fp, '%0.12f\n',power);
                 
             end
         end
     end
 end
-
-    
-%% Alternative formulation to make multiple predictions in one computation
-
-% CW: Create a (one row, in this case) 'A' matrix:
-% A = [1,instructiontype_bin(1,:),instructiontype_bin(3,:),op1binary(2,:),op2binary(2,:),...
-%     op1_bitflip,op2_bitflip,hw_op1*instructiontype_bin(1,:),hw_op2*instructiontype_bin(1,:),...
-%     hd_op1*instructiontype_bin(1,:),hd_op2*instructiontype_bin(1,:),...
-%     hw_op1*instructiontype_bin(3,:),hw_op2*instructiontype_bin(3,:),...
-%     hd_op1*instructiontype_bin(3,:),hd_op2*instructiontype_bin(3,:),...
-%     op1binary(2,B(:,1)).*op1binary(2,B(:,2)), op2binary(2,B(:,1)).*op2binary(2,B(:,2)),...
-%     op1binary(2,B(:,1)).*op1binary(2,B(:,2)), op1_bitflip(B(:,1)).*op1_bitflip(B(:,2)), op2_bitflip(B(:,1)).*op2_bitflip(B(:,2))];
-
-% (Note that once hw_op1 etc are vectors, the interaction terms will have
-% to be computed a slightly more complicated way, e.g. using bsxfun).
-
-% Create the corresponding vector of coefficients:
-% beta = coeffs{1}(:,instructiontype(2));
-% prediction = A*beta
-% Hmm, interestingly, there's a fractional difference between this and
-% above; on varying the inputs it seems to be just rounding, but I need to
-% investigate to find out which is more precise.
-
-% I hope that it is clear to you that A can just as easily be a matrix of
-% several rows, each corresponding to THE SAME INSTRUCTIONTYPE(2) but 
-% otherwise different input values. beta remains a vector but is selected 
-% according to instructiontype(2) so predictions for different target
-% instructions are performed in different computations. 
-
-% Note also that some of the operations in the previous sections are
-% redundant, and those which are necessary can (and should) also be
-% performed on vectors or matrices. E.g. for three observations such as:
-% instructiontype = [4,x,5; 3,x,4; 1,x,3]; %(i.e. for x the target)
-% op1 = [0,58,0; 1,52,3; 34,152,2];
-% op2 = [98,98,0; 7,203,57; 67,0,25];
-% there are ways to perform most of the intermediate operations required to
-% construct A matrix-wise without resorting to loops. You then "matrix
-% right-multiply" A by beta = coffs{1}(:,x), i.e. the choice of beta
-% depends on x.
