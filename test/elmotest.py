@@ -23,7 +23,7 @@ instructionpoint = 7
 
 # 1. Run the executable runtime.bin
 
-call(['.././elmo', 'elmotestbinaries/powermodeltest/runtime.bin'])
+call(['.././elmo', 'elmotestbinaries/powermodeltest/runtime.bin', '-nofvr'])
 
 # 2. Compare output against matlab generated
 
@@ -125,7 +125,7 @@ passnumber = 0
 failnumber = 0
 i = 0;
 
-with open('fixedvsrandomvectors.txt') as openfileobject:
+with open('fixedvsrandomtestvectors.txt') as openfileobject:
     for line in openfileobject:
     
         testvector = float(fp_fixedvsrandomvectors.readline())

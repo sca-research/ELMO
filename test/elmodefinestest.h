@@ -89,6 +89,7 @@ unsigned int tracenumber;
 unsigned int keyflowfailno;
 unsigned int start_mask_dataflow;
 unsigned int debug;
+unsigned int fixedvsrandomtest;
 
 unsigned int halfadd;
 unsigned int cpsr;

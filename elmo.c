@@ -385,8 +385,10 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
             tracenumber = (t-1);
 
 #ifdef FIXEDVSRANDOM
-            tracenumber = (t-1)/2;
-            fixedvsrandom();
+            if(fixedvsrandomtest){
+                tracenumber = (t-1)/2;
+                fixedvsrandom();
+            }
 #endif
             
 #ifdef ENERGYMODEL
@@ -3908,7 +3910,7 @@ int main ( int argc, char *argv[] )
     char *token;
     
     
-    t = 1; registerdataflow = 0; indexno = 1; keyflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1; runcount = 0; 
+    t = 1; registerdataflow = 0; indexno = 1; keyflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1; runcount = 0, fixedvsrandomtest = 1;
     
     mkdir(TRACEFOLDER, 0777);
     mkdir(NONPROFILEDFOLDER, 0777);
@@ -3962,6 +3964,10 @@ int main ( int argc, char *argv[] )
             dump_counters();
             return(0);
         }
+        if(strcmp(argv[ra],"-nofvr")==0){
+            fixedvsrandomtest = 0;
+        }
+        
         if(strcmp(argv[ra],"-starttrace")==0){
             sscanf(argv[ra+1], "%d", &t);
         }
