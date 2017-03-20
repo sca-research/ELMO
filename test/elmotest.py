@@ -14,7 +14,7 @@ instructionpoint = 7
 
 # 1. Run the executable runtime.bin
 
-call(['.././elmo', 'RunTime/runtime.bin'])
+call(['.././elmo', 'elmotestbinaries/powermodeltest/runtime.bin'])
 
 # 2. Compare output against matlab generated
 
@@ -66,7 +66,7 @@ print '#####################################################'
 # Fixed vs Random test
 print 'STARTING FIXED VS RANDOM TEST...'
 
-call(['.././elmo', 'fixedvsrandom/MBedAES/MBedAES.bin'])
+call(['.././elmo', 'elmotestbinaries/fixedvsrandom/MBedAES/MBedAES.bin'])
 
 # Test output is correct
 fp_AESvectors = open('AEStestvectors.txt','r')
