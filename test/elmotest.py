@@ -109,7 +109,7 @@ else:
 print '#####################################################'
 
 # Check T-test is correct
-fp_fixedvsrandomvectors = open('fixedvsrandomvectors.txt','r')
+fp_fixedvsrandomvectors = open('fixedvsrandomtestvectors.txt','r')
 fp_fixedvsrandomelmo = open('output/fixedvsrandomfail.txt','r')
 
 passnumber = 0
