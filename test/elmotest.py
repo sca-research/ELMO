@@ -10,6 +10,17 @@ powermodeltest = 0
 functest = 0
 fixedvsrandomtest = 0
 
+print '#####################################################'
+
+try:
+    raw_input('\nWARNING: before running test script elmo must be compiled to include "test/elmodefinestest.h" rather than "elmodefines.h"\n\nPress enter to continue.\n')
+except SyntaxError:
+    pass
+
+print '#####################################################'
+
+
+
 instructionpoint = 7
 
 # 1. Run the executable runtime.bin
