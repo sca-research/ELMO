@@ -36,9 +36,7 @@ int gettracelength(FILE *fp){
 #endif
         lines++;
     }
-    
-    printf("%d\n\n", lines);
-    
+        
     return lines;
 }
 
@@ -315,8 +313,7 @@ void firstorderfixedvsrandom(void){
     getvariance(fixedvariance, tracelength, fixedaverage, 1, tracenumber+1, points, 1);
     getvariance(randomvariance, tracelength, randomaverage, tracenumber+1, (tracenumber*2)+1, points, 1);
     getttest(ttest, randomaverage, randomvariance, fixedaverage, fixedvariance, tracelength);
-    
-    printf("%f %f %f %f %d\n", fixedaverage[0], randomaverage[0], fixedvariance[0], randomvariance[0], tracelength);
+
     
     fp = fopen(FIXEDVSRANDOMFILE, "w+");
     

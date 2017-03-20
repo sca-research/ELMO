@@ -19,8 +19,6 @@ except SyntaxError:
 
 print '#####################################################'
 
-
-
 instructionpoint = 7
 
 # 1. Run the executable runtime.bin
