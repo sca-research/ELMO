@@ -16,6 +16,7 @@ unsigned int read_register ( unsigned int );
 
 //#define SAMETRACELENGTH
 //#define BINARYTRACES
+//#define MEANCENTER
 #define DIFFERENTIALVOLTAGE
 
 #define CYCLEACCURATE 1

@@ -9,12 +9,15 @@ unsigned int read_register ( unsigned int );
 #define DBUG        0
 
 #define FIXEDVSRANDOM
-#define KEYFLOW
+//#define KEYFLOW
 #define POWERMODEL
 //#define ENERGYMODEL
 
-//#define SAMETRACELENGTH
+#define SAMETRACELENGTH
 #define BINARYTRACES
+//#define MEANCENTER
+#define DIFFERENTIALVOLTAGE
+
 
 #define CYCLEACCURATE 1
 #define KEYFLOWFAIL 80

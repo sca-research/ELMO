@@ -13,13 +13,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define TEST
 
-#ifdef TEST
-    #include "test/elmodefinestest.h"
-#else
-    #include "elmodefines.h"
-#endif
+//#include "test/elmodefinestest.h"
+#include "elmodefines.h"
 
 #include "include/powermodel.h"
 #include "include/fixedvsrandom.h"
