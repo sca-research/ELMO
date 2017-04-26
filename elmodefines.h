@@ -11,10 +11,10 @@ unsigned int read_register ( unsigned int );
 #define FIXEDVSRANDOM
 //#define KEYFLOW
 #define POWERMODEL
-//#define ENERGYMODEL
+#define ENERGYMODEL
 
 #define SAMETRACELENGTH
-#define BINARYTRACES
+//#define BINARYTRACES
 //#define MEANCENTER
 #define DIFFERENTIALVOLTAGE
 
@@ -25,6 +25,8 @@ unsigned int read_register ( unsigned int );
 #define PRINTTRACENOINTERVAL 1
 #define PRINTALLASMTRACES 0
 #define PRINTALLNONPROFILEDTRACES 0
+
+#define POWERMODEL_HW
 
 #define COEFFSFILE "coeffs.txt"
 

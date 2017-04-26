@@ -180,35 +180,70 @@ void createpowermodel(){
         power = supplycurrent*SUPPLYVOLTAGE;
         
 #endif
-
+        
+#ifdef POWERMODEL_HW
+        
         if(instructiontype == 2 | instructiontype == 3){
             if(CYCLEACCURATE){
-#ifdef BINARYTRACES
-                fwrite(&power, sizeof(power), 1, fp);
-                fwrite(&power, sizeof(power), 1, fp);
-#else
-                fprintf(fp,"%0.40f\n",power);
-                fprintf(fp,"%0.40f\n",power);
-#endif
+    #ifdef BINARYTRACES
+                fwrite(&hw_op2, sizeof(int), 1, fp);
+                fwrite(&hw_op2, sizeof(int), 1, fp);
+    #else
+                fprintf(fp,"%d\n",hw_op2);
+                fprintf(fp,"%d\n",hw_op2);
+    #endif
                 index += 2;
             }
             else{
-#ifdef BINARYTRACES
-                fwrite(&power, sizeof(power), 1, fp);
-#else
-                fprintf(fp,"%0.40f\n",power);
-#endif
+    #ifdef BINARYTRACES
+                fwrite(&power, sizeof(int), 1, fp);
+    #else
+                fprintf(fp,"%d\n",hw_op2);
+    #endif
                 index += 1;
             }
         }
         else{
-#ifdef BINARYTRACES
-            fwrite(&power, sizeof(power), 1, fp);
-#else
-            fprintf(fp,"%0.40f\n",power);
-#endif
+    #ifdef BINARYTRACES
+        fwrite(&hw_op2, sizeof(int), 1, fp);
+    #else
+            fprintf(fp,"%d\n",hw_op2);
+    #endif
             index += 1;
         }
+        
+#else
+
+        if(instructiontype == 2 | instructiontype == 3){
+            if(CYCLEACCURATE){
+    #ifdef BINARYTRACES
+                fwrite(&power, sizeof(power), 1, fp);
+                fwrite(&power, sizeof(power), 1, fp);
+    #else
+                fprintf(fp,"%0.40f\n",power);
+                fprintf(fp,"%0.40f\n",power);
+    #endif
+                index += 2;
+            }
+            else{
+    #ifdef BINARYTRACES
+                fwrite(&power, sizeof(power), 1, fp);
+    #else
+                fprintf(fp,"%0.40f\n",power);
+    #endif
+                index += 1;
+            }
+        }
+        else{
+    #ifdef BINARYTRACES
+            fwrite(&power, sizeof(power), 1, fp);
+    #else
+            fprintf(fp,"%0.40f\n",power);
+    #endif
+            index += 1;
+        }
+        
+#endif
 
         previous = previous->next;
         current = current->next;
