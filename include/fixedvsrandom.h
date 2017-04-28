@@ -69,13 +69,26 @@ void gettrace(double *ptr, FILE *fp, int len, int *points){
     
     for(i=0;i<tracelength;i++)
     {
-#ifdef BINARYTRACES
-        fread(&value,sizeof(double),1,fp);
-#else
+#ifdef POWERMODEL_HW
+        
+    #ifdef BINARYTRACES
+        fread(&value,sizeof(int),1,fp);
+    #else
         fscanf(fp,"%lf",&value);
-#endif
+    #endif
         traceptr[i] = value;
+#else
+        
+    #ifdef BINARYTRACES
+        fread(&value,sizeof(double),1,fp);
+    #else
+        fscanf(fp,"%lf",&value);
+    #endif
+        traceptr[i] = value;
+#endif
+        
     }
+    
     
 #ifdef MEANCENTER
     meancenter(traceptr,tracelength);
