@@ -14,6 +14,7 @@ void getenergytrace(double *averagepower, int len){
         energytrace = averagepower[i] * CLOCKCYCLETIME;
         fprintf(fp, "%0.20f\n", energytrace);
         energy += energytrace;
+
     }
 }
 

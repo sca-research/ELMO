@@ -1,3 +1,22 @@
+/*
+ 
+ #############################################################################################
+ # Default                       # Alternative                  # Define                     #
+ #############################################################################################
+ # ASCII traces                  # Binary traces                # BINARYTRACES               #
+ # Instruction accurate traces   # Cycle accurate traces        # CYCLEACCURATE              #
+ # ELMO power model              # Hamming weight model         # POWERMODEL_HW              #
+ # Modelled differential voltage # Convert to power             # POWERTRACES                #
+ # All traces are same length    # Traces of different length   # DIFFTRACELENGTH            #
+ # Not mean centered             # Mean centred (need to        # MEANCENTRE                 #
+ #                               # evaluate higher order masks) #                            #
+ #############################################################################################
+ 
+ To include fixed vs random, mask flow and energy modelling evaluations define FIXEDVSRANDOM, MASKFLOW and ENERGYMODEL respectively.
+
+ */
+
+
 unsigned int read32 ( unsigned int );
 unsigned int read_register ( unsigned int );
 
@@ -9,24 +28,32 @@ unsigned int read_register ( unsigned int );
 #define DBUG        0
 
 #define FIXEDVSRANDOM
-//#define KEYFLOW
-#define POWERMODEL
+//#define MASKFLOW
 #define ENERGYMODEL
 
-#define SAMETRACELENGTH
-//#define BINARYTRACES
-//#define MEANCENTER
-#define DIFFERENTIALVOLTAGE
+#define DIFFTRACELENGTH
+#define BINARYTRACES
+//#define MEANCENTRE
+#define POWERTRACES
+//#define POWERMODEL_HW
 
-
-#define CYCLEACCURATE 1
-#define KEYFLOWFAIL 80
-#define FIXEDVSRANDOMFAIL 4.5
-#define PRINTTRACENOINTERVAL 1
+// Toggle between 1 (for on) or 0 (for off)
 #define PRINTALLASMTRACES 0
 #define PRINTALLNONPROFILEDTRACES 0
+#define CYCLEACCURATE 1
 
-#define POWERMODEL_HW
+#define FIXEDVSRANDOMFAIL 4.5
+#define PRINTTRACENOINTERVAL 1
+
+// Make sure power traces and cycle accurate model are used if using energy model
+#ifdef ENERGYMODEL
+#ifndef POWERTRACES
+#define POWERTRACES
+#endif
+#ifndef CYCLEACCURATE
+#define CYCLEACCURATE
+#endif
+#endif
 
 #define COEFFSFILE "coeffs.txt"
 
@@ -36,7 +63,7 @@ unsigned int read_register ( unsigned int );
 #define TRACEFILE "trace%05d.trc"
 #define NONPROFILEDFILE "indextrace%05d.txt"
 #define ASMOUTPUTFILE "asmtrace%05d.txt"
-#define KEYFLOWOUTPUTFILE "output/masks.txt"
+#define MASKFLOWOUTPUTFILE "output/masks.txt"
 #define FIXEDVSRANDOMFILE "output/fixedvsrandomfail.txt"
 #define ENERGYTRACEFILE "output/energytrace.txt"
 #define ASMOUTPUTFILE "asmtrace%05d.txt"
@@ -68,7 +95,7 @@ unsigned short ram[RAMSIZE>>1];
 #define CPSR_V (1<<28)
 #define CPSR_Q (1<<27)
 
-FILE *fpvcd, *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *keyflow;
+FILE *fpvcd, *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *maskflow;
 
 unsigned int vcdcount;
 unsigned int output_vcd;
@@ -89,7 +116,7 @@ unsigned int tracelength;
 unsigned int registerdataflow;
 unsigned int indexno;
 unsigned int tracenumber;
-unsigned int keyflowfailno;
+unsigned int maskflowfailno;
 unsigned int start_mask_dataflow;
 unsigned int debug;
 unsigned int fixedvsrandomtest;
@@ -108,27 +135,27 @@ double energy;
 // Coeffiecients for power model
 double constant[5], PrvInstr[4][5], SubInstr[4][5], Operand1[32][5], Operand2[32][5], BitFlip1[32][5], BitFlip2[32][5],  HWOp1PrvInstr[4][5], HWOp2PrvInstr[4][5], HDOp1PrvInstr[4][5], HDOp2PrvInstr[4][5], HWOp1SubInstr[4][5], HWOp2SubInstr[4][5], HDOp1SubInstr[4][5], HDOp2SubInstr[4][5], Operand1_bitinteractions[496][5], Operand2_bitinteractions[496][5], BitFlip1_bitinteractions[496][5], BitFlip2_bitinteractions[496][5];
 
-struct bit32keyflow{
+struct bit32maskflow{
     
-    uint8_t keyflow[128][32];
+    uint8_t maskflow[128][32];
     unsigned int count;
     unsigned int fixedvsrandomfail;
-    struct bit32keyflow *next;
+    struct bit32maskflow *next;
     
 };
 
-typedef struct bit32keyflow bit32_keyflow;
+typedef struct bit32maskflow bit32_maskflow;
 
-struct bit16keyflow{
+struct bit16maskflow{
     
-    uint8_t keyflow[128][16];
+    uint8_t maskflow[128][16];
     unsigned int count;
     unsigned int fixedvsrandomfail;
-    struct bit16keyflow *next;
+    struct bit16maskflow *next;
     
 };
 
-typedef struct bit16keyflow bit16_keyflow;
+typedef struct bit16maskflow bit16_maskflow;
 
 struct data_flow {
     
@@ -140,8 +167,8 @@ struct data_flow {
     unsigned int op2_bitflip[32];
     unsigned int instruction_type[6];
     unsigned int instruction_typedec;
-    bit32_keyflow op1_keyflow;
-    bit32_keyflow op2_keyflow;
+    bit32_maskflow op1_maskflow;
+    bit32_maskflow op2_maskflow;
     double power;
     struct data_flow *next;
     
@@ -151,11 +178,11 @@ typedef struct data_flow dataflow;
 
 dataflow *dataptr, *current, *previous, *subsequent, *start;
 
-bit32_keyflow *masktable;
+bit32_maskflow *masktable;
 
-bit16_keyflow ram_keyflow[RAMSIZE>>1];
-bit32_keyflow reg_norm_keyflow[16];
+bit16_maskflow ram_maskflow[RAMSIZE>>1];
+bit32_maskflow reg_norm_maskflow[16];
 
-void write16_keyflow ( unsigned int addr, bit32_keyflow data );
-void write32_keyflow ( unsigned int addr, bit32_keyflow data );
+void write16_maskflow ( unsigned int addr, bit32_maskflow data );
+void write32_maskflow ( unsigned int addr, bit32_maskflow data );
 

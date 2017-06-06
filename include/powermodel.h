@@ -29,9 +29,112 @@ int hdistance(unsigned int x, unsigned int y)
     return dist;
 }
 
+#ifdef POWERMODEL_HW
+
 //-------------------------------------------------------------------
 
-void createpowermodel(){
+void hwpowermodel(){
+    
+    char str[500], filepath[500];
+    FILE *fp, *fp_nonprofiled;
+    double differentialvoltage, supplycurrent, power;
+    
+    int hw_op1, hw_op2, hd_op1, hd_op2, instructiontype, i, j, count, index = 1;
+    double PrvInstr_data = 0, SubInstr_data = 0, Operand1_data = 0, Operand2_data = 0, BitFlip1_data = 0, BitFlip2_data = 0, HWOp1PrvInstr_data = 0, HWOp2PrvInstr_data = 0, HDOp1PrvInstr_data = 0, HDOp2PrvInstr_data = 0, HWOp1SubInstr_data = 0, HWOp2SubInstr_data = 0, HDOp1SubInstr_data = 0, HDOp2SubInstr_data = 0, Operand1_bitinteractions_data = 0, Operand2_bitinteractions_data = 0, BitFlip1_bitinteractions_data = 0, BitFlip2_bitinteractions_data = 0;
+    
+    previous = start;
+    current = start->next;
+    subsequent = start->next->next;
+    
+    strcpy(str, TRACEFOLDER);
+    strcat(str, TRACEFILE);
+    sprintf(filepath, str, t);
+    fp = fopen(filepath, "w+");
+    
+    if(t==1 || PRINTALLNONPROFILEDTRACES){
+        
+        strcpy(str, NONPROFILEDFOLDER);
+        strcat(str, NONPROFILEDFILE);
+        sprintf(filepath, str, t);
+        fp_nonprofiled = fopen(filepath, "w+");
+        
+    }
+
+    while(subsequent->next != NULL){
+        
+        instructiontype = current->instruction_typedec;
+        
+        // Test for key guessing space
+        // if(t == 1)
+        //  keyflowfailtest(current);
+        
+        // Instruction was not profiled
+        
+        if(instructiontype == 5){
+            
+            dataptr->instruction_type[0] = 1;
+            instructiontype = 0;
+            
+            if(t==1 || PRINTALLNONPROFILEDTRACES)
+                fprintf(fp_nonprofiled,"%d\n",index);
+        }
+        
+        else{
+            hw_op1 = hweight(current->op1);
+            hw_op2 = hweight(current->op2);
+            
+            hd_op1 = hdistance(previous->op1, current->op1);
+            hd_op2 = hdistance(previous->op2, current->op2);
+        }
+        
+        power = (double)hw_op2;
+        
+        if(instructiontype == 2 | instructiontype == 3){
+            if(CYCLEACCURATE){
+#ifdef BINARYTRACES
+                fwrite(&power, sizeof(power), 1, fp);
+                fwrite(&power, sizeof(power), 1, fp);
+#else
+                fprintf(fp,"%0.40f\n",power);
+                fprintf(fp,"%0.40f\n",power);
+#endif
+                index += 2;
+            }
+            else{
+#ifdef BINARYTRACES
+                fwrite(&power, sizeof(power), 1, fp);
+#else
+                fprintf(fp,"%0.40f\n",power);
+#endif
+                index += 1;
+            }
+        }
+        else{
+#ifdef BINARYTRACES
+            fwrite(&power, sizeof(power), 1, fp);
+#else
+            fprintf(fp,"%0.40f\n",power);
+#endif
+            index += 1;
+        }
+    
+    previous = previous->next;
+    current = current->next;
+    subsequent = subsequent->next;
+    
+}
+
+fclose(fp);
+
+if(t==1 || PRINTALLNONPROFILEDTRACES) fclose(fp_nonprofiled);
+
+}
+
+#else
+
+//-------------------------------------------------------------------
+
+void elmopowermodel(){
     
     char str[500], filepath[500];
     FILE *fp, *fp_nonprofiled;
@@ -158,45 +261,44 @@ void createpowermodel(){
 
                 }
             }
-
         }
 
-#ifdef DEBUGPOWER
-        printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n", constant[instructiontype], PrvInstr_data, SubInstr_data, Operand1_data, Operand2_data, BitFlip1_data, BitFlip2_data, HWOp1PrvInstr_data, HWOp2PrvInstr_data, HDOp1PrvInstr_data, HDOp2PrvInstr_data, HWOp1SubInstr_data, HWOp2SubInstr_data, HDOp1SubInstr_data, HDOp2SubInstr_data, Operand1_bitinteractions_data, Operand2_bitinteractions_data, BitFlip1_bitinteractions_data, BitFlip2_bitinteractions_data);
-#endif
-        // power is total of different factors
-        
+        // Modelled differential voltage is total of different factors
+
         differentialvoltage = constant[instructiontype] + PrvInstr_data + SubInstr_data + Operand1_data + Operand2_data + BitFlip1_data + BitFlip2_data + HWOp1PrvInstr_data + HWOp2PrvInstr_data + HDOp1PrvInstr_data + HDOp2PrvInstr_data + HWOp1SubInstr_data + HWOp2SubInstr_data + HDOp1SubInstr_data + HDOp2SubInstr_data + Operand1_bitinteractions_data + Operand2_bitinteractions_data + BitFlip1_bitinteractions_data + BitFlip2_bitinteractions_data;
-        
-        // convert from differential voltage to power
-        
-#ifdef DIFFERENTIALVOLTAGE
-        
-        power = differentialvoltage;
-        
-#else
+
+        // Convert from differential voltage to power
+
+#ifdef POWERTRACES
         
         supplycurrent = differentialvoltage/RESISTANCE;
         power = supplycurrent*SUPPLYVOLTAGE;
         
-#endif
-        
-#ifdef POWERMODEL_HW
-        
-        power = (double)hw_op2;
-        
-#endif
-
-    if(instructiontype == 2 | instructiontype == 3){
-        if(CYCLEACCURATE){
-#ifdef BINARYTRACES
-            fwrite(&power, sizeof(power), 1, fp);
-            fwrite(&power, sizeof(power), 1, fp);
 #else
-            fprintf(fp,"%0.40f\n",power);
-            fprintf(fp,"%0.40f\n",power);
+        
+        power = differentialvoltage;
+
 #endif
-            index += 2;
+        
+        if(instructiontype == 2 | instructiontype == 3){
+            if(CYCLEACCURATE){
+#ifdef BINARYTRACES
+                fwrite(&power, sizeof(power), 1, fp);
+                fwrite(&power, sizeof(power), 1, fp);
+#else
+                fprintf(fp,"%0.40f\n",power);
+                fprintf(fp,"%0.40f\n",power);
+#endif
+                index += 2;
+            }
+            else{
+#ifdef BINARYTRACES
+                fwrite(&power, sizeof(power), 1, fp);
+#else
+                fprintf(fp,"%0.40f\n",power);
+#endif
+                index += 1;
+            }
         }
         else{
 #ifdef BINARYTRACES
@@ -206,15 +308,6 @@ void createpowermodel(){
 #endif
             index += 1;
         }
-    }
-    else{
-#ifdef BINARYTRACES
-            fwrite(&power, sizeof(power), 1, fp);
-#else
-            fprintf(fp,"%0.40f\n",power);
-#endif
-            index += 1;
-    }
 
         previous = previous->next;
         current = current->next;
@@ -227,6 +320,8 @@ void createpowermodel(){
     if(t==1 || PRINTALLNONPROFILEDTRACES) fclose(fp_nonprofiled);
         
 }
+
+#endif
 
 //-------------------------------------------------------------------
 

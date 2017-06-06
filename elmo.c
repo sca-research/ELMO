@@ -1,6 +1,4 @@
-/* ELMO is based on the Thumblator emmulator which can be found at: https://github.com/dwelch67/thumbulator. The functional correctness
-
- of this code has been tested using a number generic testing methods however we do not garentee this code to be bug free. */
+/* ELMO is based on the Thumblator emmulator which can be found at: https://github.com/dwelch67/thumbulator. The functional correctness of this code has been tested using a number generic testing methods however we do not garentee this code to be bug free. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,9 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
-//#include "test/elmodefinestest.h"
-#include "elmodefines.h"
+#include "test/elmodefinestest.h"
+//#include "elmodefines.h"
 
 #include "include/powermodel.h"
 #include "include/fixedvsrandom.h"
@@ -24,8 +21,8 @@
 #include "include/debug.h"
 #endif
 
-#ifdef KEYFLOW
-    #include "include/keyflow.h"
+#ifdef MASKFLOW
+    #include "include/maskflow.h"
 #endif
 
 #ifdef ENERGYMODEL
@@ -34,26 +31,9 @@
 
 //-------------------------------------------------------------------
 
-// Linked list functions for KeyFlow
+// Linked list functions for maskflow
 
-#ifdef KEYFLOW
-
-dataflow *create_dataflow(dataflow *item){
-    
-    int i;
-    
-    item -> next = malloc(sizeof(dataflow));
-    item = item -> next;
-    item -> op1 = 0;
-    item -> op2 = 0;
-    for(i=0;i<6;i++)
-        item -> instruction_type[i] = 0;
-    item -> next = NULL;
-    item -> op1_keyflow = zero_keyflow32();
-    item -> op2_keyflow = zero_keyflow32();
-    return item;
-    
-}
+#ifdef MASKFLOW
 
 void initialise_dataflow(dataflow *item){
     
@@ -63,13 +43,24 @@ void initialise_dataflow(dataflow *item){
     item -> op2 = 0;
     for(i=0;i<6;i++)
         item -> instruction_type[i] = 0;
-    item -> op1_keyflow = zero_keyflow32();
-    item -> op2_keyflow = zero_keyflow32();
+    item -> op1_maskflow = zero_maskflow32();
+    item -> op2_maskflow = zero_maskflow32();
     
 }
 
+dataflow *create_dataflow(dataflow *item){
+    
+    int i;
+    
+    item -> next = malloc(sizeof(dataflow));
+    item = item -> next;
+    initialise_dataflow(item);
+    item -> next = NULL;
+    return item;
+    
+}
 
-dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, unsigned int instruction_type, bit32_keyflow op1_keyflow, bit32_keyflow op2_keyflow){
+dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, unsigned int instruction_type, bit32_maskflow op1_maskflow, bit32_maskflow op2_maskflow){
     
     int i;
     
@@ -86,41 +77,41 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     item->instruction_type[instruction_type] = 1;
     item->instruction_typedec = instruction_type;
     
-    item->op1_keyflow = op1_keyflow;
-    item->op2_keyflow = op2_keyflow;
+    item->op1_maskflow = op1_maskflow;
+    item->op2_maskflow = op2_maskflow;
     
-    // printf("%ud ", item->op1_keyflow);
-    // printf("%ud\n", item->op2_keyflow);
+    // printf("%ud ", item->op1_maskflow);
+    // printf("%ud\n", item->op2_maskflow);
     
     /*
      for(i=31;i>=0;i--)
-     printf("%d", item->op1_keyflow[i]);
+     printf("%d", item->op1_maskflow[i]);
      printf("   ");
      
      for(i=31;i>=0;i--)
-     printf("%d", item->op2_keyflow[i]);
+     printf("%d", item->op2_maskflow[i]);
      printf("\n");
      */
     
     if(instruction_type == 2 | instruction_type == 3){
         indexno += 2;
-        item->op1_keyflow = zero_keyflow32();
+        item->op1_maskflow = zero_maskflow32();
     }
     else
         indexno++;
     
-#ifdef SAMETRACELENGTH
-    
+#ifdef DIFFTRACELENGTH
+
+    item = create_dataflow(item);
+
+#else
+
     if(t==1)
         item = create_dataflow(item);
     else{
         item = item->next;
         initialise_dataflow(item);
     }
-    
-#else
-    
-    item = create_dataflow(item);
     
 #endif
     
@@ -129,25 +120,9 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
 
 //-------------------------------------------------------------------
 
-// Linked list functions for no KeyFlow
+// Linked list functions for no maskflow
 
 #else
-
-dataflow *create_dataflow(dataflow *item){
-    
-    int i;
-    
-    item -> next = malloc(sizeof(dataflow));
-    item = item -> next;
-    item -> op1 = 0;
-    item -> op2 = 0;
-    for(i=0;i<6;i++)
-        item -> instruction_type[i] = 0;
-    item -> next = NULL;
-    return item;
-    
-}
-
 
 void initialise_dataflow(dataflow *item){
     
@@ -159,6 +134,19 @@ void initialise_dataflow(dataflow *item){
         item -> instruction_type[i] = 0;
     
 }
+
+dataflow *create_dataflow(dataflow *item){
+    
+    int i;
+    
+    item -> next = malloc(sizeof(dataflow));
+    item = item -> next;
+    initialise_dataflow(item);
+    item -> next = NULL;
+    return item;
+    
+}
+
 
 dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, unsigned int instruction_type){
     
@@ -177,16 +165,16 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     item->instruction_type[instruction_type] = 1;
     item->instruction_typedec = instruction_type;
     
-    // printf("%ud ", item->op1_keyflow);
-    // printf("%ud\n", item->op2_keyflow);
+    // printf("%ud ", item->op1_maskflow);
+    // printf("%ud\n", item->op2_maskflow);
     
     /*
      for(i=31;i>=0;i--)
-     printf("%d", item->op1_keyflow[i]);
+     printf("%d", item->op1_maskflow[i]);
      printf("   ");
      
      for(i=31;i>=0;i--)
-     printf("%d", item->op2_keyflow[i]);
+     printf("%d", item->op2_maskflow[i]);
      printf("\n");
      */
     
@@ -196,18 +184,18 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     else
         indexno++;
     
-#ifdef SAMETRACELENGTH
+#ifdef DIFFTRACELENGTH
     
+    item = create_dataflow(item);
+    
+#else
+
     if(t==1)
         item = create_dataflow(item);
     else{
         item = item->next;
         initialise_dataflow(item);
     }
-    
-#else
-    
-    item = create_dataflow(item);
     
 #endif
 
@@ -220,46 +208,47 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
 /*
 unsigned int leakagetestfail(void){
 
-    unsigned int i, j, len_keyflow, len_fixedvsrandom, leakagetestfailno = 0, *fixedvsrandom, *keyflow;
-    FILE *fp_keyflow, *fp_fixedvsrandom;
+    unsigned int i, j, len_maskflow, len_fixedvsrandom, leakagetestfailno = 0, *fixedvsrandom, *maskflow;
+    FILE *fp_maskflow, *fp_fixedvsrandom;
     char line[80];
 
-    fp_keyflow = fopen(KEYFLOWOUTPUTFILE, "r");
+    fp_maskflow = fopen(MASKFLOWOUTPUTFILE, "r");
     fp_fixedvsrandom = fopen(FIXEDVSRANDOMFILE, "r");
 
-    len_keyflow = gettracelength(fp_keyflow);
+    len_maskflow = gettracelength(fp_maskflow);
     len_fixedvsrandom = gettracelength(fp_fixedvsrandom);
 
-    rewind(fp_keyflow);
+    rewind(fp_maskflow);
     rewind(fp_fixedvsrandom);
 
-    keyflow = malloc(len_keyflow*sizeof(int));
+    maskflow = malloc(len_maskflow*sizeof(int));
     fixedvsrandom = malloc(len_fixedvsrandom*sizeof(int));
 
-    for(i=0;i<len_keyflow;i++){
-        fgets(line, 80, fp_keyflow);
-        sscanf(line, "%d", &keyflow[i]);
+    for(i=0;i<len_maskflow;i++){
+        fgets(line, 80, fp_maskflow);
+        sscanf(line, "%d", &maskflow[i]);
     }
     for(i=0;i<len_fixedvsrandom;i++){
         fgets(line, 80, fp_fixedvsrandom);
        // printf("%s\n", line);
         sscanf(line, "%d", &fixedvsrandom[i]);
     }
-    for(i=0;i<len_keyflow;i++)
+    for(i=0;i<len_maskflow;i++)
         for(j=0;j<len_fixedvsrandom; j++)
-            if(keyflow[i] == fixedvsrandom[j])
+            if(maskflow[i] == fixedvsrandom[j])
                 leakagetestfailno++;
 
-    fclose(fp_keyflow);
+    fclose(fp_maskflow);
     fclose(fp_fixedvsrandom);
     
-    free(keyflow);
+    free(maskflow);
     free(fixedvsrandom);
 
     return leakagetestfailno;
 
 }
 */
+
 //-------------------------------------------------------------------
 
 void dump_counters ( void )
@@ -429,10 +418,10 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                     if(registerdataflow){
                         if(t%PRINTTRACENOINTERVAL == 0)
                             printf("TRACE NO: %010d\n", t);
-#ifdef SAMETRACELENGTH
-                        dataptr = start;
-#else
+#ifdef DIFFTRACELENGTH
                         dataptr = create_dataflow(start);
+#else
+                        dataptr = start->next;
 #endif
                         if(t==1 || PRINTALLASMTRACES){
                             strcpy(str, ASMOUTPUTFOLDER);
@@ -442,12 +431,17 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                         }
                     }
                     else{
-                        createpowermodel();
-#ifdef KEYFLOW
-                        if (t==1) keyflowfailtest();
+#ifdef POWERMODEL_HW
+                        hwpowermodel();
+#else
+                        elmopowermodel();
 #endif
                         
-#ifndef SAMETRACELENGTH
+#ifdef MASKFLOW
+                        if (t==1) maskflowfailtest();
+#endif
+                        
+#ifdef DIFFTRACELENGTH
                         freedataflow();
 #endif
                         
@@ -490,15 +484,15 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
                 }
                 case 0xE0000040:
                 {
-#ifdef KEYFLOW
+#ifdef MASKFLOW
                     set_mask_dataflow(data, start_mask_dataflow);
 #endif
                     break;
                 }
                 case 0xE0000042:
                 {
-#ifdef KEYFLOW
-                    reset_keyflow();
+#ifdef MASKFLOW
+                    reset_maskflow();
 #endif
                     break;
                 }
@@ -759,7 +753,7 @@ int execute ( void )
 	unsigned int rm,rd,rn,rs;
 	unsigned int op;
     
-    bit32_keyflow ra_keyflow,rb_keyflow,rc_keyflow, op1_keyflow, op2_keyflow;
+    bit32_maskflow ra_maskflow,rb_maskflow,rc_maskflow, op1_maskflow, op2_maskflow;
 
 //if(fetches>400000) return(1);
 
@@ -864,18 +858,18 @@ if(output_vcd)
         if(cpsr&CPSR_C) { do_cflag(ra,rb,1); do_vflag(ra,rb,1); }
         else            { do_cflag(ra,rb,0); do_vflag(ra,rb,0); }
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adc r%u,r%u\n",rd,rm);
 
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -901,19 +895,19 @@ if(output_vcd)
             do_cflag(ra,rb,0);
             do_vflag(ra,rb,0);
             
-#ifdef KEYFLOW
+#ifdef MASKFLOW
             
-            ra_keyflow = read_register_keyflow(ra);
-            rb_keyflow = zero_keyflow32();
-            rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-            write_register_keyflow(rd, rc_keyflow);
-            op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+            ra_maskflow = read_register_maskflow(ra);
+            rb_maskflow = zero_maskflow32();
+            rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+            write_register_maskflow(rd, rc_maskflow);
+            op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
             
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,r%u,#0x%X\n",rd,rn,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -941,18 +935,18 @@ if(output_vcd)
         do_cflag(ra,rb,0);
         do_vflag(ra,rb,0);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = zero_keyflow32();
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = zero_maskflow32();
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,#0x%02X\n",rd,rb);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -981,18 +975,18 @@ if(output_vcd)
         do_cflag(ra,rb,0);
         do_vflag(ra,rb,0);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd,rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rn);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd,rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"adds r%u,r%u,r%u\n",rd,rn,rm);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1031,18 +1025,18 @@ if(output_vcd)
         
         write_register(rd,rc);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd,rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd,rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"add r%u,r%u\n",rd,rm);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1062,19 +1056,19 @@ if(output_vcd)
         write_register(rd,rc);
         op1 = 0; op2 = 0;
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(15);
-        rb_keyflow = zero_keyflow32();
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(15);
+        rb_maskflow = zero_maskflow32();
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"add r%u,PC,#0x%02X\n",rd,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1093,19 +1087,19 @@ if(output_vcd)
         write_register(rd,rc);
         op1 = 0; op2 = 0;
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(13);
-        rb_keyflow = zero_keyflow32();
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(13);
+        rb_maskflow = zero_maskflow32();
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"add r%u,SP,#0x%02X\n",rd,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1122,20 +1116,20 @@ if(output_vcd)
         write_register(13,rc);
         op1 = 0; op2 = 0;
 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(13);
-        rb_keyflow = zero_keyflow32();
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(13);
+        rb_maskflow = zero_maskflow32();
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"add SP,#0x%02X\n",rb);
 
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1158,19 +1152,19 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ands r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1212,20 +1206,19 @@ if(output_vcd)
         
         do_nflag(rc);
         do_zflag(rc);
-#ifdef KEYFLOW
         
-        rc_keyflow = read_register_keyflow(rm);
-        rb_keyflow = zero_keyflow32();
-        rc_keyflow = compute_keyflow(rc_keyflow, zero_keyflow32(), rb, 3);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = rc_keyflow; op2_keyflow = zero_keyflow32();
-        
+#ifdef MASKFLOW
+        rc_maskflow = read_register_maskflow(rm);
+        rb_maskflow = zero_maskflow32();
+        rc_maskflow = compute_maskflow(rc_maskflow, zero_maskflow32(), rb, 3);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = rc_maskflow; op2_maskflow = zero_maskflow32();
 #endif
         
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"asrs r%u,r%u,#0x%X\n",rd,rm,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1274,19 +1267,19 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rs);
-        rc_keyflow = compute_keyflow(rc_keyflow, zero_keyflow32(), rb, 3);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = rc_keyflow; op2_keyflow = rb_keyflow;
+        rc_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rs);
+        rc_maskflow = compute_maskflow(rc_maskflow, zero_maskflow32(), rb, 3);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = rc_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"asrs r%u,r%u\n",rd,rs);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif        
@@ -1311,8 +1304,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"beq 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1325,8 +1318,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bne 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1339,8 +1332,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bcs 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1353,8 +1346,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bcc 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1368,8 +1361,8 @@ if(output_vcd)
                 
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bmi 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1382,8 +1375,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bpl 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif        
@@ -1396,8 +1389,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bvs 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1411,8 +1404,8 @@ if(output_vcd)
                 
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bvc 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1425,8 +1418,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bhi 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1440,8 +1433,8 @@ if(output_vcd)
                 
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bls 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1457,8 +1450,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bge 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1475,8 +1468,8 @@ if(output_vcd)
                 
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"blt 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1494,8 +1487,8 @@ if(output_vcd)
                 
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bgt 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1512,8 +1505,8 @@ if(output_vcd)
                 }
                 if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ble 0x%08X\n",rb-3);
                 op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1539,8 +1532,8 @@ if(output_vcd)
         write_register(15,rb);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"B 0x%08X\n",rb-3);
         op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1560,8 +1553,8 @@ if(output_vcd)
         do_zflag(rc);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bics r%u,r%u\n",rd,rm);
         op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1588,8 +1581,8 @@ if(output_vcd)
             write_register(14,rb);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bl\n");
             op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
             if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1607,8 +1600,8 @@ if(output_vcd)
             write_register(15,rb);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bl 0x%08X\n",rb-3);
             op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
             if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1629,8 +1622,8 @@ if(output_vcd)
                 write_register(15,rb);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bl 0x%08X\n",rb-3);
             op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
             if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1652,8 +1645,8 @@ if(output_vcd)
             rc&=~1;
             write_register(15,rc);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"blx r%u\n",rm);
-#ifdef KEYFLOW
-            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
             if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1679,8 +1672,8 @@ if(output_vcd)
             write_register(15,rc);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"bx r%u\n",rm);
             op1 = 0; op2 = 0;
-#ifdef KEYFLOW
-            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
             if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1703,10 +1696,10 @@ if(output_vcd)
         rc=ra+rb;
         op1 = 0; op2 = 0;
         
-#ifdef KEYFLOW
-        ra_keyflow=read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow=read_register_maskflow(rn);
+        rb_maskflow = read_register_maskflow(rm);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
 
         do_nflag(rc);
@@ -1715,8 +1708,8 @@ if(output_vcd)
         do_vflag(ra,rb,0);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmns r%u,r%u\n",rn,rm);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1739,16 +1732,16 @@ if(output_vcd)
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = zero_keyflow32();
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rn);
+        rb_maskflow = zero_maskflow32();
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmp r%u,#0x%02X\n",rn,rb);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1773,16 +1766,16 @@ if(output_vcd)
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rn);
+        rb_maskflow = read_register_maskflow(rm);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmps r%u,r%u\n",rn,rm);
 
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1816,17 +1809,17 @@ if(output_vcd)
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(rn);
+        rb_maskflow = read_register_maskflow(rm);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cmps r%u,r%u\n",rn,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1852,11 +1845,11 @@ if(output_vcd)
         op1=read_register(rd); op2=rc;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        rc_maskflow = read_register_maskflow(rm);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
@@ -1867,8 +1860,8 @@ if(output_vcd)
         //}
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"cpy r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1889,19 +1882,19 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 1);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 1);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"eors r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -1921,15 +1914,15 @@ if(output_vcd)
                 op1 = 0; op2 = 0;
                 write_register(ra,read32(sp));
                 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
                 
-                op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(sp);
-                write_register_keyflow(ra, op2_keyflow);
+                op1_maskflow = read_register_maskflow(ra); op2_maskflow = read32_maskflow(sp);
+                write_register_maskflow(ra, op2_maskflow);
                 
 #endif
 
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -1969,11 +1962,11 @@ if(output_vcd)
         op1 = read_register(rd); op2 = rc;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read32_keyflow(rb);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        rc_maskflow = read32_maskflow(rb);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
@@ -1984,8 +1977,8 @@ if(output_vcd)
             }
         }
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -1999,15 +1992,15 @@ if(output_vcd)
         rn=(inst>>3)&0x7;
         rm=(inst>>6)&0x7;
         rb=read_register(rn)+read_register(rm);
-        //rc_keyflow = compute_keyflow(read32_keyflow(rb), read_register_keyflow(rm), 0, 0); // Need to preserve key data if used in computing address
+        //rc_maskflow = compute_maskflow(read32_maskflow(rb), read_register_maskflow(rm), 0, 0); // Need to preserve key data if used in computing address
         rc=read32(rb);
         op1 = read_register(rd); op2 = rc;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
-        rc_keyflow = read32_keyflow(rb); // Need to preserve key data if used in computing address
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        rc_maskflow = read32_maskflow(rb); // Need to preserve key data if used in computing address
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldr r%u,[r%u,r%u]\n",rd,rn,rm);
@@ -2016,8 +2009,8 @@ if(output_vcd)
                 fprintf(asmoutput,"ldr r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2038,10 +2031,10 @@ if(output_vcd)
         op1 = read_register(rd); op2 = rc;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
-        rc_keyflow = read32_keyflow(rb);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        rc_maskflow = read32_maskflow(rb);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
 
@@ -2052,8 +2045,8 @@ if(output_vcd)
             }
         }
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2075,11 +2068,11 @@ if(output_vcd)
         op1 = read_register(rd); op2 = rc;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read32_keyflow(rb);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rc_maskflow = read32_maskflow(rb);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
         
 #endif
         
@@ -2089,8 +2082,8 @@ if(output_vcd)
                 fprintf(asmoutput,"ldr r%u,[SP+#0x%X]\n",rd,rb);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2106,9 +2099,9 @@ if(output_vcd)
         rb=read_register(rn)+rb;
         rc=read16(rb&(~1));
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow=read16_keyflow(rb&(~1));
+        rc_maskflow=read16_maskflow(rb&(~1));
         
 #endif
         
@@ -2117,9 +2110,9 @@ if(output_vcd)
         {
             rc>>=8;
             
-#ifdef KEYFLOW
+#ifdef MASKFLOW
             
-            rc_keyflow = bit8tobit16(rc_keyflow, true);
+            rc_maskflow = bit8tobit16(rc_maskflow, true);
             
 #endif
             
@@ -2127,9 +2120,9 @@ if(output_vcd)
         else
         {
             
-#ifdef KEYFLOW
+#ifdef MASKFLOW
             
-            rc_keyflow = bit8tobit16(rc_keyflow, false);
+            rc_maskflow = bit8tobit16(rc_maskflow, false);
             
 #endif
             
@@ -2138,22 +2131,22 @@ if(output_vcd)
         op1 = read_register(rd); op2 = rc&0xFF;
         write_register(rd,rc&0xFF);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
-        //if(registerdataflow) print32(read_register_keyflow(rd));
+        //if(registerdataflow) print32(read_register_maskflow(rd));
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrb r%u,[r%u,#0x%X]\n",rd,rn,rb);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
                 fprintf(asmoutput,"ldrb r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2169,33 +2162,33 @@ if(output_vcd)
         rb=read_register(rn)+read_register(rm);
         rc=read16(rb&(~1));
         
-#ifdef KEYFLOW
-        rc_keyflow = read16_keyflow(rb&(~1));
+#ifdef MASKFLOW
+        rc_maskflow = read16_maskflow(rb&(~1));
 #endif
         
         if(rb&1)
         {
             rc>>=8;
             
-#ifdef KEYFLOW
-            rc_keyflow = bit8tobit16(rc_keyflow, true);
+#ifdef MASKFLOW
+            rc_maskflow = bit8tobit16(rc_maskflow, true);
 #endif
             
         }
         else
         {
-#ifdef KEYFLOW
-             rc_keyflow = bit8tobit16(rc_keyflow, false);
+#ifdef MASKFLOW
+             rc_maskflow = bit8tobit16(rc_maskflow, false);
 #endif
             
         }
-        //rc_keyflow = compute_keyflow(rc_keyflow, read_register_keyflow(rm), 0, 0);
+        //rc_maskflow = compute_maskflow(rc_maskflow, read_register_maskflow(rm), 0, 0);
         op1 = read_register(rd); op2 = rc&0xFF;
         write_register(rd,rc&0xFF);
         
-#ifdef KEYFLOW
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+#ifdef MASKFLOW
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrb r%u,[r%u,r%u]\n",rd,rn,rm);
@@ -2204,8 +2197,8 @@ if(output_vcd)
                 fprintf(asmoutput,"ldrb r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2225,10 +2218,10 @@ if(output_vcd)
         op1 = read_register(rd); op2 = rc&0xFFFF;
         write_register(rd,rc&0xFFFF);
         
-#ifdef KEYFLOW
-        rc_keyflow = read16_keyflow(rb);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+#ifdef MASKFLOW
+        rc_maskflow = read16_maskflow(rb);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrh r%u,[r%u,#0x%X]\n",rd,rn,rb);
@@ -2238,8 +2231,8 @@ if(output_vcd)
             }
         }
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2258,10 +2251,10 @@ if(output_vcd)
         op1 = read_register(rd); op2 = rc&0xFFFF;
         write_register(rd,rc&0xFFFF);
         
-#ifdef KEYFLOW
-        rc_keyflow = compute_keyflow(read16_keyflow(rb), read_register_keyflow(rm), 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+#ifdef MASKFLOW
+        rc_maskflow = compute_maskflow(read16_maskflow(rb), read_register_maskflow(rm), 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrh r%u,[r%u,r%u]\n",rd,rn,rm);
@@ -2271,8 +2264,8 @@ if(output_vcd)
             }
         }
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3);
 #endif
@@ -2289,20 +2282,20 @@ if(output_vcd)
         rb=read_register(rn)+read_register(rm);
         rc=read16(rb&(~1));
         
-#ifdef KEYFLOW
-        rc_keyflow = read16_keyflow(rb&(~1));
+#ifdef MASKFLOW
+        rc_maskflow = read16_maskflow(rb&(~1));
 #endif
         if(rb&1)
         {
             rc>>=8;
-#ifdef KEYFLOW
-            rc_keyflow = bit8tobit16(rc_keyflow, true);
+#ifdef MASKFLOW
+            rc_maskflow = bit8tobit16(rc_maskflow, true);
 #endif
         }
         else
         {
-#ifdef KEYFLOW
-            rc_keyflow = bit8tobit16(rc_keyflow, false);
+#ifdef MASKFLOW
+            rc_maskflow = bit8tobit16(rc_maskflow, false);
 #endif
         }
         rc&=0xFF;
@@ -2310,16 +2303,16 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
-        rc_keyflow = compute_keyflow(rc_keyflow, read_register_keyflow(rm), 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+#ifdef MASKFLOW
+        rc_maskflow = compute_maskflow(rc_maskflow, read_register_maskflow(rm), 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ldrsb r%u,[r%u,r%u]\n",rd,rn,rm);
 
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2340,17 +2333,17 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = compute_keyflow(read16_keyflow(rb), read_register_keyflow(rm), 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rc_maskflow = compute_maskflow(read16_maskflow(rb), read_register_maskflow(rm), 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
 
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ldrsh r%u,[r%u,r%u]\n",rd,rn,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2366,9 +2359,9 @@ if(output_vcd)
         rc=read_register(rm);
         op1=rc; op2=rb;
         
-#ifdef KEYFLOW
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = rc_keyflow; op2_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+        rc_maskflow = read_register_maskflow(rm);
+        op1_maskflow = rc_maskflow; op2_maskflow = zero_maskflow32();
 #endif
         
         if(rb==0)
@@ -2383,8 +2376,8 @@ if(output_vcd)
             do_cflag_bit(rc&(1<<(32-rb)));
             rc<<=rb;
             
-#ifdef KEYFLOW
-            rc_keyflow = compute_keyflow(rc_keyflow, zero_keyflow32(), rb, 2);
+#ifdef MASKFLOW
+            rc_maskflow = compute_maskflow(rc_maskflow, zero_maskflow32(), rb, 2);
 #endif
             
         }
@@ -2395,14 +2388,14 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        write_register_maskflow(rd, rc_maskflow);
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsls r%u,r%u,#0x%X\n",rd,rm,rb);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2419,10 +2412,10 @@ if(output_vcd)
         rb=read_register(rs);
         op1=rc; op2=rb;
         
-#ifdef KEYFLOW
-        rc_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rs);
-        op1_keyflow = rc_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        rc_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rs);
+        op1_maskflow = rc_maskflow; op2_maskflow = rb_maskflow;
 #endif
         
         rb&=0xFF;
@@ -2434,8 +2427,8 @@ if(output_vcd)
             do_cflag_bit(rc&(1<<(32-rb)));
             rc<<=rb;
             
-#ifdef KEYFLOW
-            rc_keyflow = compute_keyflow(rc_keyflow, rb_keyflow, rb, 2);
+#ifdef MASKFLOW
+            rc_maskflow = compute_maskflow(rc_maskflow, rb_maskflow, rb, 2);
 #endif
             
         }
@@ -2444,8 +2437,8 @@ if(output_vcd)
             do_cflag_bit(rc&1);
             rc=0;
             
-#ifdef KEYFLOW
-            rc_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+            rc_maskflow = zero_maskflow32();
 #endif
         }
         else
@@ -2453,8 +2446,8 @@ if(output_vcd)
             do_cflag_bit(0);
             rc=0;
 
-#ifdef KEYFLOW
-            rc_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+            rc_maskflow = zero_maskflow32();
 #endif
 
         }
@@ -2463,14 +2456,14 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        write_register_maskflow(rd, rc_maskflow);
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsls r%u,r%u\n",rd,rs);
 
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1);
 #endif
@@ -2488,9 +2481,9 @@ if(output_vcd)
         rc=read_register(rm);
         op1=rc; op2=rb;
         
-#ifdef KEYFLOW
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = rc_keyflow; op2_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+        rc_maskflow = read_register_maskflow(rm);
+        op1_maskflow = rc_maskflow; op2_maskflow = zero_maskflow32();
 #endif
 
 	if(rb==0)
@@ -2503,8 +2496,8 @@ if(output_vcd)
             do_cflag_bit(rc&(1<<(rb-1)));
             rc>>=rb;
             
-#ifdef KEYFLOW
-            rc_keyflow = compute_keyflow(rc_keyflow, zero_keyflow32(), rb, 3);
+#ifdef MASKFLOW
+            rc_maskflow = compute_maskflow(rc_maskflow, zero_maskflow32(), rb, 3);
 #endif
             
         }
@@ -2515,14 +2508,14 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        write_register_maskflow(rd, rc_maskflow);
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsrs r%u,r%u,#0x%X\n",rd,rm,rb);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif        
@@ -2538,11 +2531,11 @@ if(output_vcd)
         rb=read_register(rs);
         op1=rc; op2=rb;
 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rs);
-        op1_keyflow = rc_keyflow; op2_keyflow = rb_keyflow;
+        rc_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rs);
+        op1_maskflow = rc_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
 
@@ -2554,24 +2547,24 @@ if(output_vcd)
         {
             do_cflag_bit(rc&(1<<(rb-1)));
             rc>>=rb;
-#ifdef KEYFLOW
-            rc_keyflow = compute_keyflow(rc_keyflow, rb_keyflow, rb, 3);
+#ifdef MASKFLOW
+            rc_maskflow = compute_maskflow(rc_maskflow, rb_maskflow, rb, 3);
 #endif
         }
         else if(rb==32)
         {
             do_cflag_bit(rc&0x80000000);
             rc=0;
-#ifdef KEYFLOW
-            rc_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+            rc_maskflow = zero_maskflow32();
 #endif
         }
         else
         {
             do_cflag_bit(0);
             rc=0;
-#ifdef KEYFLOW
-            rc_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+            rc_maskflow = zero_maskflow32();
 #endif
         }
 
@@ -2579,13 +2572,13 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        write_register_maskflow(rd, rc_maskflow);
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"lsrs r%u,r%u\n",rd,rs);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1);
 #endif
@@ -2604,15 +2597,15 @@ if(output_vcd)
         do_nflag(rb);
         do_zflag(rb);
 
-#ifdef KEYFLOW
-        write_register_keyflow(rd, zero_keyflow32());
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = zero_keyflow32();
+#ifdef MASKFLOW
+        write_register_maskflow(rd, zero_maskflow32());
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = zero_maskflow32();
 #endif
         
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"movs r%u,#0x%02X\n",rd,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -2629,11 +2622,11 @@ if(output_vcd)
         write_register(rd,rc);
         op1=ra; op2=rc;
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rc_keyflow = read_register_keyflow(rn);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rc_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rc_maskflow = read_register_maskflow(rn);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rc_maskflow;
 #endif
         
         do_nflag(rc);
@@ -2642,8 +2635,8 @@ if(output_vcd)
         do_vflag_bit(0);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"movs r%u,r%u\n",rd,rn);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -2679,16 +2672,16 @@ if(output_vcd)
         
         write_register(rd,rc);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rc_maskflow = read_register_maskflow(rm);
+        op1_maskflow = ra_maskflow; op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"mov r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -2712,18 +2705,18 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"muls r%u,r%u\n",rd,rm);
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 4, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 4, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 4);
 #endif
@@ -2744,17 +2737,17 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rm);
-        write_register_keyflow(rd,rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rc_maskflow = read_register_maskflow(rm);
+        write_register_maskflow(rd,rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"mvns r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2777,15 +2770,15 @@ if(output_vcd)
         do_cflag(0,~ra,1);
         do_vflag(0,~ra,1);
         
-#ifdef KEYFLOW
-        rc_keyflow = read_register_keyflow(rm);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        rc_maskflow = read_register_maskflow(rm);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"negs r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2808,17 +2801,17 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(rc_keyflow, rb_keyflow, 0, 0);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(rc_maskflow, rb_maskflow, 0, 0);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"orrs r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -2837,13 +2830,13 @@ if(output_vcd)
                 op1 = 0; op2 = 0;
                 write_register(ra,read32(sp));
                 
-#ifdef KEYFLOW
-                write_register_keyflow(ra, read32_keyflow(sp));
-                op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(sp);
+#ifdef MASKFLOW
+                write_register_maskflow(ra, read32_maskflow(sp));
+                op1_maskflow = read_register_maskflow(ra); op2_maskflow = read32_maskflow(sp);
 #endif
 
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2908,13 +2901,13 @@ if(output_vcd)
                 op1 = 0; op2 = 0;
                 write32(rd,read_register(ra));
                 
-#ifdef KEYFLOW
-                write32_keyflow(rd, read_register_keyflow(ra));
-                op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(rd);
+#ifdef MASKFLOW
+                write32_maskflow(rd, read_register_maskflow(ra));
+                op1_maskflow = read_register_maskflow(ra); op2_maskflow = read32_maskflow(rd);
 #endif
 
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -2971,22 +2964,22 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rb_keyflow = read_register_keyflow(rd);
-        ra_keyflow = read_register_keyflow(rn);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 0, 3), false), zero_keyflow32(), 24, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 8, 3), false), zero_keyflow32(), 16, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 16, 3), false), zero_keyflow32(), 8, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 24, 3), false), zero_keyflow32(), 0, 2), rc_keyflow,0,0);
-        op1_keyflow = rb_keyflow; op2_keyflow = ra_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        rb_maskflow = read_register_maskflow(rd);
+        ra_maskflow = read_register_maskflow(rn);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 0, 3), false), zero_maskflow32(), 24, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 8, 3), false), zero_maskflow32(), 16, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 16, 3), false), zero_maskflow32(), 8, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 24, 3), false), zero_maskflow32(), 0, 2), rc_maskflow,0,0);
+        op1_maskflow = rb_maskflow; op2_maskflow = ra_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"rev r%u,r%u\n",rd,rn);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3008,22 +3001,22 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
 
-        rb_keyflow = read_register_keyflow(rd);
-        ra_keyflow = read_register_keyflow(rn);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 0, 3), false), zero_keyflow32(), 8, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 8, 3), false), zero_keyflow32(), 0, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 16, 3), false), zero_keyflow32(), 24, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 24, 3), false), zero_keyflow32(), 16, 2), rc_keyflow,0,0);
-        op1_keyflow = rb_keyflow; op2_keyflow = ra_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        rb_maskflow = read_register_maskflow(rd);
+        ra_maskflow = read_register_maskflow(rn);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 0, 3), false), zero_maskflow32(), 8, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 8, 3), false), zero_maskflow32(), 0, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 16, 3), false), zero_maskflow32(), 24, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 24, 3), false), zero_maskflow32(), 16, 2), rc_maskflow,0,0);
+        op1_maskflow = rb_maskflow; op2_maskflow = ra_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"rev16 r%u,r%u\n",rd,rn);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3044,20 +3037,20 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rb_keyflow = read_register_keyflow(rd);
-        ra_keyflow = read_register_keyflow(rn);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 0, 3), false), zero_keyflow32(), 8, 2), rc_keyflow,0,0);
-        rc_keyflow = compute_keyflow(compute_keyflow(bit8tobit16(compute_keyflow(ra_keyflow, zero_keyflow32(), 8, 3), false), zero_keyflow32(), 0, 2), rc_keyflow,0,0);
-        op1_keyflow = rb_keyflow; op2_keyflow = ra_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        rb_maskflow = read_register_maskflow(rd);
+        ra_maskflow = read_register_maskflow(rn);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 0, 3), false), zero_maskflow32(), 8, 2), rc_maskflow,0,0);
+        rc_maskflow = compute_maskflow(compute_maskflow(bit8tobit16(compute_maskflow(ra_maskflow, zero_maskflow32(), 8, 3), false), zero_maskflow32(), 0, 2), rc_maskflow,0,0);
+        op1_maskflow = rb_maskflow; op2_maskflow = ra_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"revsh r%u,r%u\n",rd,rn);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3091,12 +3084,12 @@ if(output_vcd)
                 rc>>=ra;
                 rc|=rb;
                 
-#ifdef KEYFLOW
-                rc_keyflow = read_register_keyflow(rd);
-                ra_keyflow = read_register_keyflow(rs);
-                op1_keyflow = rc_keyflow; op2_keyflow = ra_keyflow;
-                rc_keyflow = compute_keyflow(rc_keyflow, ra_keyflow, ra, 4);
-                write_register_keyflow(rd, rc_keyflow);
+#ifdef MASKFLOW
+                rc_maskflow = read_register_maskflow(rd);
+                ra_maskflow = read_register_maskflow(rs);
+                op1_maskflow = rc_maskflow; op2_maskflow = ra_maskflow;
+                rc_maskflow = compute_maskflow(rc_maskflow, ra_maskflow, ra, 4);
+                write_register_maskflow(rd, rc_maskflow);
 #endif
                 
             }
@@ -3107,8 +3100,8 @@ if(output_vcd)
         do_zflag(rc);
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"rors r%u,r%u\n",rd,rs);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 1);
 #endif
@@ -3141,19 +3134,19 @@ if(output_vcd)
             do_vflag(ra,~rb,0);
         }
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rd);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        ra_maskflow = read_register_maskflow(rd);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"sbc r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3181,15 +3174,15 @@ if(output_vcd)
                 op1 = 0; op2 = 0;
                 write32(sp,read_register(ra));
                 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
 
-                write32_keyflow(sp, read_register_keyflow(ra));
-                op1_keyflow = read_register_keyflow(ra); op2_keyflow = read32_keyflow(sp);
+                write32_maskflow(sp, read_register_maskflow(ra));
+                op1_maskflow = read_register_maskflow(ra); op2_maskflow = read32_maskflow(sp);
                 
 #endif
 
-#ifdef KEYFLOW
-                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+                if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
                 if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif                
@@ -3227,10 +3220,10 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write32(rb,rc);
         
-#ifdef KEYFLOW
-        rc_keyflow = read_register_keyflow(rd);
-        write32_keyflow(rb, rc_keyflow);
-        op1_keyflow = read32_keyflow(rb); op2_keyflow = rc_keyflow;
+#ifdef MASKFLOW
+        rc_maskflow = read_register_maskflow(rd);
+        write32_maskflow(rb, rc_maskflow);
+        op1_maskflow = read32_maskflow(rb); op2_maskflow = rc_maskflow;
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"str r%u,[r%u,#0x%X]\n",rd,rn,rb);
@@ -3240,8 +3233,8 @@ if(output_vcd)
             }
         }
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3261,11 +3254,11 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write32(rb,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        write32_keyflow(rb, rc_keyflow);
-        op1_keyflow = read32_keyflow(rb); op2_keyflow = rc_keyflow;
+        rc_maskflow = read_register_maskflow(rd);
+        write32_maskflow(rb, rc_maskflow);
+        op1_maskflow = read32_maskflow(rb); op2_maskflow = rc_maskflow;
         
 #endif
         
@@ -3275,8 +3268,8 @@ if(output_vcd)
                 fprintf(asmoutput,"str r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3295,11 +3288,11 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write32(rb,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
 
-        rc_keyflow = read_register_keyflow(rd);
-        op1_keyflow = read32_keyflow(rb); op2_keyflow = rc_keyflow;
-        write32_keyflow(rb, rc_keyflow);
+        rc_maskflow = read_register_maskflow(rd);
+        op1_maskflow = read32_maskflow(rb); op2_maskflow = rc_maskflow;
+        write32_maskflow(rb, rc_maskflow);
         
 #endif
 
@@ -3309,8 +3302,8 @@ if(output_vcd)
                 fprintf(asmoutput,"str r%u,[SP,#0x%X]\n",rd,rb);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3328,10 +3321,10 @@ if(output_vcd)
         rc=read_register(rd);
         ra=read16(rb&(~1));
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        ra_keyflow = read16_keyflow(rb&(~1));
+        rc_maskflow = read_register_maskflow(rd);
+        ra_maskflow = read16_maskflow(rb&(~1));
         
 #endif
         
@@ -3340,11 +3333,11 @@ if(output_vcd)
             ra&=0x00FF;
             ra|=rc<<8;
             
-#ifdef KEYFLOW
-                ra_keyflow = bit8tobit16(ra_keyflow, false);
-                rc_keyflow = bit8tobit16(rc_keyflow, false);
-             //   print32(rc_keyflow);
-                ra_keyflow = compute_keyflow(ra_keyflow, rotatematrixleft(rc_keyflow, 8), 0, 1);
+#ifdef MASKFLOW
+                ra_maskflow = bit8tobit16(ra_maskflow, false);
+                rc_maskflow = bit8tobit16(rc_maskflow, false);
+             //   print32(rc_maskflow);
+                ra_maskflow = compute_maskflow(ra_maskflow, rotatematrixleft(rc_maskflow, 8), 0, 1);
 #endif
             
         }
@@ -3353,10 +3346,10 @@ if(output_vcd)
             ra&=0xFF00;
             ra|=rc&0x00FF;
             
-#ifdef KEYFLOW
-                ra_keyflow = bit8tobit16(ra_keyflow, true);
-                rc_keyflow = bit8tobit16(rc_keyflow, false);
-            	ra_keyflow = compute_keyflow(rotatematrixleft(ra_keyflow, 8), rc_keyflow, 0, 1);
+#ifdef MASKFLOW
+                ra_maskflow = bit8tobit16(ra_maskflow, true);
+                rc_maskflow = bit8tobit16(rc_maskflow, false);
+            	ra_maskflow = compute_maskflow(rotatematrixleft(ra_maskflow, 8), rc_maskflow, 0, 1);
 #endif
             
         }
@@ -3364,10 +3357,10 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write16(rb&(~1),ra&0xFFFF);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        write16_keyflow(rb&(~1),ra_keyflow);
-        op2_keyflow = rc_keyflow; op1_keyflow = read32_keyflow(rb);
+        write16_maskflow(rb&(~1),ra_maskflow);
+        op2_maskflow = rc_maskflow; op1_maskflow = read32_maskflow(rb);
         
 #endif
 
@@ -3377,8 +3370,8 @@ if(output_vcd)
                 fprintf(asmoutput,"strb r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3397,10 +3390,10 @@ if(output_vcd)
         rc=read_register(rd);
         ra=read16(rb&(~1));
 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        ra_keyflow = read16_keyflow(rb&(~1));
+        rc_maskflow = read_register_maskflow(rd);
+        ra_maskflow = read16_maskflow(rb&(~1));
         
 #endif
 
@@ -3409,11 +3402,11 @@ if(output_vcd)
             ra&=0x00FF;
             ra|=rc<<8;
             
-#ifdef KEYFLOW
-                ra_keyflow = bit8tobit16(ra_keyflow, false);
-                rc_keyflow = bit8tobit16(rc_keyflow, false);
-               // print32(rc_keyflow);
-                ra_keyflow = compute_keyflow(ra_keyflow, rotatematrixleft(rc_keyflow, 8), 0, 1);
+#ifdef MASKFLOW
+                ra_maskflow = bit8tobit16(ra_maskflow, false);
+                rc_maskflow = bit8tobit16(rc_maskflow, false);
+               // print32(rc_maskflow);
+                ra_maskflow = compute_maskflow(ra_maskflow, rotatematrixleft(rc_maskflow, 8), 0, 1);
 #endif
             
         }
@@ -3422,10 +3415,10 @@ if(output_vcd)
             ra&=0xFF00;
             ra|=rc&0x00FF;
             
-#ifdef KEYFLOW
-                ra_keyflow = bit8tobit16(ra_keyflow, true);
-                rc_keyflow = bit8tobit16(rc_keyflow, false);
-                ra_keyflow = compute_keyflow(rotatematrixleft(ra_keyflow, 8), rc_keyflow, 0, 1);
+#ifdef MASKFLOW
+                ra_maskflow = bit8tobit16(ra_maskflow, true);
+                rc_maskflow = bit8tobit16(rc_maskflow, false);
+                ra_maskflow = compute_maskflow(rotatematrixleft(ra_maskflow, 8), rc_maskflow, 0, 1);
 #endif
             
         }
@@ -3433,10 +3426,10 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write16(rb&(~1),ra&0xFFFF);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
 
-        write16_keyflow(rb&(~1),ra_keyflow);
-        op1_keyflow = zero_keyflow32(); op2_keyflow = rc_keyflow;
+        write16_maskflow(rb&(~1),ra_maskflow);
+        op1_maskflow = zero_maskflow32(); op2_maskflow = rc_maskflow;
 
 #endif
         
@@ -3447,8 +3440,8 @@ if(output_vcd)
             }
         }
         
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3468,11 +3461,11 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write16(rb,rc&0xFFFF);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        write16_keyflow(rb, rc_keyflow);
-        op1_keyflow = read32_keyflow(rb); op2_keyflow = rc_keyflow;
+        rc_maskflow = read_register_maskflow(rd);
+        write16_maskflow(rb, rc_maskflow);
+        op1_maskflow = read32_maskflow(rb); op2_maskflow = rc_maskflow;
         
 #endif
         
@@ -3482,8 +3475,8 @@ if(output_vcd)
                 fprintf(asmoutput,"strh r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3502,11 +3495,11 @@ if(output_vcd)
         op1 = read32(rb); op2 = rc;
         write16(rb,rc&0xFFFF);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rd);
-        write16_keyflow(rb, rc_keyflow);
-        op1_keyflow = read32_keyflow(rb); op2_keyflow = rc_keyflow;
+        rc_maskflow = read_register_maskflow(rd);
+        write16_maskflow(rb, rc_maskflow);
+        op1_maskflow = read32_maskflow(rb); op2_maskflow = rc_maskflow;
         
 #endif
 
@@ -3516,8 +3509,8 @@ if(output_vcd)
                 fprintf(asmoutput,"strh r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2);
 #endif
@@ -3535,12 +3528,12 @@ if(output_vcd)
         op1=ra; op2=rb;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rn);
-        rc_keyflow = compute_keyflow(ra_keyflow, zero_keyflow32(), 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = zero_keyflow32();
+        ra_maskflow = read_register_maskflow(rn);
+        rc_maskflow = compute_maskflow(ra_maskflow, zero_maskflow32(), 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = zero_maskflow32();
         
 #endif
 
@@ -3549,8 +3542,8 @@ if(output_vcd)
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"subs r%u,r%u,#0x%X\n",rd,rn,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -3567,12 +3560,12 @@ if(output_vcd)
         op1=ra; op2=rb;
         write_register(rd,rc);
 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rd);
-        rc_keyflow = compute_keyflow(ra_keyflow, zero_keyflow32(), 0, 0);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = ra_keyflow; op2_keyflow = zero_keyflow32();
+        ra_maskflow = read_register_maskflow(rd);
+        rc_maskflow = compute_maskflow(ra_maskflow, zero_maskflow32(), 0, 0);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = ra_maskflow; op2_maskflow = zero_maskflow32();
 
 #endif
         
@@ -3582,8 +3575,8 @@ if(output_vcd)
         do_vflag(ra,~rb,1);
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"subs r%u,#0x%02X\n",rd,rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -3602,13 +3595,13 @@ if(output_vcd)
         op1=ra; op2=rb;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        rc_keyflow = compute_keyflow(ra_keyflow, rb_keyflow, 0, 0);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
-        write_register_keyflow(rd, rc_keyflow);
+        ra_maskflow = read_register_maskflow(rn);
+        rb_maskflow = read_register_maskflow(rm);
+        rc_maskflow = compute_maskflow(ra_maskflow, rb_maskflow, 0, 0);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
+        write_register_maskflow(rd, rc_maskflow);
         
 #endif
         
@@ -3617,8 +3610,8 @@ if(output_vcd)
         do_cflag(ra,~rb,1);
         do_vflag(ra,~rb,1);
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"subs r%u,r%u,r%u\n",rd,rn,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -3636,16 +3629,16 @@ if(output_vcd)
         ra-=rb;
         write_register(13,ra);
 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(13);
-        op1_keyflow = ra_keyflow; op2_keyflow = zero_keyflow32();
+        ra_maskflow = read_register_maskflow(13);
+        op1_maskflow = ra_maskflow; op2_maskflow = zero_maskflow32();
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"sub SP,#0x%02X\n",rb);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 0);
 #endif
@@ -3662,8 +3655,8 @@ if(output_vcd)
             op1 = 0; op2 = 0;
             write_register(0,cpsr);
             if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"swi 0x%02X\n",rb);
-#ifdef KEYFLOW
-            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+            if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
             if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3688,17 +3681,17 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
 
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rm);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rc_maskflow = read_register_maskflow(rm);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"sxtb r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3717,17 +3710,17 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rc_keyflow = read_register_keyflow(rm);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rc_maskflow = read_register_maskflow(rm);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"sxth r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3749,17 +3742,17 @@ if(output_vcd)
         do_nflag(rc);
         do_zflag(rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        ra_keyflow = read_register_keyflow(rn);
-        rb_keyflow = read_register_keyflow(rm);
-        op1_keyflow = ra_keyflow; op2_keyflow = rb_keyflow;
+        ra_maskflow = read_register_maskflow(rn);
+        rb_maskflow = read_register_maskflow(rm);
+        op1_maskflow = ra_maskflow; op2_maskflow = rb_maskflow;
         
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"tst r%u,r%u\n",rn,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3776,17 +3769,17 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rb_keyflow = read_register_keyflow(rm);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rb_maskflow = read_register_maskflow(rm);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"uxtb r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3804,17 +3797,17 @@ if(output_vcd)
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
-#ifdef KEYFLOW
+#ifdef MASKFLOW
         
-        rb_keyflow = read_register_keyflow(rm);
-        write_register_keyflow(rd, rc_keyflow);
-        op1_keyflow = read_register_keyflow(rd); op2_keyflow = rc_keyflow;
+        rb_maskflow = read_register_maskflow(rm);
+        write_register_maskflow(rd, rc_maskflow);
+        op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
         
 #endif
         
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"uxth r%u,r%u\n",rd,rm);
-#ifdef KEYFLOW
-        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_keyflow, op2_keyflow);
+#ifdef MASKFLOW
+        if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5);
 #endif
@@ -3909,8 +3902,7 @@ int main ( int argc, char *argv[] )
     const char s[2] = " ";
     char *token;
     
-    
-    t = 1; registerdataflow = 0; indexno = 1; keyflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1; runcount = 0, fixedvsrandomtest = 1;
+    t = 1; registerdataflow = 0; indexno = 1; maskflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1; runcount = 0, fixedvsrandomtest = 1;
     
     mkdir(TRACEFOLDER, 0777);
     mkdir(NONPROFILEDFOLDER, 0777);
@@ -3938,11 +3930,14 @@ int main ( int argc, char *argv[] )
         fprintf(stderr,"Warning: datafile filepointer NULL\n");
 
     srand((unsigned) time(&timet));
-
 	start = malloc(sizeof(dataflow));
-	dataptr = malloc(sizeof(dataflow));
+    initialise_dataflow(start);
     
-#ifdef SAMETRACELENGTH
+#ifdef DIFFTRACELENGTH
+
+    dataptr = malloc(sizeof(dataflow));
+
+#else
 
     dataptr = create_dataflow(start);
 
@@ -4054,9 +4049,9 @@ int main ( int argc, char *argv[] )
     
     memset(ram,0x00,sizeof(ram));
     
-#ifdef KEYFLOW
-    printf("########################################\n\nINITIALISING KEYFLOW...\n\n");
-    reset_keyflow();
+#ifdef MASKFLOW
+    printf("########################################\n\nINITIALISING MASKFLOW...\n\n");
+    reset_maskflow();
 #endif
 
     printf("########################################\n\nGENERATING TRACES...\n\n");

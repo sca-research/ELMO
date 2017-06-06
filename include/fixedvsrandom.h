@@ -40,6 +40,8 @@ int gettracelength(FILE *fp){
     return lines;
 }
 
+#ifdef MEANCENTRE
+
 //-------------------------------------------------------------------
 
 void meancenter(double *trace, int len){
@@ -58,6 +60,8 @@ void meancenter(double *trace, int len){
         trace[i] -= average;
     
 }
+
+#endif
 
 //-------------------------------------------------------------------
 
@@ -79,8 +83,7 @@ void gettrace(double *ptr, FILE *fp, int len, int *points){
         
     }
     
-    
-#ifdef MEANCENTER
+#ifdef MEANCENTRE
     meancenter(traceptr,tracelength);
 #endif
     
@@ -210,7 +213,7 @@ void getttest(double *ttest, double *randomaverage, double *randomvariance, doub
 void getmaskpoints(int *maskpoint, int mask, int len_masktrace){
     
     FILE *fp;
-    fp = fopen(KEYFLOWOUTPUTFILE, "r");
+    fp = fopen(MASKFLOWOUTPUTFILE, "r");
     int op1_mask, op2_mask, i, j, prevmaskpoint;
     
     j = 0, prevmaskpoint=0;
@@ -240,7 +243,7 @@ void getmaskpoints(int *maskpoint, int mask, int len_masktrace){
 int getmaskpointslen(int mask){
     
     FILE *fp;
-    fp = fopen(KEYFLOWOUTPUTFILE, "r");
+    fp = fopen(MASKFLOWOUTPUTFILE, "r");
     int op1_mask, op2_mask, i, j, prevmaskpoint;
     
     j = 0, prevmaskpoint=0;
@@ -268,7 +271,7 @@ int getmaskpointslen(int mask){
 unsigned int getmasklen(int mask){
     
     FILE *fp;
-    fp = fopen(KEYFLOWOUTPUTFILE, "r");
+    fp = fopen(MASKFLOWOUTPUTFILE, "r");
     int op1_mask, op2_mask, i, j;
     
     j = 0;
@@ -418,7 +421,7 @@ void fixedvsrandom(void){
     printf("\n########################################\n\nSTARTING SECOND ORDER FIXED VS RANDOM T-TEST...\n\n");
     
     no_masks = 0;
-#ifdef KEYFLOW
+#ifdef MASKFLOW
     while(getmasklen(no_masks+1)!=0)
         no_masks++;
 #endif
