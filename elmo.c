@@ -11,8 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "test/elmodefinestest.h"
-//#include "elmodefines.h"
+//#include "test/elmodefinestest.h"
+#include "elmodefines.h"
 
 #include "include/powermodel.h"
 #include "include/fixedvsrandom.h"

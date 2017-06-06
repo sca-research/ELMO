@@ -31,10 +31,10 @@ unsigned int read_register ( unsigned int );
 //#define MASKFLOW
 #define ENERGYMODEL
 
-#define DIFFTRACELENGTH
-#define BINARYTRACES
+//#define DIFFTRACELENGTH
+//#define BINARYTRACES
 //#define MEANCENTRE
-#define POWERTRACES
+//#define POWERTRACES
 //#define POWERMODEL_HW
 
 // Toggle between 1 (for on) or 0 (for off)
