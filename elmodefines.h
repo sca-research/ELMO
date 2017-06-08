@@ -8,7 +8,7 @@
  # ELMO power model              # Hamming weight model         # POWERMODEL_HW              #
  # Modelled differential voltage # Convert to power             # POWERTRACES                #
  # All traces are same length    # Traces of different length   # DIFFTRACELENGTH            #
- # Not mean centered             # Mean centred (need to        # MEANCENTRE                 ##
+ # Not mean centered             # Mean centred (need to        # MEANCENTRE                 #
  #                               # evaluate higher order masks) #                            #
  #############################################################################################
  
