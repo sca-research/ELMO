@@ -8,14 +8,13 @@
  # ELMO power model              # Hamming weight model         # POWERMODEL_HW              #
  # Modelled differential voltage # Convert to power             # POWERTRACES                #
  # All traces are same length    # Traces of different length   # DIFFTRACELENGTH            #
- # Not mean centered             # Mean centred (need to        # MEANCENTRE                 #
+ # Not mean centered             # Mean centred (need to        # MEANCENTRE                 ##
  #                               # evaluate higher order masks) #                            #
  #############################################################################################
  
  To include fixed vs random, mask flow and energy modelling evaluations define FIXEDVSRANDOM, MASKFLOW and ENERGYMODEL respectively.
 
  */
-
 
 unsigned int read32 ( unsigned int );
 unsigned int read_register ( unsigned int );
