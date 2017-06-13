@@ -56,6 +56,7 @@ unsigned int read_register ( unsigned int );
 
 #define COEFFSFILE "coeffs.txt"
 
+#define OUTPUTFOLDER "output"
 #define TRACEFOLDER "output/traces/"
 #define NONPROFILEDFOLDER "output/nonprofiledindexes/"
 #define ASMOUTPUTFOLDER "output/asmoutput/"

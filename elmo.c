@@ -3903,23 +3903,17 @@ int main ( int argc, char *argv[] )
     char *token;
     
     t = 1; registerdataflow = 0; indexno = 1; maskflowfailno = 0, debug = 0, fvr_only = 0, tracestart = 1; runcount = 0, fixedvsrandomtest = 1;
-    
+
+    // Make directories with given permission settings. Default 0777.
+    mkdir(OUTPUTFOLDER, 0777);
     mkdir(TRACEFOLDER, 0777);
     mkdir(NONPROFILEDFOLDER, 0777);
     mkdir(ASMOUTPUTFOLDER, 0777);
-    
-    strcpy(str, TRACEFOLDER);
-    strcat(str, "randdata.txt");
-    sprintf(filepath, str, t);
-    randdata = fopen(filepath,"w");
 
-    strcpy(str, TRACEFOLDER);
-    strcat(str, "uartout.txt");
-    sprintf(filepath, str, t);
-    uartout = fopen(filepath,"w");
-    
+    randdata = fopen(RANDDATAFILE,"w");
+    uartout = fopen(UARTOUTFILE,"w");
     datafile = fopen(DATAFILEPATH,"r");
-
+    
     if(randdata == NULL)
         fprintf(stderr,"Warning: randdata filepointer NULL\n");
      
