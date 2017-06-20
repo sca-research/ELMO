@@ -1,0 +1,381 @@
+Archive member included to satisfy reference by file (symbol)
+
+/Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                              (reset_handler)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+                              MBedAES.o (malloc)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o) (_malloc_r)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+                              /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o (memset)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o) (__malloc_lock)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o) (_sbrk_r)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o) (_free_r)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o) (_impure_ptr)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o) (errno)
+/usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+                              /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o) (_sbrk)
+
+Allocating common symbols
+Common symbol       size              file
+
+errno               0x4               /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 MBedAES.o
+ .data          0x0000000000000000        0x0 MBedAES.o
+ .bss           0x0000000000000000        0x0 MBedAES.o
+ .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+ .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+ .data          0x0000000000000000        0x0 ../../elmoasmfunctions.o
+ .bss           0x0000000000000000        0x0 ../../elmoasmfunctions.o
+ .text          0x0000000000000000        0x0 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+ .data          0x0000000000000000        0x0 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+ .bss           0x0000000000000000        0x0 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+ .text.free     0x0000000000000000       0x14 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+ .rodata._global_impure_ptr
+                0x0000000000000000        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .text.cleanup_glue
+                0x0000000000000000       0x1c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .text._reclaim_reent
+                0x0000000000000000       0x94 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+ .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+ .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x0000000008000000 0x0000000000010000 xr
+ram              0x0000000020000000 0x0000000000002000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD MBedAES.o
+LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+LOAD ../../elmoasmfunctions.o
+LOAD /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a
+START GROUP
+LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a
+LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/armv6-m/libgcc.a
+LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a
+END GROUP
+START GROUP
+LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/armv6-m/libgcc.a
+LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a
+END GROUP
+
+.text           0x0000000008000000     0x40b8
+ *(.vectors)
+ .vectors       0x0000000008000000       0xc0 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x0000000008000000                vector_table
+ *(.text*)
+ .text.startup.main
+                0x00000000080000c0       0x80 MBedAES.o
+                0x00000000080000c0                main
+ .text          0x0000000008000140     0x1388 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+                0x000000000800016c                mbedtls_aes_init
+                0x000000000800018c                mbedtls_aes_free
+                0x00000000080001b4                mbedtls_aes_setkey_enc
+                0x0000000008000550                mbedtls_aes_setkey_dec
+                0x0000000008000868                mbedtls_aes_encrypt
+                0x0000000008000e7c                mbedtls_aes_decrypt
+                0x0000000008001490                mbedtls_aes_crypt_ecb
+ .text          0x00000000080014c8       0xa4 ../../elmoasmfunctions.o
+                0x00000000080014c8                starttrigger
+                0x00000000080014da                endtrigger
+                0x00000000080014ec                readdata
+                0x00000000080014fa                randdata
+                0x000000000800150c                printhex
+                0x000000000800151a                endprogram
+                0x0000000008001528                initialisekeyflow
+                0x0000000008001538                resetkeyflow
+                0x000000000800154a                setmaskdataflowstart
+                0x000000000800155a                resetdatafile
+ .text.blocking_handler
+                0x000000000800156c        0x2 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x000000000800156c                exti0_1_isr
+                0x000000000800156c                tim7_isr
+                0x000000000800156c                blocking_handler
+                0x000000000800156c                tsc_isr
+                0x000000000800156c                spi1_isr
+                0x000000000800156c                i2c1_isr
+                0x000000000800156c                tim17_isr
+                0x000000000800156c                i2c2_isr
+                0x000000000800156c                usart1_isr
+                0x000000000800156c                usart3_4_isr
+                0x000000000800156c                tim1_cc_isr
+                0x000000000800156c                exti2_3_isr
+                0x000000000800156c                tim16_isr
+                0x000000000800156c                pvd_isr
+                0x000000000800156c                rcc_isr
+                0x000000000800156c                flash_isr
+                0x000000000800156c                hard_fault_handler
+                0x000000000800156c                tim14_isr
+                0x000000000800156c                spi2_isr
+                0x000000000800156c                usb_isr
+                0x000000000800156c                tim15_isr
+                0x000000000800156c                tim3_isr
+                0x000000000800156c                usart2_isr
+                0x000000000800156c                adc_comp_isr
+                0x000000000800156c                dma1_channel1_isr
+                0x000000000800156c                tim6_dac_isr
+                0x000000000800156c                tim1_brk_up_trg_com_isr
+                0x000000000800156c                dma1_channel2_3_isr
+                0x000000000800156c                exti4_15_isr
+                0x000000000800156c                cec_can_isr
+                0x000000000800156c                wwdg_isr
+                0x000000000800156c                tim2_isr
+                0x000000000800156c                dma1_channel4_5_isr
+                0x000000000800156c                rtc_isr
+ .text.null_handler
+                0x000000000800156e        0x2 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x000000000800156e                null_handler
+                0x000000000800156e                sv_call_handler
+                0x000000000800156e                pend_sv_handler
+                0x000000000800156e                sys_tick_handler
+                0x000000000800156e                nmi_handler
+ .text.reset_handler
+                0x0000000008001570       0x7c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                0x0000000008001570                reset_handler
+ .text.malloc   0x00000000080015ec       0x14 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+                0x00000000080015ec                malloc
+ .text._malloc_r
+                0x0000000008001600      0x554 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x0000000008001600                _malloc_r
+ .text.memset   0x0000000008001b54       0x8c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+                0x0000000008001b54                memset
+ .text.__malloc_lock
+                0x0000000008001be0        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                0x0000000008001be0                __malloc_lock
+ .text.__malloc_unlock
+                0x0000000008001be4        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                0x0000000008001be4                __malloc_unlock
+ .text._sbrk_r  0x0000000008001be8       0x24 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+                0x0000000008001be8                _sbrk_r
+ .text._malloc_trim_r
+                0x0000000008001c0c       0xa0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                0x0000000008001c0c                _malloc_trim_r
+ .text._free_r  0x0000000008001cac      0x1c4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                0x0000000008001cac                _free_r
+ .text._sbrk    0x0000000008001e70       0x1c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+                0x0000000008001e70                _sbrk
+                0x0000000008001e8c                . = ALIGN (0x4)
+ *(.rodata*)
+ .rodata        0x0000000008001e8c     0x2228 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+ .rodata.str1.4
+                0x00000000080040b4        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+                                          0x2 (size before relaxing)
+                0x00000000080040b8                . = ALIGN (0x4)
+
+.glue_7         0x00000000080040b8        0x0
+ .glue_7        0x00000000080040b8        0x0 linker stubs
+
+.glue_7t        0x00000000080040b8        0x0
+ .glue_7t       0x00000000080040b8        0x0 linker stubs
+
+.vfp11_veneer   0x00000000080040b8        0x0
+ .vfp11_veneer  0x00000000080040b8        0x0 linker stubs
+
+.v4_bx          0x00000000080040b8        0x0
+ .v4_bx         0x00000000080040b8        0x0 linker stubs
+
+.iplt           0x00000000080040b8        0x0
+ .iplt          0x00000000080040b8        0x0 MBedAES.o
+
+.rel.dyn        0x00000000080040b8        0x0
+ .rel.iplt      0x00000000080040b8        0x0 MBedAES.o
+
+.preinit_array  0x00000000080040b8        0x0
+                0x00000000080040b8                . = ALIGN (0x4)
+                0x00000000080040b8                __preinit_array_start = .
+ *(.preinit_array)
+                0x00000000080040b8                __preinit_array_end = .
+
+.init_array     0x00000000080040b8        0x0
+                0x00000000080040b8                . = ALIGN (0x4)
+                0x00000000080040b8                __init_array_start = .
+ *(SORT(.init_array.*))
+ *(.init_array)
+                0x00000000080040b8                __init_array_end = .
+
+.fini_array     0x00000000080040b8        0x0
+                0x00000000080040b8                . = ALIGN (0x4)
+                0x00000000080040b8                __fini_array_start = .
+ *(.fini_array)
+ *(SORT(.fini_array.*))
+                0x00000000080040b8                __fini_array_end = .
+
+.ARM.extab
+ *(.ARM.extab*)
+
+.ARM.exidx      0x00000000080040b8        0x0
+                0x00000000080040b8                __exidx_start = .
+ *(.ARM.exidx*)
+                0x00000000080040b8                __exidx_end = .
+                0x00000000080040b8                . = ALIGN (0x4)
+                0x00000000080040b8                _etext = .
+
+.data           0x0000000020000000      0x83c load address 0x00000000080040b8
+                0x0000000020000000                _data = .
+ *(.data*)
+ .data.__malloc_av_
+                0x0000000020000000      0x408 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x0000000020000000                __malloc_av_
+ .data.__malloc_trim_threshold
+                0x0000000020000408        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x0000000020000408                __malloc_trim_threshold
+ .data.__malloc_sbrk_base
+                0x000000002000040c        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x000000002000040c                __malloc_sbrk_base
+ .data.impure_data
+                0x0000000020000410      0x428 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+ .data._impure_ptr
+                0x0000000020000838        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+                0x0000000020000838                _impure_ptr
+                0x000000002000083c                . = ALIGN (0x4)
+                0x000000002000083c                _edata = .
+                0x00000000080040b8                _data_loadaddr = LOADADDR (.data)
+
+.igot.plt       0x000000002000083c        0x0 load address 0x00000000080048f4
+ .igot.plt      0x000000002000083c        0x0 MBedAES.o
+
+.bss            0x000000002000083c       0x3c load address 0x00000000080048f4
+ *(.bss*)
+ .bss.__malloc_max_total_mem
+                0x000000002000083c        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x000000002000083c                __malloc_max_total_mem
+ .bss.__malloc_max_sbrked_mem
+                0x0000000020000840        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x0000000020000840                __malloc_max_sbrked_mem
+ .bss.__malloc_top_pad
+                0x0000000020000844        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x0000000020000844                __malloc_top_pad
+ .bss.__malloc_current_mallinfo
+                0x0000000020000848       0x28 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x0000000020000848                __malloc_current_mallinfo
+ .bss.heap_end.4167
+                0x0000000020000870        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+ *(COMMON)
+ COMMON         0x0000000020000874        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+                0x0000000020000874                errno
+                0x0000000020000878                . = ALIGN (0x4)
+                0x0000000020000878                _ebss = .
+
+/DISCARD/
+ *(.eh_frame)
+                0x0000000020000878                . = ALIGN (0x4)
+                0x0000000020000878                end = .
+                0x0000000020002000                PROVIDE (_stack, (ORIGIN (ram) + LENGTH (ram)))
+OUTPUT(MBedAES.elf elf32-littlearm)
+
+.debug_info     0x0000000000000000      0x577
+ .debug_info    0x0000000000000000      0x2a6 MBedAES.o
+ .debug_info    0x00000000000002a6      0x2d1 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+
+.debug_abbrev   0x0000000000000000      0x227
+ .debug_abbrev  0x0000000000000000       0xfd MBedAES.o
+ .debug_abbrev  0x00000000000000fd      0x12a /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+
+.debug_loc      0x0000000000000000      0x211
+ .debug_loc     0x0000000000000000      0x123 MBedAES.o
+ .debug_loc     0x0000000000000123       0xee /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+
+.debug_aranges  0x0000000000000000       0x50
+ .debug_aranges
+                0x0000000000000000       0x20 MBedAES.o
+ .debug_aranges
+                0x0000000000000020       0x30 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+
+.debug_ranges   0x0000000000000000       0x30
+ .debug_ranges  0x0000000000000000       0x10 MBedAES.o
+ .debug_ranges  0x0000000000000010       0x20 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+
+.debug_line     0x0000000000000000      0x274
+ .debug_line    0x0000000000000000      0x17b MBedAES.o
+ .debug_line    0x000000000000017b       0xf9 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+
+.debug_str      0x0000000000000000      0x425
+ .debug_str     0x0000000000000000      0x1f9 MBedAES.o
+                                        0x248 (size before relaxing)
+ .debug_str     0x00000000000001f9      0x22c /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                                        0x2be (size before relaxing)
+
+.comment        0x0000000000000000       0xde
+ .comment       0x0000000000000000       0x6e MBedAES.o
+                                         0x6f (size before relaxing)
+ .comment       0x000000000000006e       0x6f /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+ .comment       0x000000000000006e       0x70 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+                                         0x71 (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x2d
+ .ARM.attributes
+                0x0000000000000000       0x31 MBedAES.o
+ .ARM.attributes
+                0x0000000000000031       0x31 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccswBnFK.o
+ .ARM.attributes
+                0x0000000000000062       0x14 ../../elmoasmfunctions.o
+ .ARM.attributes
+                0x0000000000000076       0x31 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+ .ARM.attributes
+                0x00000000000000a7       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+ .ARM.attributes
+                0x00000000000000d3       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+ .ARM.attributes
+                0x00000000000000ff       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+ .ARM.attributes
+                0x000000000000012b       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+ .ARM.attributes
+                0x0000000000000157       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+ .ARM.attributes
+                0x0000000000000183       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+ .ARM.attributes
+                0x00000000000001af       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+ .ARM.attributes
+                0x00000000000001db       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .ARM.attributes
+                0x0000000000000207       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+
+.debug_frame    0x0000000000000000      0x230
+ .debug_frame   0x0000000000000000       0x30 MBedAES.o
+ .debug_frame   0x0000000000000030       0x40 /Users/dm12408/PhD/Libraries/libopencm3/libopencm3/lib/libopencm3_stm32f0.a(vector.o)
+ .debug_frame   0x0000000000000070       0x40 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+ .debug_frame   0x00000000000000b0       0x3c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+ .debug_frame   0x00000000000000ec       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
+ .debug_frame   0x0000000000000118       0x30 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+ .debug_frame   0x0000000000000148       0x2c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x0000000000000174       0x54 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+ .debug_frame   0x00000000000001c8       0x48 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-reent.o)
+ .debug_frame   0x0000000000000210       0x20 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)

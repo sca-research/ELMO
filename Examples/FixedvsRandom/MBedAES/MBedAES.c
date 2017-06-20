@@ -53,7 +53,7 @@ int main(void) {
 
     for(j=0;j<16;j++)
         output[j] = 0x00;
-    
+
     // Random Traces
     
     for(i=0;i<NOTRACES;i++){
