@@ -26,14 +26,14 @@ unsigned int read_register ( unsigned int );
 #define DISS        0
 #define DBUG        0
 
-#define FIXEDVSRANDOM
-//#define MASKFLOW
-#define ENERGYMODEL
+//#define FIXEDVSRANDOM
+#define MASKFLOW
+//#define ENERGYMODEL
 
 //#define DIFFTRACELENGTH
-//#define BINARYTRACES
-//#define MEANCENTRE
-//#define POWERTRACES
+#define BINARYTRACES
+#define MEANCENTRE
+#define POWERTRACES
 //#define POWERMODEL_HW
 
 // Toggle between 1 (for on) or 0 (for off)
@@ -51,6 +51,13 @@ unsigned int read_register ( unsigned int );
 #endif
 #ifndef CYCLEACCURATE
 #define CYCLEACCURATE
+#endif
+#endif
+
+// Make sure traces are mean centred if using mask flow
+#ifdef MASKFLOW
+#ifndef MEANCENTRE
+#define MEANCENTRE
 #endif
 #endif
 

@@ -51,7 +51,7 @@ LDSCRIPT	?= $(BINARY).ld
 
 OBJS		+= $(BINARY).o
 
-OPENCM3_DIR = /Users/dm12408/PhD/Libraries/libopencm3/libopencm3
+OPENCM3_DIR = ../../libopencm3
 
 ELMOASMFUNCTIONSDIR = ../../
 
@@ -60,7 +60,7 @@ ifeq ($(strip $(OPENCM3_DIR)),)
 
 # where we search for the library
 LIBPATHS := ./libopencm3
-OPENCM3_DIR = /Users/dm12408/PhD/Libraries/libopencm3/libopencm3
+OPENCM3_DIR = ../../libopencm3
 
 OPENCM3_DIR := $(wildcard $(LIBPATHS:=/locm3.sublime-project))
 OPENCM3_DIR := $(firstword $(dir $(OPENCM3_DIR)))
