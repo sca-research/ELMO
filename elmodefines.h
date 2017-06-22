@@ -27,13 +27,13 @@ unsigned int read_register ( unsigned int );
 #define DBUG        0
 
 //#define FIXEDVSRANDOM
-#define MASKFLOW
+//#define MASKFLOW
 //#define ENERGYMODEL
 
 //#define DIFFTRACELENGTH
-#define BINARYTRACES
-#define MEANCENTRE
-#define POWERTRACES
+//#define BINARYTRACES
+//#define MEANCENTRE
+//#define POWERTRACES
 //#define POWERMODEL_HW
 
 // Toggle between 1 (for on) or 0 (for off)

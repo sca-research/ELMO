@@ -254,6 +254,12 @@ unsigned int leakagetestfail(void){
 void dump_counters ( void )
 {
     int i;
+    FILE *fp;
+    
+    // Get trace length
+    fp = loadtrace(1);
+    tracelength = gettracelength(fp);
+    instructions = tracelength;
     
     printf("\n########################################\n\nSUMMARY:\n");
     if(CYCLEACCURATE) printf("cycle accurate model\n");
