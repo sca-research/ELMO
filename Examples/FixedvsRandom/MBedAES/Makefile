@@ -27,9 +27,6 @@ endif
 
 BINARY = MBedAES
 
-LIBNAME		= opencm3_stm32f0
-DEFS		= -DSTM32F0
-
 FP_FLAGS	?= -msoft-float
 ARCH_FLAGS	= -mthumb -mcpu=cortex-m0 $(FP_FLAGS)
 
@@ -48,11 +45,6 @@ OBJDUMP		:= $(PREFIX)-objdump
 LDSCRIPT	= $(BINARY).ld
 OBJS		+= $(BINARY).o
 ELMOASMFUNCTIONS = ../../elmoasmfunctions.o
-
-# where we search for the library
-OPENCM3_DIR = ../../libopencm3
-
-LIB_DIR		= $(OPENCM3_DIR)/lib
 
 
 ###############################################################################
@@ -73,7 +65,6 @@ CPPFLAGS	+= -Wall -Wundef
 # Linker flags
 
 LDFLAGS		+= --static -nostartfiles
-#LDFLAGS	+= -L$(LIB_DIR)
 LDFLAGS		+= -T$(LDSCRIPT)
 LDFLAGS		+= -Wl,-Map=$(*).map
 LDFLAGS		+= -Wl,--gc-sections
@@ -81,7 +72,6 @@ LDFLAGS		+= -Wl,--gc-sections
 ###############################################################################
 # Used libraries
 
-#LDLIBS		+= -l$(LIBNAME)
 LDLIBS		+= -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 
 ###############################################################################
@@ -111,5 +101,3 @@ $(BINARY).o: $(BINARY).c
 
 clean:
 	$(Q)$(RM) $(BINARY).o $(BINARY).d $(BINARY).elf $(BINARY).bin $(BINARY).list $(BINARY).map
-
-

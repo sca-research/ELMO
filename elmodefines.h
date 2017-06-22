@@ -26,9 +26,9 @@ unsigned int read_register ( unsigned int );
 #define DISS        0
 #define DBUG        0
 
-//#define FIXEDVSRANDOM
-//#define MASKFLOW
-//#define ENERGYMODEL
+#define FIXEDVSRANDOM
+#define MASKFLOW
+#define ENERGYMODEL
 
 //#define DIFFTRACELENGTH
 //#define BINARYTRACES

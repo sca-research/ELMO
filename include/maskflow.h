@@ -135,7 +135,7 @@ void maskflowfailtest(void){
     masktable = initialisemaskflow32();
     masktable->next = initialisemaskflow32();
     
-    fp_maskflow = fopen(maskflowOUTPUTFILE, "w+");
+    fp_maskflow = fopen(MASKFLOWOUTPUTFILE, "w+");
     
     while(current->next != NULL){
         
