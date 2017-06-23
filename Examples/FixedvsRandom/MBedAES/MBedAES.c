@@ -1,10 +1,9 @@
-#define NOTRACES 1000
+#define NOTRACES 5000
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "aes.h"
-#include "aes.c"
 #include "../../elmoasmfunctionsdef.h"
 
 int main(void) {

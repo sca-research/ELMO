@@ -18,12 +18,8 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-
- V = 1
-ifneq ($(V),1)
+# Remove to display makefile output
 Q		:= @
-NULL		:= 2>/dev/null
-endif
 
 BINARY = MBedAES
 

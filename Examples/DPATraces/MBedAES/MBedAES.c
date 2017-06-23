@@ -28,7 +28,7 @@ int main(void) {
         
         for(j=0;j<16;j++){
 
-            randdata(&input[j]); //Get random data for inputs. Random data generated is stored in randdata.txt.
+            randbyte(&input[j]); //Get random data for inputs. Random data generated is stored in randdata.txt.
             key[j] = j; // Initialise key to 0, 1, 2, 3,..., 15
             output[j] = 0x00;
                 
@@ -46,7 +46,7 @@ int main(void) {
         
         for(j=0;j<16;j++){
                 
-            printhex(&output[j]);
+            printbyte(&output[j]);
 
         }
                 

@@ -1,16 +1,18 @@
 /*
  
- #############################################################################################
- # Default                       # Alternative                  # Define                     #
- #############################################################################################
- # ASCII traces                  # Binary traces                # BINARYTRACES               #
- # Instruction accurate traces   # Cycle accurate traces        # CYCLEACCURATE              #
- # ELMO power model              # Hamming weight model         # POWERMODEL_HW              #
- # Modelled differential voltage # Convert to power             # POWERTRACES                #
- # All traces are same length    # Traces of different length   # DIFFTRACELENGTH            #
- # Not mean centered             # Mean centred (need to        # MEANCENTRE                 #
- #                               # evaluate higher order masks) #                            #
- #############################################################################################
+ ################################################################################################
+ # Default                        # Alternative                   # Define                      #
+ ################################################################################################
+ # ASCII traces                   # Binary traces                 # BINARYTRACES                #
+ # ELMO power model               # Hamming weight model          # POWERMODEL_HW               #
+ # Modelled differential voltage  # Convert to power              # POWERTRACES                 #
+ # All traces are same length     # Traces of different length    # DIFFTRACELENGTH             #
+ # Not mean centered              # Mean centred (need to         # MEANCENTRE                  #
+ #                                # evaluate higher order masks)  #                             #
+ # Instruction accurate traces    # Cycle accurate traces         # CYCLEACCURATE 1             #
+ # Print first asm trace          # Print all asm traces          # PRINTALLASMTRACES 1         #
+ # Print first non-profiled trace # Print all non-profiled traces # PRINTALLNONPROFILEDTRACES 1 #
+ ################################################################################################
  
  To include fixed vs random, mask flow and energy modelling evaluations define FIXEDVSRANDOM, MASKFLOW and ENERGYMODEL respectively.
 
@@ -26,9 +28,9 @@ unsigned int read_register ( unsigned int );
 #define DISS        0
 #define DBUG        0
 
-#define FIXEDVSRANDOM
-#define MASKFLOW
-#define ENERGYMODEL
+//#define FIXEDVSRANDOM
+//#define MASKFLOW
+//#define ENERGYMODEL
 
 //#define DIFFTRACELENGTH
 //#define BINARYTRACES
@@ -39,7 +41,7 @@ unsigned int read_register ( unsigned int );
 // Toggle between 1 (for on) or 0 (for off)
 #define PRINTALLASMTRACES 0
 #define PRINTALLNONPROFILEDTRACES 0
-#define CYCLEACCURATE 1
+#define CYCLEACCURATE 0
 
 #define FIXEDVSRANDOMFAIL 4.5
 #define PRINTTRACENOINTERVAL 1
@@ -49,9 +51,7 @@ unsigned int read_register ( unsigned int );
 #ifndef POWERTRACES
 #define POWERTRACES
 #endif
-#ifndef CYCLEACCURATE
-#define CYCLEACCURATE
-#endif
+#define CYCLEACCURATE 1
 #endif
 
 // Make sure traces are mean centred if using mask flow
@@ -71,7 +71,7 @@ unsigned int read_register ( unsigned int );
 #define NONPROFILEDFILE "indextrace%05d.txt"
 #define ASMOUTPUTFILE "asmtrace%05d.txt"
 #define MASKFLOWOUTPUTFILE "output/masks.txt"
-#define FIXEDVSRANDOMFILE "output/fixedvsrandomfail.txt"
+#define FIXEDVSRANDOMFILE "output/fixedvsrandomtstatistics.txt"
 #define ENERGYTRACEFILE "output/energytrace.txt"
 #define ASMOUTPUTFILE "asmtrace%05d.txt"
 
@@ -79,7 +79,7 @@ unsigned int read_register ( unsigned int );
 #define DATAFILEPATH "Examples/randdata100000.txt"
 
 #define RANDDATAFILE "output/randdata.txt"
-#define UARTOUTFILE "output/uartout.txt"
+#define UARTOUTFILE "output/printdata.txt"
 
 #define RESISTANCE 360
 #define SUPPLYVOLTAGE 3

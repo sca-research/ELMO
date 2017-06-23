@@ -34,10 +34,10 @@ bx lr
 
 .endfunc
 
-.func readdata
-.global readdata
+.func readbyte
+.global readbyte
 
-readdata:
+readbyte:
     push {r0-r7}
     movs r4, #0xE1
     lsls r4, #24
@@ -49,10 +49,10 @@ bx lr
 
 .endfunc
 
-.func randdata
-.global randdata
+.func randbyte
+.global randbyte
 
-randdata:
+randbyte:
     push {r0-r7}
     movs r4, #0xE1
     lsls r4, #24
@@ -103,10 +103,10 @@ bx lr
 
 
 
-.func printhex
-.global printhex
+.func printbyte
+.global printbyte
 
-printhex:
+printbyte:
     push {r0-r7}
     movs r4, #0xE0
     lsls r4, #24
@@ -132,11 +132,11 @@ bx lr
 
 .endfunc
 
-.func initialisekeyflow
-.global initialisekeyflow
+.func initialisemaskflow
+.global initialisemaskflow
 
 # Takes address of key as input (r0)
-initialisekeyflow:
+initialisemaskflow:
     push {r0-r7}
     movs r4, #0xE0
     lsls r4, #24
@@ -148,10 +148,10 @@ bx lr
 
 .endfunc
 
-.func resetkeyflow
-.global resetkeyflow
+.func resetmaskflow
+.global resetmaskflow
 
-resetkeyflow:
+resetmaskflow:
     push {r0-r7}
     movs r4, #0xE0
     lsls r4, #24
@@ -164,12 +164,12 @@ bx lr
 
 .endfunc
 
-.func setmaskdataflowstart
-.global setmaskdataflowstart
+.func setmaskflowstart
+.global setmaskflowstart
 
 # Takes r0 as start number
 
-setmaskdataflowstart:
+setmaskflowstart:
     push {r0-r7}
     movs r4, #0xE0
     lsls r4, #24

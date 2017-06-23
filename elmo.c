@@ -265,7 +265,9 @@ void dump_counters ( void )
     if(CYCLEACCURATE) printf("cycle accurate model\n");
     else printf("instruction accurate model\n");
     printf("instructions/cylces %d\n",instructions);
+#ifdef ENERGYMODEL
     printf("total energy consumption %0.20f\n",energy);
+#endif
     printf("first order fixed vs random fail instructions/cycles %d\n",leakyinstructionno);
     printf("second order fixed vs random instructions/cycles\n");
     for(i=0;i<no_masks;i++)

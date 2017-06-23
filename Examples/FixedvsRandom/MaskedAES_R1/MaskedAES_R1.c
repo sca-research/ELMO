@@ -1,8 +1,5 @@
 #define NOTRACES 20000
 
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/usart.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,23 +30,24 @@ int main(void) {
     for(j=0;j<16;j++){
         output[j] = 0x00;
     }
-    
+
+// Generate fixed traces
     for(i=0;i<NOTRACES;i++){
 
-        readdata(&U);
-        readdata(&V);
+        readbyte(&U);
+        readbyte(&V);
         
         for(j=0;j<16;j++){
-            readdata(&input[j]);
+            readbyte(&input[j]);
             input[j] = fixedinput[j];
             key[j] = fixedkey[j];
         }
         
-        setmaskdataflowstart(0);
-        initialisekeyflow(&U);
+        setmaskflowstart(0);
+        initialisemaskflow(&U);
         
-        setmaskdataflowstart(8);
-        initialisekeyflow(&V);
+        setmaskflowstart(8);
+        initialisemaskflow(&V);
         
         //Trigger started in asm file
         acComputeAESMasked(output, input, key);
@@ -61,21 +59,23 @@ int main(void) {
         output[j] = 0x00;
     }
     
+// Generate random traces
+    
     for(i=0;i<NOTRACES;i++){
         
-        readdata(&U);
-        readdata(&V);
+        readbyte(&U);
+        readbyte(&V);
         
         for(j=0;j<16;j++){
-            readdata(&input[j]);
+            readbyte(&input[j]);
             key[j] = fixedkey[j];
         }
         
-        setmaskdataflowstart(0);
-        initialisekeyflow(&U);
+        setmaskflowstart(0);
+        initialisemaskflow(&U);
         
-        setmaskdataflowstart(8);
-        initialisekeyflow(&V);
+        setmaskflowstart(8);
+        initialisemaskflow(&V);
         
         //Trigger started in asm file
         acComputeAESMasked(output, input, key);

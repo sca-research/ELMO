@@ -1,5 +1,20 @@
-unsigned int read32 ( unsigned int );
-unsigned int read_register ( unsigned int );
+/*
+ 
+ #############################################################################################
+ # Default                       # Alternative                  # Define                     #
+ #############################################################################################
+ # ASCII traces                  # Binary traces                # BINARYTRACES               #
+ # ELMO power model              # Hamming weight model         # POWERMODEL_HW              #
+ # Modelled differential voltage # Convert to power             # POWERTRACES                #
+ # All traces are same length    # Traces of different length   # DIFFTRACELENGTH            #
+ # Not mean centered             # Mean centred (need to        # MEANCENTRE                 #
+ #                               # evaluate higher order masks) #                            #
+ # Instruction accurate traces   # Cycle accurate traces        # CYCLEACCURATE 1            #
+ #############################################################################################
+ 
+ To include fixed vs random, mask flow and energy modelling evaluations define FIXEDVSRANDOM, MASKFLOW and ENERGYMODEL respectively.
+ 
+ */
 
 #define DBUGFETCH   0
 #define DBUGRAM     0
@@ -10,24 +25,40 @@ unsigned int read_register ( unsigned int );
 
 #define FIXEDVSRANDOM
 //#define MASKFLOW
-#define POWERMODEL
 //#define ENERGYMODEL
-//#define DEBUGPOWER
 
-#define SAMETRACELENGTH
+//#define DIFFTRACELENGTH
 //#define BINARYTRACES
-//#define MEANCENTER
-#define DIFFERENTIALVOLTAGE
+//#define MEANCENTRE
+//#define POWERTRACES
+//#define POWERMODEL_HW
 
-#define CYCLEACCURATE 1
-#define MASKFLOWFAIL 80
-#define FIXEDVSRANDOMFAIL 4.5
-#define PRINTTRACENOINTERVAL 1000
-#define PRINTALLASMTRACES 1
+// Toggle between 1 (for on) or 0 (for off)
+#define PRINTALLASMTRACES 0
 #define PRINTALLNONPROFILEDTRACES 0
+#define CYCLEACCURATE 1
+
+#define FIXEDVSRANDOMFAIL 4.5
+#define PRINTTRACENOINTERVAL 1
+
+// Make sure power traces and cycle accurate model are used if using energy model
+#ifdef ENERGYMODEL
+#ifndef POWERTRACES
+#define POWERTRACES
+#endif
+#define CYCLEACCURATE 1
+#endif
+
+// Make sure traces are mean centred if using mask flow
+#ifdef MASKFLOW
+#ifndef MEANCENTRE
+#define MEANCENTRE
+#endif
+#endif
 
 #define COEFFSFILE "../coeffs.txt"
 
+#define OUTPUTFOLDER "output"
 #define TRACEFOLDER "output/traces/"
 #define NONPROFILEDFOLDER "output/nonprofiledindexes/"
 #define ASMOUTPUTFOLDER "output/asmoutput/"
@@ -35,14 +66,14 @@ unsigned int read_register ( unsigned int );
 #define NONPROFILEDFILE "indextrace%05d.txt"
 #define ASMOUTPUTFILE "asmtrace%05d.txt"
 #define MASKFLOWOUTPUTFILE "output/masks.txt"
-#define FIXEDVSRANDOMFILE "output/fixedvsrandomfail.txt"
+#define FIXEDVSRANDOMFILE "output/fixedvsrandomtstatistics.txt"
 #define ENERGYTRACEFILE "output/energytrace.txt"
-#define ASMOUTPUTFILE "asmtrace%05d.txt"
 
 // Change to give path to data file if being used
-#define DATAFILEPATH "testrandomdataelmo.txt"
+#define DATAFILEPATH "elmotestbinaries/randdata100000.txt"
+
 #define RANDDATAFILE "output/randdata.txt"
-#define UARTOUTFILE "output/uartout.txt"
+#define UARTOUTFILE "output/printdata.txt"
 
 #define RESISTANCE 360
 #define SUPPLYVOLTAGE 3
@@ -155,4 +186,10 @@ bit32_maskflow reg_norm_maskflow[16];
 
 void write16_maskflow ( unsigned int addr, bit32_maskflow data );
 void write32_maskflow ( unsigned int addr, bit32_maskflow data );
+
+
+
+
+unsigned int read32 ( unsigned int );
+unsigned int read_register ( unsigned int );
 

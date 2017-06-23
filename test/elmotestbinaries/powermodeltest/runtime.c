@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../Examples/elmoasmfunctionsdef.h"
+#include "../elmoasmfunctionsdef.h"
 
 #define U_8bit unsigned char
 #define NO_BYTES 16
@@ -168,7 +168,7 @@ int main(void) {
                     instselect[2] = instructiongroup[k];
 
                     for(m=0;m<24;m++){
-                        readdata(&op[m]);
+                        readbyte(&op[m]);
                     }
 
                     create_insts(instad, instselect);

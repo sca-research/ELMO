@@ -110,7 +110,7 @@ LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/armv6-m/
 LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a
 END GROUP
 
-.text           0x0000000008000000     0x2164
+.text           0x0000000008000000     0x2188
  *(.vectors)
  .vectors       0x0000000008000000       0xc0 vector.o
                 0x0000000008000000                vector_table
@@ -170,99 +170,101 @@ END GROUP
  .text.startup.main
                 0x0000000008000700       0x80 MBedAES.o
                 0x0000000008000700                main
- .text          0x0000000008000780       0xa4 ../../elmoasmfunctions.o
+ .text          0x0000000008000780       0xc8 ../../elmoasmfunctions.o
                 0x0000000008000780                starttrigger
                 0x0000000008000792                endtrigger
-                0x00000000080007a4                readdata
-                0x00000000080007b2                randdata
-                0x00000000080007c4                printhex
-                0x00000000080007d2                endprogram
-                0x00000000080007e0                initialisekeyflow
-                0x00000000080007f0                resetkeyflow
-                0x0000000008000802                setmaskdataflowstart
-                0x0000000008000812                resetdatafile
- .text.malloc   0x0000000008000824       0x14 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
-                0x0000000008000824                malloc
+                0x00000000080007a4                readbyte
+                0x00000000080007b2                randbyte
+                0x00000000080007c4                getstart
+                0x00000000080007d6                getruncount
+                0x00000000080007e8                printbyte
+                0x00000000080007f6                endprogram
+                0x0000000008000804                initialisemaskflow
+                0x0000000008000814                resetmaskflow
+                0x0000000008000826                setmaskflowstart
+                0x0000000008000836                resetdatafile
+ .text.malloc   0x0000000008000848       0x14 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
+                0x0000000008000848                malloc
  .text._malloc_r
-                0x0000000008000838      0x554 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
-                0x0000000008000838                _malloc_r
+                0x000000000800085c      0x554 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
+                0x000000000800085c                _malloc_r
  .text.__malloc_lock
-                0x0000000008000d8c        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
-                0x0000000008000d8c                __malloc_lock
+                0x0000000008000db0        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                0x0000000008000db0                __malloc_lock
  .text.__malloc_unlock
-                0x0000000008000d90        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
-                0x0000000008000d90                __malloc_unlock
- .text._sbrk_r  0x0000000008000d94       0x24 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
-                0x0000000008000d94                _sbrk_r
+                0x0000000008000db4        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
+                0x0000000008000db4                __malloc_unlock
+ .text._sbrk_r  0x0000000008000db8       0x24 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
+                0x0000000008000db8                _sbrk_r
  .text._malloc_trim_r
-                0x0000000008000db8       0xa0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
-                0x0000000008000db8                _malloc_trim_r
- .text._free_r  0x0000000008000e58      0x1c4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
-                0x0000000008000e58                _free_r
- .text._sbrk    0x000000000800101c       0x1c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
-                0x000000000800101c                _sbrk
-                0x0000000008001038                . = ALIGN (0x4)
+                0x0000000008000ddc       0xa0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                0x0000000008000ddc                _malloc_trim_r
+ .text._free_r  0x0000000008000e7c      0x1c4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-freer.o)
+                0x0000000008000e7c                _free_r
+ .text._sbrk    0x0000000008001040       0x1c /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+                0x0000000008001040                _sbrk
+                0x000000000800105c                . = ALIGN (0x4)
  *(.rodata*)
- .rodata.FSb    0x0000000008001038      0x100 MBedAES.o
- .rodata.RCON   0x0000000008001138       0x28 MBedAES.o
- .rodata.FT0    0x0000000008001160      0x400 MBedAES.o
- .rodata.FT1    0x0000000008001560      0x400 MBedAES.o
- .rodata.FT2    0x0000000008001960      0x400 MBedAES.o
- .rodata.FT3    0x0000000008001d60      0x400 MBedAES.o
+ .rodata.FSb    0x000000000800105c      0x100 MBedAES.o
+ .rodata.RCON   0x000000000800115c       0x28 MBedAES.o
+ .rodata.FT0    0x0000000008001184      0x400 MBedAES.o
+ .rodata.FT1    0x0000000008001584      0x400 MBedAES.o
+ .rodata.FT2    0x0000000008001984      0x400 MBedAES.o
+ .rodata.FT3    0x0000000008001d84      0x400 MBedAES.o
  .rodata.str1.4
-                0x0000000008002160        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
+                0x0000000008002184        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
                                           0x2 (size before relaxing)
-                0x0000000008002164                . = ALIGN (0x4)
+                0x0000000008002188                . = ALIGN (0x4)
 
-.glue_7         0x0000000008002164        0x0
- .glue_7        0x0000000008002164        0x0 linker stubs
+.glue_7         0x0000000008002188        0x0
+ .glue_7        0x0000000008002188        0x0 linker stubs
 
-.glue_7t        0x0000000008002164        0x0
- .glue_7t       0x0000000008002164        0x0 linker stubs
+.glue_7t        0x0000000008002188        0x0
+ .glue_7t       0x0000000008002188        0x0 linker stubs
 
-.vfp11_veneer   0x0000000008002164        0x0
- .vfp11_veneer  0x0000000008002164        0x0 linker stubs
+.vfp11_veneer   0x0000000008002188        0x0
+ .vfp11_veneer  0x0000000008002188        0x0 linker stubs
 
-.v4_bx          0x0000000008002164        0x0
- .v4_bx         0x0000000008002164        0x0 linker stubs
+.v4_bx          0x0000000008002188        0x0
+ .v4_bx         0x0000000008002188        0x0 linker stubs
 
-.iplt           0x0000000008002164        0x0
- .iplt          0x0000000008002164        0x0 vector.o
+.iplt           0x0000000008002188        0x0
+ .iplt          0x0000000008002188        0x0 vector.o
 
-.rel.dyn        0x0000000008002164        0x0
- .rel.iplt      0x0000000008002164        0x0 vector.o
+.rel.dyn        0x0000000008002188        0x0
+ .rel.iplt      0x0000000008002188        0x0 vector.o
 
-.preinit_array  0x0000000008002164        0x0
-                0x0000000008002164                . = ALIGN (0x4)
-                0x0000000008002164                __preinit_array_start = .
+.preinit_array  0x0000000008002188        0x0
+                0x0000000008002188                . = ALIGN (0x4)
+                0x0000000008002188                __preinit_array_start = .
  *(.preinit_array)
-                0x0000000008002164                __preinit_array_end = .
+                0x0000000008002188                __preinit_array_end = .
 
-.init_array     0x0000000008002164        0x0
-                0x0000000008002164                . = ALIGN (0x4)
-                0x0000000008002164                __init_array_start = .
+.init_array     0x0000000008002188        0x0
+                0x0000000008002188                . = ALIGN (0x4)
+                0x0000000008002188                __init_array_start = .
  *(SORT(.init_array.*))
  *(.init_array)
-                0x0000000008002164                __init_array_end = .
+                0x0000000008002188                __init_array_end = .
 
-.fini_array     0x0000000008002164        0x0
-                0x0000000008002164                . = ALIGN (0x4)
-                0x0000000008002164                __fini_array_start = .
+.fini_array     0x0000000008002188        0x0
+                0x0000000008002188                . = ALIGN (0x4)
+                0x0000000008002188                __fini_array_start = .
  *(.fini_array)
  *(SORT(.fini_array.*))
-                0x0000000008002164                __fini_array_end = .
+                0x0000000008002188                __fini_array_end = .
 
 .ARM.extab
  *(.ARM.extab*)
 
-.ARM.exidx      0x0000000008002164        0x0
-                0x0000000008002164                __exidx_start = .
+.ARM.exidx      0x0000000008002188        0x0
+                0x0000000008002188                __exidx_start = .
  *(.ARM.exidx*)
-                0x0000000008002164                __exidx_end = .
-                0x0000000008002164                . = ALIGN (0x4)
-                0x0000000008002164                _etext = .
+                0x0000000008002188                __exidx_end = .
+                0x0000000008002188                . = ALIGN (0x4)
+                0x0000000008002188                _etext = .
 
-.data           0x0000000020000000      0x83c load address 0x0000000008002164
+.data           0x0000000020000000      0x83c load address 0x0000000008002188
                 0x0000000020000000                _data = .
  *(.data*)
  .data.__malloc_av_
@@ -281,12 +283,12 @@ END GROUP
                 0x0000000020000838                _impure_ptr
                 0x000000002000083c                . = ALIGN (0x4)
                 0x000000002000083c                _edata = .
-                0x0000000008002164                _data_loadaddr = LOADADDR (.data)
+                0x0000000008002188                _data_loadaddr = LOADADDR (.data)
 
-.igot.plt       0x000000002000083c        0x0 load address 0x00000000080029a0
+.igot.plt       0x000000002000083c        0x0 load address 0x00000000080029c4
  .igot.plt      0x000000002000083c        0x0 vector.o
 
-.bss            0x000000002000083c       0x3c load address 0x00000000080029a0
+.bss            0x000000002000083c       0x3c load address 0x00000000080029c4
  *(.bss*)
  .bss.__malloc_max_total_mem
                 0x000000002000083c        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
@@ -341,11 +343,11 @@ OUTPUT(MBedAES.elf elf32-littlearm)
  .debug_line    0x0000000000000000       0xf9 vector.o
  .debug_line    0x00000000000000f9      0x626 MBedAES.o
 
-.debug_str      0x0000000000000000      0x4bd
+.debug_str      0x0000000000000000      0x4be
  .debug_str     0x0000000000000000      0x285 vector.o
                                         0x2be (size before relaxing)
- .debug_str     0x0000000000000285      0x238 MBedAES.o
-                                        0x2e0 (size before relaxing)
+ .debug_str     0x0000000000000285      0x239 MBedAES.o
+                                        0x2e1 (size before relaxing)
 
 .comment        0x0000000000000000       0xde
  .comment       0x0000000000000000       0x70 vector.o

@@ -28,4 +28,4 @@ runtime.o: runtime.c \
  /usr/local/Cellar/arm-none-eabi/arm-none-eabi/include/alloca.h \
  /usr/local/Cellar/arm-none-eabi/arm-none-eabi/include/string.h \
  /usr/local/Cellar/arm-none-eabi/arm-none-eabi/include/sys/string.h \
- ../../Examples/elmoasmfunctionsdef.h
+ ../elmoasmfunctionsdef.h

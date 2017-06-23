@@ -18,14 +18,12 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-
- V = 1
-ifneq ($(V),1)
+# Remove to display makefile output
 Q		:= @
-NULL		:= 2>/dev/null
-endif
 
 BINARY = MBedAES
+VECTORS = vector.o
+MBedTLS_AES = aes.c
 
 FP_FLAGS	?= -msoft-float
 ARCH_FLAGS	= -mthumb -mcpu=cortex-m0 $(FP_FLAGS)
@@ -94,7 +92,7 @@ $(BINARY).list: $(BINARY).elf
 	$(Q)$(OBJDUMP) -S $(BINARY).elf > $(BINARY).list
 
 $(BINARY).elf $(BINARY).map: $(OBJS) $(LDSCRIPT)
-	$(Q)$(LD) $(LDFLAGS) vector.o $(ARCH_FLAGS) $(OBJS) $(ELMOASMFUNCTIONS) $(LDLIBS) -o $(BINARY).elf
+	$(Q)$(LD) $(LDFLAGS) $(VECTORS) $(ARCH_FLAGS) $(OBJS) $(MBedTLS_AES) $(ELMOASMFUNCTIONS) $(LDLIBS) -o $(BINARY).elf
 
 $(BINARY).o: $(BINARY).c
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -o $(BINARY).o -c $(BINARY).c

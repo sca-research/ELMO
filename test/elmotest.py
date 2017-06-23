@@ -75,11 +75,11 @@ print '#####################################################'
 # Fixed vs Random test
 print 'STARTING FIXED VS RANDOM TEST...'
 
-call(['.././elmo', 'elmotestbinaries/fixedvsrandom/MBedAES/MBedAES.bin'])
+call(['.././elmo', 'elmotestbinaries/fixedvsrandomtest/MBedAES.bin'])
 
 # Test output is correct
 fp_AESvectors = open('AEStestvectors.txt','r')
-fp_AESelmooutput = open('output/traces/uartout.txt','r')
+fp_AESelmooutput = open('output/printdata.txt','r')
 
 passnumber = 0
 failnumber = 0
@@ -118,20 +118,22 @@ else:
 print '#####################################################'
 
 # Check T-test is correct
-fp_fixedvsrandomvectors = open('fixedvsrandomtestvectors.txt','r')
-fp_fixedvsrandomelmo = open('output/fixedvsrandomfail.txt','r')
+fp_fixedvsrandomvectors = open('ttesttestvectors.txt','r')
+fp_fixedvsrandomelmo = open('output/fixedvsrandomtstatistics.txt','r')
 
 passnumber = 0
 failnumber = 0
 i = 0;
 
-with open('fixedvsrandomtestvectors.txt') as openfileobject:
+with open('ttesttestvectors.txt') as openfileobject:
     for line in openfileobject:
     
         testvector = float(fp_fixedvsrandomvectors.readline())
         elmooutput = float(fp_fixedvsrandomelmo.readline())
         
         result = Decimal(testvector).quantize(Decimal('.001')) - Decimal(elmooutput).quantize(Decimal('.001'))
+        
+        print result
         
         if(result == 0):
             passnumber = passnumber + 1

@@ -350,7 +350,7 @@ void secondorderfixedvsrandom(int len_masktrace, int mask){
     temp = malloc(100);
 
     len_multipliedmasktrace = len_masktrace*len_masktrace;
-    printf("%d\n\n", len_multipliedmasktrace);
+    //printf("%d\n\n", len_multipliedmasktrace);
 
     // Create variables
     fixedaverage = malloc(len_multipliedmasktrace*sizeof(double));
@@ -382,12 +382,10 @@ void secondorderfixedvsrandom(int len_masktrace, int mask){
     sprintf(temp, "%smask%d.txt", FIXEDVSRANDOMFILE, mask);
     fp = fopen(temp, "w+");
     
-    //Index from 1
-    
     for(i=0;i<len_multipliedmasktrace;i++){
         fprintf(fp, "%f\n", ttest[i]);
         if(ttest[i] < -FIXEDVSRANDOMFAIL | ttest[i] > FIXEDVSRANDOMFAIL){
-            printf("%d %d\n", i/len_masktrace, i%len_masktrace);
+            //printf("%d %d\n", i/len_masktrace, i%len_masktrace);
             leakyinstructionnomask++;
         }
     }
