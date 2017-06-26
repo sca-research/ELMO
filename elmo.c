@@ -11,8 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-//#include "test/elmodefinestest.h"
-#include "elmodefines.h"
+#include "test/elmodefinestest.h"
+//#include "elmodefines.h"
 
 #include "include/powermodel.h"
 #include "include/fixedvsrandom.h"
@@ -298,19 +298,17 @@ if(registerdataflow && DBUG) fprintf(stderr,"fetch16(0x%08X)=",addr);
             
             addr>>=1;
             data=rom[addr];
-if(DBUGFETCH) fprintf(stderr,"0x%04X\n",data);
-if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
+            if(DBUGFETCH) fprintf(stderr,"0x%04X\n",data);
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
             return(data);
-        case 0x20000000: //RAM
+        default: //RAM
             addr&=RAMADDMASK;
             addr>>=1;
             data=ram[addr];
-if(DBUGFETCH) fprintf(stderr,"0x%04X\n",data);
-if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
+            if(DBUGFETCH) fprintf(stderr,"0x%04X\n",data);
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
             return(data);
     }
-    fprintf(stderr,"fetch16(0x%08X), abort pc = 0x%04X\n",addr,read_register(15));
-    exit(1);
 }
 
 //-------------------------------------------------------------------
@@ -327,24 +325,22 @@ if(registerdataflow && DBUG) fprintf(stderr,"fetch32(0x%08X)=",addr);
             if(addr<0x50)
             {
                 data=read32(addr);
-if(DBUGFETCH) fprintf(stderr,"0x%08X\n",data);
-if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
+                if(DBUGFETCH) fprintf(stderr,"0x%08X\n",data);
+                if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
                 if(addr==0x00000000) return(data);
                 if(addr==0x00000004) return(data);
                 if(addr==0x0000003C) return(data);
                 fprintf(stderr,"fetch32(0x%08X), abort pc = 0x%04X\n",addr,read_register(15));
                 exit(1);
             }
-        case 0x20000000: //RAM
+        default: //RAM
             //data=fetch16(addr+0);
             //data|=((unsigned int)fetch16(addr+2))<<16;
             data=read32(addr);
-if(DBUGFETCH) fprintf(stderr,"0x%08X\n",data);
-if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
+            if(DBUGFETCH) fprintf(stderr,"0x%08X\n",data);
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
             return(data);
     }
-    fprintf(stderr,"fetch32(0x%08X), abort pc 0x%04X\n",addr,read_register(15));
-    exit(1);
 }
 
 //-------------------------------------------------------------------
@@ -354,18 +350,13 @@ void write16 ( unsigned int addr, unsigned int data )
 
     writes++;
     
-if(registerdataflow && DBUG) fprintf(stderr,"write16(0x%08X,0x%04X)\n",addr,data);
-    switch(addr&0xF0000000)
-    {
-        case 0x20000000: //RAM
-if(DBUGRAM) fprintf(stderr,"write16(0x%08X,0x%04X)\n",addr,data);
-            addr&=RAMADDMASK;
-            addr>>=1;
-            ram[addr]=data&0xFFFF;
-            return;
-      }
-      fprintf(stderr,"write16(0x%08X,0x%04X), abort pc 0x%04X\n",addr,data,read_register(15));
-      exit(1);
+    if(registerdataflow && DBUG) fprintf(stderr,"write16(0x%08X,0x%04X)\n",addr,data);
+
+    if(DBUGRAM) fprintf(stderr,"write16(0x%08X,0x%04X)\n",addr,data);
+    addr&=RAMADDMASK;
+    addr>>=1;
+    ram[addr]=data&0xFFFF;
+    return;
 }
 
 //-------------------------------------------------------------------
@@ -518,14 +509,11 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
             }
             return;
     }
-            //  case 0x20000000: //RAM
-if(DBUGRAMW) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data);
-            write16(addr+0,(data>> 0)&0xFFFF);
-            write16(addr+2,(data>>16)&0xFFFF);
-            return;
-    
-    fprintf(stderr,"write32(0x%08X,0x%08X), abort pc 0x%04X\n",addr,data,read_register(15));
-    exit(1);
+        //RAM
+        if(DBUGRAMW) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data);
+        write16(addr+0,(data>> 0)&0xFFFF);
+        write16(addr+2,(data>>16)&0xFFFF);
+        return;
 }
 
 //-----------------------------------------------------------------
@@ -544,28 +532,17 @@ if(registerdataflow && DBUG) fprintf(stderr,"read16(0x%08X)=",addr);
             addr&=ROMADDMASK;
             addr>>=1;
             data=rom[addr];
-if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
             return(data);
-        case 0x20000000: //RAM
-if(DBUGRAM) fprintf(stderr,"read16(0x%08X)=",addr);
+        default: //RAM
+            if(DBUGRAM) fprintf(stderr,"read16(0x%08X)=",addr);
             addr&=RAMADDMASK;
             addr>>=1;
             data=ram[addr];
-if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
-if(DBUGRAM) fprintf(stderr,"0x%04X\n",data);
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
+            if(DBUGRAM) fprintf(stderr,"0x%04X\n",data);
             return(data);
     }
-
-    if(DBUGRAM) fprintf(stderr,"read16(0x%08X)=",addr);
-    addr&=RAMADDMASK;
-    addr>>=1;
-    data=ram[addr];
-    if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
-    if(DBUGRAM) fprintf(stderr,"0x%04X\n",data);
-    return(data);
-    
-    fprintf(stderr,"read16(0x%08X), abort pc 0x%04X\n",addr,read_register(15));
-    exit(1);
 }
 
 //-------------------------------------------------------------------
@@ -578,7 +555,7 @@ unsigned int read32 ( unsigned int addr )
 
     str = (char *)malloc(len);
 
-if(registerdataflow && DBUG) fprintf(stderr,"read32(0x%08X)=",addr);
+    if(registerdataflow && DBUG) fprintf(stderr,"read32(0x%08X)=",addr);
     
     switch(addr&0xF0000000)
     {
@@ -654,10 +631,6 @@ if(registerdataflow && DBUG) fprintf(stderr,"read32(0x%08X)=",addr);
      free(str);
      return(data);
     
-
-    fprintf(stderr,"read32(0x%08X), abort pc 0x%04X\n",addr,read_register(15));
-    exit(1);
-    
 }
 
 //-------------------------------------------------------------------
@@ -667,8 +640,8 @@ unsigned int read_register ( unsigned int reg )
     unsigned int data;
 
     reg&=0xF;
-if(registerdataflow && DBUG) fprintf(stderr,"read_register(%u)=",reg);
-if(DBUGREG) fprintf(stderr,"read_register(%u)=",reg);
+    if(registerdataflow && DBUG) fprintf(stderr,"read_register(%u)=",reg);
+    if(DBUGREG) fprintf(stderr,"read_register(%u)=",reg);
     data=reg_norm[reg];
     if(reg==15)
     {
@@ -678,16 +651,16 @@ if(DBUGREG) fprintf(stderr,"read_register(%u)=",reg);
         }
         data&=~1;
     }
-if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
-if(DBUGREG) fprintf(stderr,"0x%08X\n",data);
+    if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
+    if(DBUGREG) fprintf(stderr,"0x%08X\n",data);
     return(data);
 }
 //-------------------------------------------------------------------
 void write_register ( unsigned int reg, unsigned int data )
 {
     reg&=0xF;
-if(registerdataflow && DBUG) fprintf(stderr,"write_register(%u,0x%08X)\n",reg,data);
-if(DBUGREG) fprintf(stderr,"write_register(%u,0x%08X)\n",reg,data);
+    if(registerdataflow && DBUG) fprintf(stderr,"write_register(%u,0x%08X)\n",reg,data);
+    if(DBUGREG) fprintf(stderr,"write_register(%u,0x%08X)\n",reg,data);
     if(reg==15) data&=~1;
     reg_norm[reg]=data;
 
