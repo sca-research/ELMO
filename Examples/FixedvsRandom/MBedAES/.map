@@ -5,7 +5,7 @@ Archive member included to satisfy reference by file (symbol)
 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o)
                               /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o) (_malloc_r)
 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-memset.o)
-                              /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o (memset)
+                              /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o (memset)
 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mlock.o)
                               /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-mallocr.o) (__malloc_lock)
 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-sbrkr.o)
@@ -32,8 +32,8 @@ Discarded input sections
  .text          0x0000000000000000        0x0 MBedAES.o
  .data          0x0000000000000000        0x0 MBedAES.o
  .bss           0x0000000000000000        0x0 MBedAES.o
- .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
- .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
+ .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
+ .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
  .data          0x0000000000000000        0x0 ../../elmoasmfunctions.o
  .bss           0x0000000000000000        0x0 ../../elmoasmfunctions.o
  .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-malloc.o)
@@ -82,7 +82,7 @@ Linker script and memory map
 
 LOAD vector.o
 LOAD MBedAES.o
-LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
+LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
 LOAD ../../elmoasmfunctions.o
 START GROUP
 LOAD /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a
@@ -148,7 +148,7 @@ END GROUP
  .text.startup.main
                 0x0000000008000140       0xd8 MBedAES.o
                 0x0000000008000140                main
- .text          0x0000000008000218     0x1388 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
+ .text          0x0000000008000218     0x1388 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
                 0x0000000008000244                mbedtls_aes_init
                 0x0000000008000264                mbedtls_aes_free
                 0x000000000800028c                mbedtls_aes_setkey_enc
@@ -197,7 +197,7 @@ END GROUP
                 0x0000000008001f08       0x10 MBedAES.o
  .rodata.fixedkey.5668
                 0x0000000008001f18       0x10 MBedAES.o
- .rodata        0x0000000008001f28     0x2228 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
+ .rodata        0x0000000008001f28     0x2228 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
  .rodata.str1.4
                 0x0000000008004150        0x4 /usr/local/Cellar/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.2.1/../../../../arm-none-eabi/lib/armv6-m/libc.a(lib_a-impure.o)
                                           0x2 (size before relaxing)
@@ -341,7 +341,7 @@ OUTPUT(MBedAES.elf elf32-littlearm)
                                          0x71 (size before relaxing)
  .comment       0x0000000000000070       0x6e MBedAES.o
                                          0x6f (size before relaxing)
- .comment       0x00000000000000de       0x6f /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
+ .comment       0x00000000000000de       0x6f /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
 
 .ARM.attributes
                 0x0000000000000000       0x2d
@@ -350,7 +350,7 @@ OUTPUT(MBedAES.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000031       0x31 MBedAES.o
  .ARM.attributes
-                0x0000000000000062       0x31 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//cc5dLDlg.o
+                0x0000000000000062       0x31 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccIDsTRt.o
  .ARM.attributes
                 0x0000000000000093       0x14 ../../elmoasmfunctions.o
  .ARM.attributes

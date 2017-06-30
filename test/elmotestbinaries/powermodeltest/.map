@@ -27,8 +27,8 @@ Discarded input sections
  .text          0x0000000000000000        0x0 vector.o
  .data          0x0000000000000000        0x0 vector.o
  .bss           0x0000000000000000        0x0 vector.o
- .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccLJoye9.o
- .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccLJoye9.o
+ .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccuPtYI8.o
+ .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccuPtYI8.o
  .text          0x0000000000000000        0x0 runtime.o
  .data          0x0000000000000000        0x0 runtime.o
  .bss           0x0000000000000000        0x0 runtime.o
@@ -76,7 +76,7 @@ ram              0x0000000020000000 0x0000000000002000 xrw
 Linker script and memory map
 
 LOAD vector.o
-LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccLJoye9.o
+LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccuPtYI8.o
 LOAD runtime.o
 LOAD ../elmoasmfunctions.o
 START GROUP
@@ -140,7 +140,7 @@ END GROUP
  .text.reset_handler
                 0x00000000080000c4       0x7c vector.o
                 0x00000000080000c4                reset_handler
- .text          0x0000000008000140        0xa /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccLJoye9.o
+ .text          0x0000000008000140        0xa /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccuPtYI8.o
                 0x0000000008000140                instructions
  *fill*         0x000000000800014a        0x2 
  .text.startup.main
@@ -349,7 +349,7 @@ OUTPUT(runtime.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000000       0x31 vector.o
  .ARM.attributes
-                0x0000000000000031       0x21 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccLJoye9.o
+                0x0000000000000031       0x21 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccuPtYI8.o
  .ARM.attributes
                 0x0000000000000052       0x31 runtime.o
  .ARM.attributes

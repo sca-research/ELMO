@@ -1,22 +1,67 @@
 /*
- 
- ################################################################################################
- # Default                        # Alternative                   # Define                      #
- ################################################################################################
- # ASCII traces                   # Binary traces                 # BINARYTRACES                #
- # ELMO power model               # Hamming weight model          # POWERMODEL_HW               #
- # Modelled differential voltage  # Convert to power              # POWERTRACES                 #
- # All traces are same length     # Traces of different length    # DIFFTRACELENGTH             #
- # Not mean centered              # Mean centred (need to         # MEANCENTRE                  #
- #                                # evaluate higher order masks)  #                             #
- # Instruction accurate traces    # Cycle accurate traces         # CYCLEACCURATE 1             #
- # Print first asm trace          # Print all asm traces          # PRINTALLASMTRACES 1         #
- # Print first non-profiled trace # Print all non-profiled traces # PRINTALLNONPROFILEDTRACES 1 #
- ################################################################################################
- 
- To include fixed vs random, mask flow and energy modelling evaluations define FIXEDVSRANDOM, MASKFLOW and ENERGYMODEL respectively.
-
+ * University of Bristol – Open Access Software Licence
+ * Copyright (c) 2016, The University of Bristol, a chartered
+ * corporation having Royal Charter number RC000648 and a charity
+ * (number X1121) and its place of administration being at Senate
+ * House, Tyndall Avenue, Bristol, BS8 1TH, United Kingdom.
+ * All rights reserved
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Any use of the software for scientific publications or commercial
+ * purposes should be reported to the University of Bristol
+ * (OSI-notifications@bristol.ac.uk and quote reference 2668). This is
+ * for impact and usage monitoring purposes only.
+ *
+ * Enquiries about further applications and development opportunities
+ * are welcome. Please contact elisabeth.oswald@bristol.ac.uk
  */
+/*
+ *################################################################################################
+ *# Default                        # Alternative                   # Define                      #
+ *################################################################################################
+ *# ASCII traces                   # Binary traces                 # BINARYTRACES                #
+ *# ELMO power model               # Hamming weight model          # POWERMODEL_HW               #
+ *# Modelled differential voltage  # Convert to power              # POWERTRACES                 #
+ *# All traces are same length     # Traces of different length    # DIFFTRACELENGTH             #
+ *# Not mean centered              # Mean centred (need to         # MEANCENTRE                  #
+ *#                                # evaluate higher order masks)  #                             #
+ *# Instruction accurate traces    # Cycle accurate traces         # CYCLEACCURATE 1             #
+ *# Print first asm trace          # Print all asm traces          # PRINTALLASMTRACES 1         #
+ *# Print first non-profiled trace # Print all non-profiled traces # PRINTALLNONPROFILEDTRACES 1 #
+ *################################################################################################
+ *
+ * To include fixed vs random, mask flow and energy modelling evaluations define FIXEDVSRANDOM,
+ * MASKFLOW and ENERGYMODEL respectively.
+ */
+
+/*******************************************************************************************/
+/* Thumbulator */
+
+FILE *fpvcd;
 
 unsigned int read32 ( unsigned int );
 unsigned int read_register ( unsigned int );
@@ -27,6 +72,41 @@ unsigned int read_register ( unsigned int );
 #define DBUGREG     0
 #define DISS        0
 #define DBUG        0
+
+#define ROMADDMASK 0xFFFFF
+#define RAMADDMASK 0xFFFFF
+
+#define ROMSIZE (ROMADDMASK+1)
+#define RAMSIZE (RAMADDMASK+1)
+
+unsigned short rom[ROMSIZE>>1];
+unsigned short ram[RAMSIZE>>1];
+
+#define CPSR_N (1<<31)
+#define CPSR_Z (1<<30)
+#define CPSR_C (1<<29)
+#define CPSR_V (1<<28)
+#define CPSR_Q (1<<27)
+
+unsigned int vcdcount;
+unsigned int output_vcd;
+
+unsigned int systick_ctrl;
+unsigned int systick_reload;
+unsigned int systick_count;
+unsigned int systick_calibrate;
+
+unsigned int halfadd;
+unsigned int cpsr;
+unsigned int handler_mode;
+unsigned int reg_norm[16]; //normal execution mode, do not have a thread model
+unsigned long fetches;
+unsigned long reads;
+unsigned long writes;
+unsigned long systick_ints;
+
+/*******************************************************************************************/
+/*ELMO*/
 
 //#define FIXEDVSRANDOM
 //#define MASKFLOW
@@ -87,30 +167,8 @@ unsigned int read_register ( unsigned int );
 //8 MHz
 #define CLOCKCYCLETIME 0.000000125
 
-#define ROMADDMASK 0xFFFFF
-#define RAMADDMASK 0xFFFFF
 
-#define ROMSIZE (ROMADDMASK+1)
-#define RAMSIZE (RAMADDMASK+1)
-
-unsigned short rom[ROMSIZE>>1];
-unsigned short ram[RAMSIZE>>1];
-
-#define CPSR_N (1<<31)
-#define CPSR_Z (1<<30)
-#define CPSR_C (1<<29)
-#define CPSR_V (1<<28)
-#define CPSR_Q (1<<27)
-
-FILE *fpvcd, *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *maskflow;
-
-unsigned int vcdcount;
-unsigned int output_vcd;
-
-unsigned int systick_ctrl;
-unsigned int systick_reload;
-unsigned int systick_count;
-unsigned int systick_calibrate;
+FILE *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *maskflow;
 
 unsigned int t;
 unsigned int tracestart;
@@ -127,15 +185,6 @@ unsigned int maskflowfailno;
 unsigned int start_mask_dataflow;
 unsigned int debug;
 unsigned int fixedvsrandomtest;
-
-unsigned int halfadd;
-unsigned int cpsr;
-unsigned int handler_mode;
-unsigned int reg_norm[16]; //normal execution mode, do not have a thread model
-unsigned long fetches;
-unsigned long reads;
-unsigned long writes;
-unsigned long systick_ints;
 
 double energy;
 

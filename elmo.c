@@ -1,4 +1,48 @@
-/* ELMO is based on the Thumblator emmulator which can be found at: https://github.com/dwelch67/thumbulator. The functional correctness of this code has been tested using a number generic testing methods however we do not garentee this code to be bug free. */
+/*
+ * University of Bristol – Open Access Software Licence
+ * Copyright (c) 2016, The University of Bristol, a chartered
+ * corporation having Royal Charter number RC000648 and a charity
+ * (number X1121) and its place of administration being at Senate
+ * House, Tyndall Avenue, Bristol, BS8 1TH, United Kingdom.
+ * All rights reserved
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Any use of the software for scientific publications or commercial
+ * purposes should be reported to the University of Bristol
+ * (OSI-notifications@bristol.ac.uk and quote reference 2668). This is
+ * for impact and usage monitoring purposes only.
+ *
+ * Enquiries about further applications and development opportunities
+ * are welcome. Please contact elisabeth.oswald@bristol.ac.uk
+ */
+/*
+ * ELMO is based on the Thumblator emmulator which can be found at: 
+ * https://github.com/dwelch67/thumbulator.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,10 +60,6 @@
 
 #include "include/powermodel.h"
 #include "include/fixedvsrandom.h"
-
-#ifdef DBUG
-#include "include/debug.h"
-#endif
 
 #ifdef MASKFLOW
     #include "include/maskflow.h"
@@ -137,8 +177,6 @@ void initialise_dataflow(dataflow *item){
 
 dataflow *create_dataflow(dataflow *item){
     
-    int i;
-    
     item -> next = malloc(sizeof(dataflow));
     item = item -> next;
     initialise_dataflow(item);
@@ -253,12 +291,12 @@ unsigned int leakagetestfail(void){
 
 void dump_counters ( void )
 {
-    int i;
     FILE *fp;
     
     // Get trace length
     fp = loadtrace(1);
     tracelength = gettracelength(fp);
+    fclose(fp);
     instructions = tracelength;
     
     printf("\n########################################\n\nSUMMARY:\n");
@@ -270,7 +308,7 @@ void dump_counters ( void )
 #endif
     printf("first order fixed vs random fail instructions/cycles %d\n",leakyinstructionno);
     printf("second order fixed vs random instructions/cycles\n");
-    for(i=0;i<no_masks;i++)
+    for(unsigned int i=0;i<no_masks;i++)
         printf("mask %d: %d\n",i, maskfixedvsrandomfail[i]);
 
 }
@@ -295,6 +333,20 @@ if(registerdataflow && DBUG) fprintf(stderr,"fetch16(0x%08X)=",addr);
 //    fprintf(stderr,"fetch16(0x%08X), abort\n",addr);
 //    exit(1);
 //}
+            
+            addr>>=1;
+            data=rom[addr];
+            if(DBUGFETCH) fprintf(stderr,"0x%04X\n",data);
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
+            return(data);
+        case 0x10000000: //ROM
+            addr&=ROMADDMASK;
+            
+            //if(addr<0x50)
+            //{
+            //    fprintf(stderr,"fetch16(0x%08X), abort\n",addr);
+            //    exit(1);
+            //}
             
             addr>>=1;
             data=rom[addr];
@@ -333,6 +385,18 @@ if(registerdataflow && DBUG) fprintf(stderr,"fetch32(0x%08X)=",addr);
                 fprintf(stderr,"fetch32(0x%08X), abort pc = 0x%04X\n",addr,read_register(15));
                 exit(1);
             }
+        case 0x10000000: //ROM
+            if(addr<0x50)
+            {
+                data=read32(addr);
+                if(DBUGFETCH) fprintf(stderr,"0x%08X\n",data);
+                if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
+                if(addr==0x00000000) return(data);
+                if(addr==0x00000004) return(data);
+                if(addr==0x0000003C) return(data);
+                fprintf(stderr,"fetch32(0x%08X), abort pc = 0x%04X\n",addr,read_register(15));
+                exit(1);
+            }
         default: //RAM
             //data=fetch16(addr+0);
             //data|=((unsigned int)fetch16(addr+2))<<16;
@@ -351,6 +415,8 @@ void write16 ( unsigned int addr, unsigned int data )
     writes++;
     
     if(registerdataflow && DBUG) fprintf(stderr,"write16(0x%08X,0x%04X)\n",addr,data);
+    
+    // Assume write is to RAM
 
     if(DBUGRAM) fprintf(stderr,"write16(0x%08X,0x%04X)\n",addr,data);
     addr&=RAMADDMASK;
@@ -508,12 +574,14 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
 
             }
             return;
+            
+        default: // Do two write 16s
+            if(DBUGRAMW) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data);
+            write16(addr+0,(data>> 0)&0xFFFF);
+            write16(addr+2,(data>>16)&0xFFFF);
+            return;
     }
-        //RAM
-        if(DBUGRAMW) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data);
-        write16(addr+0,(data>> 0)&0xFFFF);
-        write16(addr+2,(data>>16)&0xFFFF);
-        return;
+
 }
 
 //-----------------------------------------------------------------
@@ -529,6 +597,12 @@ if(registerdataflow && DBUG) fprintf(stderr,"read16(0x%08X)=",addr);
     switch(addr&0xF0000000)
     {
         case 0x00000000: //ROM
+            addr&=ROMADDMASK;
+            addr>>=1;
+            data=rom[addr];
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%04X\n",data);
+            return(data);
+        case 0x10000000: //ROM
             addr&=ROMADDMASK;
             addr>>=1;
             data=rom[addr];
@@ -620,16 +694,16 @@ unsigned int read32 ( unsigned int addr )
 
             }
         }
+            
+        default: //Do two read16s
+            if(DBUGRAMW) fprintf(stderr,"read32(0x%08X)=",addr);
+            data =read16(addr+0);
+            data|=((unsigned int)read16(addr+2))<<16;
+            if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
+            if(DBUGRAMW) fprintf(stderr,"0x%08X\n",data);
+            free(str);
+            return(data);
     }
-    
-     // Case RAM
-     if(DBUGRAMW) fprintf(stderr,"read32(0x%08X)=",addr);
-     data =read16(addr+0);
-     data|=((unsigned int)read16(addr+2))<<16;
-     if(registerdataflow && DBUG) fprintf(stderr,"0x%08X\n",data);
-     if(DBUGRAMW) fprintf(stderr,"0x%08X\n",data);
-     free(str);
-     return(data);
     
 }
 
@@ -729,13 +803,11 @@ int execute ( void )
 	unsigned int sp;
 	unsigned int inst;
 	
-	unsigned int op1 = 0,op2 = 0,output;
+	unsigned int op1 = 0,op2 = 0;
 	unsigned int ra,rb,rc;
 	unsigned int rm,rd,rn,rs;
 	unsigned int op;
     
-    bit32_maskflow ra_maskflow,rb_maskflow,rc_maskflow, op1_maskflow, op2_maskflow;
-
 //if(fetches>400000) return(1);
 
     pc=read_register(15);
@@ -1271,7 +1343,11 @@ if(output_vcd)
     if((inst&0xF000)==0xD000)
     {
         rb=(inst>>0)&0xFF;
-        if(rb&0x80) rb|=(~0)<<8;
+        if(rb&0x80) {
+            unsigned int tmp = ~0;
+            tmp <<= 8;
+            rb|=tmp;
+        }
         op=(inst>>8)&0xF;
         rb<<=1;
         rb+=pc;
@@ -1506,7 +1582,13 @@ if(output_vcd)
     if((inst&0xF800)==0xE000)
     {
         rb=(inst>>0)&0x7FF;
-        if(rb&(1<<10)) rb|=(~0)<<11;
+
+        if(rb&(1<<10)) {
+            unsigned int tmp = ~0;
+            tmp <<= 11;
+            rb|=tmp;
+        }
+
         rb<<=1;
         rb+=pc;
         rb+=2;
@@ -2280,7 +2362,11 @@ if(output_vcd)
 #endif
         }
         rc&=0xFF;
-        if(rc&0x80) rc|=((~0)<<8);
+        if(rc&0x80) {
+            unsigned int tmp = ~0;
+            tmp <<= 8;
+            rc|=tmp;
+        }
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
@@ -2310,7 +2396,11 @@ if(output_vcd)
         rc=read16(rb);
     
         rc&=0xFFFF;
-        if(rc&0x8000) rc|=((~0)<<16);
+        if(rc&0x8000) {
+            unsigned int tmp = ~0;
+            tmp <<= 16;
+            rc|=tmp;
+        }
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
@@ -2354,7 +2444,9 @@ if(output_vcd)
         else
         {
             //else immed_5 > 0
-            do_cflag_bit(rc&(1<<(32-rb)));
+            unsigned int shifted = 1;
+            shifted = shifted << (32 - rb);
+            do_cflag_bit(rc&shifted);
             rc<<=rb;
             
 #ifdef MASKFLOW
@@ -2405,7 +2497,9 @@ if(output_vcd)
         }
         else if(rb<32)
         {
-            do_cflag_bit(rc&(1<<(32-rb)));
+            unsigned int shifted = 1;
+            shifted = shifted << (32 - rb);
+            do_cflag_bit(rc&shifted);
             rc<<=rb;
             
 #ifdef MASKFLOW
@@ -3657,7 +3751,11 @@ if(output_vcd)
         rm=(inst>>3)&0x7;
         ra=read_register(rm);
         rc=ra&0xFF;
-        if(rc&0x80) rc|=(~0)<<8;
+        if(rc&0x80) {
+            unsigned int tmp = ~0;
+            tmp <<= 8;
+            rc|=tmp;
+        }
         
         op1 = 0; op2 = 0;
         write_register(rd,rc);
@@ -3687,7 +3785,11 @@ if(output_vcd)
         
         ra=read_register(rm);
         rc=ra&0xFFFF;
-        if(rc&0x8000) rc|=(~0)<<16;
+        if(rc&0x8000) {
+            unsigned int tmp = ~0;
+            tmp <<= 16;
+            rc|=tmp;
+        }
         op1 = 0; op2 = 0;
         write_register(rd,rc);
         
@@ -3879,7 +3981,7 @@ int main ( int argc, char *argv[] )
     time_t timet;
 
     unsigned int ra, j, fvr_only;
-    char line[128], str[500], filepath[500];
+    char line[128];
     const char s[2] = " ";
     char *token;
     
@@ -3925,7 +4027,7 @@ int main ( int argc, char *argv[] )
     }
 
     output_vcd=0;
-    for(ra=0;ra<argc;ra++)
+    for(ra=0;ra<(unsigned)argc;ra++)
     {
         if(strcmp(argv[ra],"--vcd")==0) output_vcd=1;
         if(strcmp(argv[ra],"-fvr")==0){
@@ -3993,11 +4095,14 @@ int main ( int argc, char *argv[] )
     // Compile coefficiants
     fpcoeffs = fopen(COEFFSFILE , "r");
 
-    fgets(line, sizeof line, fp);
+    fgets(line, sizeof line, fpcoeffs);
     token = strtok(line, s);
-        
+
     for(j=0; j<5; j++){
-        
+	    if(token == NULL) {
+	    	printf("Error: \"token\" ad idx %d is NULL. Aborting.\n", j);
+	    	exit(666);
+	    }        
         sscanf(token, "%lf", &constant[j]);
         token = strtok(NULL, s);
             
@@ -4021,6 +4126,8 @@ int main ( int argc, char *argv[] )
     readcoeffs(Operand2_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip1_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip2_bitinteractions,fpcoeffs, 496);
+
+    fclose(fpcoeffs);
     
     memset(ram,0x00,sizeof(ram));
     

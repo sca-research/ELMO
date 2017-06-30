@@ -27,8 +27,8 @@ Discarded input sections
  .text          0x0000000000000000        0x0 vector.o
  .data          0x0000000000000000        0x0 vector.o
  .bss           0x0000000000000000        0x0 vector.o
- .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccFVQZ5L.o
- .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccFVQZ5L.o
+ .data          0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccGQ963Q.o
+ .bss           0x0000000000000000        0x0 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccGQ963Q.o
  .text          0x0000000000000000        0x0 MaskedAES_R1.o
  .data          0x0000000000000000        0x0 MaskedAES_R1.o
  .bss           0x0000000000000000        0x0 MaskedAES_R1.o
@@ -79,7 +79,7 @@ ram              0x0000000020000000 0x0000000000002000 xrw
 Linker script and memory map
 
 LOAD vector.o
-LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccFVQZ5L.o
+LOAD /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccGQ963Q.o
 LOAD MaskedAES_R1.o
 LOAD ../../elmoasmfunctions.o
 START GROUP
@@ -143,7 +143,7 @@ END GROUP
  .text.reset_handler
                 0x00000000080000c4       0x7c vector.o
                 0x00000000080000c4                reset_handler
- .text          0x0000000008000140      0x15c /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccFVQZ5L.o
+ .text          0x0000000008000140      0x15c /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccGQ963Q.o
                 0x0000000008000140                acComputeAESMasked
  .text.startup.main
                 0x000000000800029c      0x11c MaskedAES_R1.o
@@ -353,7 +353,7 @@ OUTPUT(MaskedAES_R1.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000000       0x31 vector.o
  .ARM.attributes
-                0x0000000000000031       0x21 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccFVQZ5L.o
+                0x0000000000000031       0x21 /var/folders/23/292pfjwj4wvg32_6z960xk708c94_s/T//ccGQ963Q.o
  .ARM.attributes
                 0x0000000000000052       0x31 MaskedAES_R1.o
  .ARM.attributes
