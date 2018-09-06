@@ -39,7 +39,7 @@
  * Enquiries about further applications and development opportunities
  * are welcome. Please contact elisabeth.oswald@bristol.ac.uk
  */
-
+bit32_maskflow ra_maskflow,rb_maskflow,rc_maskflow,op1_maskflow,op2_maskflow;
 bit32_maskflow *initialisemaskflow32(void){
     
     bit32_maskflow *bit32;
@@ -156,7 +156,7 @@ void printmask(unsigned int mask){
 
     for(i=0;i<mask;i++)
         current_mask = current_mask->next;
-    print32(*current_mask);
+    //print32(*current_mask);
     
 }
 
