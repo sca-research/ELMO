@@ -43,6 +43,7 @@
 extern void starttrigger(void);
 extern void endtrigger(void);
 extern void randbyte(unsigned char * pointer);
+extern void LoadNForTVLA(void* addr);
 extern void readbyte(unsigned char * pointer);
 extern void printbyte(unsigned char * pointer);
 extern void endprogram(void);

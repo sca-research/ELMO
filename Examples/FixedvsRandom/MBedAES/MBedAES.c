@@ -41,7 +41,7 @@
  */
 
 #define NOTRACES 5000
-
+#define AUTON //Automaticially decide the number of traces N
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -51,12 +51,22 @@
 int main(void) {
     
     int i,j;
-    
+    uint32_t N;
     uint8_t *input, *output, *key;
     
     key = malloc(16*sizeof(uint8_t));
     input = malloc(16*sizeof(uint8_t));
     output = malloc(16*sizeof(uint8_t));
+
+
+
+    #ifdef AUTON
+     LoadNForTVLA(&N);//Get N from ELMO
+    #else
+     N=NOTRACES;
+    #endif
+
+
     
     // Use fixed key and fixed input as specified by CRI for use with AES
 
@@ -70,11 +80,42 @@ int main(void) {
     for(j=0;j<16;j++)
         output[j] = 0x00;
     
-    // Fixed Traces
 
-    for(i=0;i<NOTRACES;i++){
+     // Random Traces
+    
+    for(i=0;i<2*N;i++){
         
+	//Switch from Fix to Random (Only do it once)
+        if(i==N){
+		for(j=0;j<16;j++)
+           	  output[j] = 0x00;
+	}
         for(j=0;j<16;j++){
+            if(i<N){
+		input[j] = fixedinput[j]; // Fixed Traces
+	    }
+	    else{
+		input[j] = output[j]; // Random Traces
+	    }
+            
+            key[j] = fixedkey[j];
+        }
+
+        
+        mbedtls_aes_setkey_enc(ctx, key, 128);
+
+                
+        starttrigger();
+        
+            mbedtls_aes_encrypt(ctx, input, output);
+        
+        endtrigger();
+    }
+
+
+ /*   for(i=0;i<N;i++){
+        
+       for(j=0;j<16;j++){
 
             input[j] = fixedinput[j];
             key[j] = fixedkey[j];
@@ -89,28 +130,14 @@ int main(void) {
         endtrigger();
         
     }
+*/
 
-    for(j=0;j<16;j++)
-        output[j] = 0x00;
+   // for(j=0;j<16;j++)
+    //    output[j] = 0x00;
+   // for(j=0;j<16;j++)
+   //     randbyte(output[j]);
 
-    // Random Traces
-    
-    for(i=0;i<NOTRACES;i++){
-        
-        for(j=0;j<16;j++){
-            input[j] = output[j];
-            key[j] = fixedkey[j];
-        }
-        
-        mbedtls_aes_setkey_enc(ctx, key, 128);
-        
-        starttrigger();
-        
-            mbedtls_aes_encrypt(ctx, input, output);
-        
-        endtrigger();
-        
-    }
+   
     
     endprogram();
 

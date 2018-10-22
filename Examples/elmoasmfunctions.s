@@ -91,6 +91,23 @@ bx lr
 
 .endfunc
 
+.func LoadNForTVLA
+.global LoadNForTVLA
+
+LoadNForTVLA:
+    push {r0-r7}
+    movs r4, #0xE1
+    lsls r4, #24
+    movs r5, #0x10
+    eors r4, r5
+    ldr r1, [r4, #0]
+    str r1, [r0, #0]
+    pop {r0-r7}
+
+bx lr
+
+.endfunc
+
 .func randbyte
 .global randbyte
 

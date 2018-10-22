@@ -69,6 +69,49 @@
     #include "include/energy.h"
 #endif
 
+//For the license issue, here we use a vague approximation for the gaussian quantile function;
+//Will fix this later
+
+// Abramowitz and Stegun "Handbook of Mathematical Functions" formula 26.2.23.
+// Code from "www.johndcook.com/blog/normal_cdf_inverse/"
+double RationalApproximation(double t)
+{
+    double c[] = {2.515517, 0.802853, 0.010328};
+    double d[] = {1.432788, 0.189269, 0.001308};
+    return t - ((c[2]*t + c[1])*t + c[0]) /
+        (((d[2]*t + d[1])*t + d[0])*t + 1.0);
+}
+double NormalCDFInverse(double p)
+{
+    if (p < 0.5)
+    {
+        return -RationalApproximation( sqrt(-2.0*log(p)) );
+    }
+    else
+    {
+        return RationalApproximation( sqrt(-2.0*log(1-p)) );
+    }
+}
+double gaussian_quantile(double alpha)
+{
+
+    return NormalCDFInverse(1-alpha);
+}
+
+//Automatically decide the number of traces for TVLA
+int getsamplesize_standardTVLA(){
+
+    //formula (2) in Section3.pdf
+    double upper=(gaussian_quantile(Statistical_alpha)+gaussian_quantile(Statistical_beta))*(gaussian_quantile(Statistical_alpha)+gaussian_quantile(Statistical_beta))*2*Model_Variance;
+    double lower=EffectiveSize*EffectiveSize;
+    double N=2*floor(upper/lower);//Multiply 2 to counter the statistic effect
+
+    //Set a minimal value for N
+    if(N<50)
+	N=50;
+    printf("ES=%lf, alpha=%lf, beta=%lf, N=%lf\n",EffectiveSize,Statistical_alpha,Statistical_beta,N);
+    return (int)N;
+}
 //-------------------------------------------------------------------
 
 // Linked list functions for maskflow
@@ -146,8 +189,11 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
 
 #else
 
-    if(t==1)
+    if((t==1)||(item->next==NULL)){
         item = create_dataflow(item);
+	if(t!=1)
+	  printf("Trace Length Difference! Check your code...\n");
+    }
     else{
         item = item->next;
         initialise_dataflow(item);
@@ -228,8 +274,11 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
     
 #else
 
-    if(t==1)
+ if((t==1)||(item->next==NULL)){
         item = create_dataflow(item);
+	if(t!=1)
+	  printf("Trace Length Difference! Check your code...\n");
+    }
     else{
         item = item->next;
         initialise_dataflow(item);
@@ -451,12 +500,13 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
 
             dump_counters();
             exit(0);
-        case 0xE0000000: //periph
+        case 0xE0000000: //print byte
             switch(addr)
         {
             case 0xE0000000:{
                 fprintf(uartout,"%02x\n",data);
-                fflush(stdout);
+                //fflush(stdout);
+                fflush(uartout);
                 break;
             }
             case 0xE0000004:{ // trigger
@@ -687,6 +737,13 @@ unsigned int read32 ( unsigned int addr )
                 case 0xE100000C:
                 {
                     data = runcount;
+                    free(str);
+                    return(data);
+
+                }
+                case 0xE1000010://New ELMO library function: LoadNForTVLA(&N), return the automatically determined number of traces for one Fix-vs-Random Ttest
+                {
+                    data=getsamplesize_standardTVLA();
                     free(str);
                     return(data);
 
@@ -3971,7 +4028,17 @@ void readcoeffs(double varaddress[][5], FILE *fp, int number){
         }
     }
 }
+//-------------------------------------------------------------------
+//Read model variance from the coefficient file
+double readmodelvariance(FILE *fp){
+    
+    char line[128];  
+    double result;
+    fgets(line, sizeof line, fp);
+    sscanf(line, "%lf", &result);
+    return result;
 
+}
 //-------------------------------------------------------------------
 
 int main ( int argc, char *argv[] )
@@ -4025,6 +4092,10 @@ int main ( int argc, char *argv[] )
         fprintf(stderr,"bin file not specified\n");
         return(1);
     }
+    //Default value for effectivesize, alpha and beta (for automation of the number of traces of TVLA)
+    EffectiveSize=EFFECTIVESIZE;
+    Statistical_alpha=TVLA_ALPHA;
+    Statistical_beta=TVLA_BETA;
 
     output_vcd=0;
     for(ra=0;ra<(unsigned)argc;ra++)
@@ -4048,6 +4119,12 @@ int main ( int argc, char *argv[] )
         }
         if(strcmp(argv[ra],"-starttraceghost")==0){
             sscanf(argv[ra+1], "%d", &tracestart);
+        }
+        //Setting the parameters for automatically determining the sample size for TVLA
+         if(strcmp(argv[ra],"-autotvla")==0){
+            sscanf(argv[ra+1], "%lf", &EffectiveSize);
+            sscanf(argv[ra+2], "%lf", &Statistical_alpha);
+            sscanf(argv[ra+3], "%lf", &Statistical_beta);
         }
     }
     fp=fopen(argv[1],"rb");
@@ -4126,6 +4203,10 @@ int main ( int argc, char *argv[] )
     readcoeffs(Operand2_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip1_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip2_bitinteractions,fpcoeffs, 496);
+
+    #ifdef AUTOTVLA// read the extra variance estimation in the coefficient file
+    Model_Variance=readmodelvariance(fpcoeffs);
+    #endif
 
     fclose(fpcoeffs);
     
