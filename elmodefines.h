@@ -119,7 +119,7 @@ unsigned long systick_ints;
 //#define POWERMODEL_HW
 
 // Toggle between 1 (for on) or 0 (for off)
-#define PRINTALLASMTRACES 1
+#define PRINTALLASMTRACES 0
 #define PRINTALLNONPROFILEDTRACES 0
 #define CYCLEACCURATE 1
 #define AUTOTVLA// Determine the sample size of TLVA automatically, require an extra variance estimation in the coefficient file
@@ -169,9 +169,9 @@ unsigned long systick_ints;
 #define CLOCKCYCLETIME 0.000000125
 
 //Default values for automatic TVLA
-#define EFFECTIVESIZE 0.02
-#define TVLA_ALPHA 0.00001
-#define TVLA_BETA 0.3 //(???)
+#define TVLA_ALPHA 0.01
+#define EFFECTIVESIZE 0.01
+#define TVLA_BETA 0.1
 FILE *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *maskflow;
 
 unsigned int t;
@@ -195,7 +195,8 @@ double energy;
 // Coeffiecients for power model
 double constant[5], PrvInstr[4][5], SubInstr[4][5], Operand1[32][5], Operand2[32][5], BitFlip1[32][5], BitFlip2[32][5],  HWOp1PrvInstr[4][5], HWOp2PrvInstr[4][5], HDOp1PrvInstr[4][5], HDOp2PrvInstr[4][5], HWOp1SubInstr[4][5], HWOp2SubInstr[4][5], HDOp1SubInstr[4][5], HDOp2SubInstr[4][5], Operand1_bitinteractions[496][5], Operand2_bitinteractions[496][5], BitFlip1_bitinteractions[496][5], BitFlip2_bitinteractions[496][5];
 // Parameters for calculating the sample size for standard Fix-vs-Random TVLA
-double Model_Variance, EffectiveSize, Statistical_alpha, Statistical_beta;
+double EffectiveSize, Statistical_alpha, Statistical_beta;
+int N;
 
 struct bit32maskflow{
     

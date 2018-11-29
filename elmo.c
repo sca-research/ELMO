@@ -69,11 +69,10 @@
     #include "include/energy.h"
 #endif
 
-//For the license issue, here we use a vague approximation for the gaussian quantile function;
-//Will fix this later
-
+#ifndef Pi 
+#define Pi 3.141592653589793238462643 
+#endif 
 // Abramowitz and Stegun "Handbook of Mathematical Functions" formula 26.2.23.
-// Code from "www.johndcook.com/blog/normal_cdf_inverse/"
 double RationalApproximation(double t)
 {
     double c[] = {2.515517, 0.802853, 0.010328};
@@ -98,8 +97,25 @@ double gaussian_quantile(double alpha)
     return NormalCDFInverse(1-alpha);
 }
 
+
+double gaussian_CDF(double x)
+{
+  double L, K, w ;
+  /* constants */
+  double const a1 = 0.31938153, a2 = -0.356563782, a3 = 1.781477937;
+  double const a4 = -1.821255978, a5 = 1.330274429;
+
+  L = fabs(x);
+  K = 1.0 / (1.0 + 0.2316419 * L);
+  w = 1.0 - 1.0 / sqrt(2 * Pi) * exp(-L *L / 2) * (a1 * K + a2 * K *K + a3 * pow(K,3) + a4 * pow(K,4) + a5 * pow(K,5));
+
+  if (x < 0 ){
+    w= 1.0 - w;
+  }
+  return w;
+}
 //Automatically decide the number of traces for TVLA
-int getsamplesize_standardTVLA(){
+/*int getsamplesize_standardTVLA(){
 
     //formula (2) in Section3.pdf
     double upper=(gaussian_quantile(Statistical_alpha)+gaussian_quantile(Statistical_beta))*(gaussian_quantile(Statistical_alpha)+gaussian_quantile(Statistical_beta))*2*Model_Variance;
@@ -112,8 +128,18 @@ int getsamplesize_standardTVLA(){
     printf("ES=%lf, alpha=%lf, beta=%lf, N=%lf\n",EffectiveSize,Statistical_alpha,Statistical_beta,N);
     return (int)N;
 }
+*/
 //-------------------------------------------------------------------
+//Calculate the statistical power of the TVLA test under given number of traces
+//Caution note: as ELMO is a determinstic simulation, this beta might not be accurate
+double TVLA_power()
+{
+     //Formula (8) in the notes
+     double z_alpha=gaussian_quantile(Statistical_alpha/2.0);
+     double z_beta=sqrt(N)*EffectiveSize/2.0-z_alpha;
+     return 1-gaussian_CDF(z_beta);
 
+}
 // Linked list functions for maskflow
 
 #ifdef MASKFLOW
@@ -354,6 +380,12 @@ void dump_counters ( void )
     printf("instructions/cylces %d\n",instructions);
 #ifdef ENERGYMODEL
     printf("total energy consumption %0.20f\n",energy);
+#endif
+#ifdef AUTOTVLA
+    Statistical_beta=TVLA_power();
+    printf("User provided traces: %d\n",N);
+    printf("alpha=%0.5f, standardised effect size=%0.5f\n",Statistical_alpha,EffectiveSize);
+    printf("Power of the test=%0.5f\n",1-Statistical_beta);
 #endif
     printf("first order fixed vs random fail instructions/cycles %d\n",leakyinstructionno);
     printf("second order fixed vs random instructions/cycles\n");
@@ -743,7 +775,8 @@ unsigned int read32 ( unsigned int addr )
                 }
                 case 0xE1000010://New ELMO library function: LoadNForTVLA(&N), return the automatically determined number of traces for one Fix-vs-Random Ttest
                 {
-                    data=getsamplesize_standardTVLA();
+                    //data=getsamplesize_standardTVLA();
+		    data=N/2;
                     free(str);
                     return(data);
 
@@ -4029,8 +4062,8 @@ void readcoeffs(double varaddress[][5], FILE *fp, int number){
     }
 }
 //-------------------------------------------------------------------
-//Read model variance from the coefficient file
-double readmodelvariance(FILE *fp){
+//Read standalised effect size from the coefficient file
+double readeffectivesize(FILE *fp){
     
     char line[128];  
     double result;
@@ -4122,9 +4155,9 @@ int main ( int argc, char *argv[] )
         }
         //Setting the parameters for automatically determining the sample size for TVLA
          if(strcmp(argv[ra],"-autotvla")==0){
-            sscanf(argv[ra+1], "%lf", &EffectiveSize);
-            sscanf(argv[ra+2], "%lf", &Statistical_alpha);
-            sscanf(argv[ra+3], "%lf", &Statistical_beta);
+            sscanf(argv[ra+1], "%d", &N);
+            //sscanf(argv[ra+2], "%lf", &Statistical_alpha);
+            //sscanf(argv[ra+3], "%lf", &Statistical_beta);
         }
     }
     fp=fopen(argv[1],"rb");
@@ -4205,7 +4238,7 @@ int main ( int argc, char *argv[] )
     readcoeffs(BitFlip2_bitinteractions,fpcoeffs, 496);
 
     #ifdef AUTOTVLA// read the extra variance estimation in the coefficient file
-    Model_Variance=readmodelvariance(fpcoeffs);
+    EffectiveSize=readeffectivesize(fpcoeffs);
     #endif
 
     fclose(fpcoeffs);
