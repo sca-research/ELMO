@@ -1,13 +1,13 @@
-As stated in the manual, in order to run ELMO (or ELMO_mini), users need both the ARM toolchain and the GCC compiler. Since both tools are actually essential parts of embedded development platform, we expect both tools to be installed before ELMO. If not, please following the instruction below; note that here we only provide the instruction for Mac or Linux (Ubuntu): support for Windows is not provided yet.
+ELMO needs both the ARM toolchain and the GCC compiler. We provide the instruction for Mac or Linux (Ubuntu): support for Windows is not provided yet.
 
 1. GCC compiler collection:
 GCC is only used when ELMO is installed into a new system or the user changes some ELMO defines in "elmodefines.h". In both cases, ELMO needs to be recompiled to generate a new executable program.
 
     ---Mac:  Download and install “Command Line Tools for Xcode”, which is available on Apple’s developer page. After installation is completed, run “gcc -v” in a terminal to see whether you can see the correct version information.
-    ---Ubuntu: Type "sudo apt-get install gcc" in the command line will install gcc.
+    ---Ubuntu: Type "sudo apt-get install gcc" in the command line to install gcc.
 
 2. The GNU ARM Embedded Toolchain 
-The GNU ARM Embedded toolchain is used for compiling the test examples from C codes to ARM binary codes. Technically, this is *NOT* a step in ELMO, as ELMO starts from analyzing the binary codes. However, to run any user-defined test case, users need the ARM toolchain to compile their codes to binary codes (".bin" file). 
+The GNU ARM Embedded toolchain is used for compiling the test examples from C to ARM binaries. Technically, this is *NOT* a step in ELMO, as ELMO starts from analyzing the binary representation. However, to run any user-defined test case, users need the ARM toolchain to compile their codes to binary codes (".bin" file). 
 
 The GNU ARM Embedded Toolchain can be downloaded from https://developer.arm.com/open-source/gnu-toolchain/gnu-rm. According to ARM's install guide:
 
