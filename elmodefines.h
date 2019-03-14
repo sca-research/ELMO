@@ -172,6 +172,7 @@ unsigned long systick_ints;
 #define TVLA_ALPHA 0.01
 #define EFFECTIVESIZE 0.01
 #define TVLA_BETA 0.1
+#define NUMTRACES 200
 FILE *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *maskflow;
 
 unsigned int t;

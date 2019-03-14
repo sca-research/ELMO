@@ -4129,7 +4129,7 @@ int main ( int argc, char *argv[] )
     EffectiveSize=EFFECTIVESIZE;
     Statistical_alpha=TVLA_ALPHA;
     Statistical_beta=TVLA_BETA;
-
+    N=NUMTRACES;
     output_vcd=0;
     for(ra=0;ra<(unsigned)argc;ra++)
     {

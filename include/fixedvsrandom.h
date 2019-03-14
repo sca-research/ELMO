@@ -54,7 +54,7 @@ FILE * loadtrace(int trace){
     
     if(fp == NULL){
         
-        printf("Error\n");
+        printf("Trace File Error: filename=%s\n", filepath);
         
     }
     
