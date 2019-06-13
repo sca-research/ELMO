@@ -169,7 +169,7 @@ unsigned long systick_ints;
 #define CLOCKCYCLETIME 0.000000125
 
 //Default values for automatic TVLA
-#define TVLA_ALPHA 0.01
+#define TVLA_ALPHA 0.00001
 #define EFFECTIVESIZE 0.01
 #define TVLA_BETA 0.1
 #define NUMTRACES 200

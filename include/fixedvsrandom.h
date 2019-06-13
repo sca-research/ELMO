@@ -237,10 +237,21 @@ void getttest(double *ttest, double *randomaverage, double *randomvariance, doub
     // FILE *fp;
     
     //fp = fopen(FIXEDVSRANDOMTTEST, "w");
-
     for(i=0;i<len;i++){
-
+if((fixedvariance[i]/tracenumber)+(randomvariance[i]/tracenumber)>0)
         ttest[i] = ((fixedaverage[i] - randomaverage[i]) / (sqrt((fixedvariance[i]/tracenumber)+(randomvariance[i]/tracenumber))));
+else
+    {
+	if(fixedaverage[i]==randomaverage[i])
+		ttest[i] = 0;
+        else
+	{
+		if(fixedaverage[i]>randomaverage[i])
+			ttest[i] = INFINITY;
+		else
+			ttest[i] = -INFINITY;
+	}
+     }
         //printf("%d: Fixed: %lf %lf Random: %lf %lf\n\n",i, fixedaverage[i], fixedvariance[i], randomaverage[i], randomvariance[i]);
 
         //printf("%0.20f\n", randomvariance[i]);
