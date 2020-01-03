@@ -20,7 +20,7 @@
 % regression.
 %
 % This command loads our dataset:
-t = load('exampleData.mat');
+t = load('../../PowerModel_5Clusters_Full_EOR_Lecroy.mat');
 %
 % Number of instructions:
 nI = numel(unique(t.opcodes(:)));
@@ -197,7 +197,7 @@ issig = zeros(max(cell2mat(Xcols(:,3)')),numel(t.oplist));
 FstatMod = zeros(size(modelList,1),numel(t.oplist));
 
 for ip = 1:numel(t.oplist)
-    trace = t.trace(t.opcodes(:,2)==ip,:);
+    trace = t.traces(t.opcodes(:,2)==ip,:);
     input = cell(3,1);
     for inp = 1:3
         input{inp} = t.input{inp}(t.opcodes(:,2)==ip,:);
