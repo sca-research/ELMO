@@ -18,12 +18,14 @@ For most users, we believe it is sufficient to follow the exact workflow provide
 
 ## Basic power model
 In general, the following leakages might be captured with ELMO's power model:
-The weighted Hamming weight/distance on the data bus for operand  1 /operand 2 in the ALU (3-instruction time window)
-Second-order bit-interaction between adjacent bits/bitflips (only for shift instructions and multiplications)
+- The weighted Hamming weight/distance on the data bus for operand  1 /operand 2 in the ALU (3-instruction time window)
+- Second-order bit-interaction between adjacent bits/bitflips (only for shift instructions and multiplications)
+
 Depending on the previous and the following instructions, such leakage combined with one another according to the model coefficients, which in the end, becomes the final power consumption.  The following terms are not included in the basic model, mainly because they failed to cause enough statistical significance in the original model building attempt:
-The bitflip of the target register (although this is by chance, duplicated by the bitflip of a certain operand bus)
-The leakage of the memory system (not significant in the dataset)
-Bit-interaction of non-adjacent bits (not significant enough in the dataset)
+
+- The bitflip of the target register (although this is by chance, duplicated by the bitflip of a certain operand bus)
+- The leakage of the memory system (not significant in the dataset)
+- Bit-interaction of non-adjacent bits (not significant enough in the dataset)
 Note that the latter two are actually quite core-dependent: sometimes even [the same manufacturer may change micro-architectures in their product lines](https://github.com/sca-research/ShareSlicing_AES).
 
 ## Model coefficients
@@ -32,4 +34,32 @@ Over the years there are discussions (happening internally or externally) about 
 It is worthwhile to point out though, under the restriction of the acquisition effort and computation power, achieving both goals can be difficult. By definition, leakage detection is a "qualitative" process: as long as the p-value is lower than some threshold, we do not care about the actual p-value or the statistic, only the binary decision of whether the null hypothesis should be accepted or rejected. As long as the "quantity" is ignored, it may make sense to use some artificially made coefficients instead, say all 1-s. This approach may help users to quickly find out all potential problems, as no leakage will be concealed by other more significant leakage components. One example can be found in the appendix of [our paper](https://tches.iacr.org/index.php/TCHES/article/view/8396/7780), which stated the bit-interaction leakage, although does exist in ELMO's model, could not be detected until millions of traces, as the contribution of that term is relatively small in the whole power consumption. Although that is consistent with realistic experiments, in an early-stage detection, sometimes we prefer every potential threat to be found easily. Following that philosophy, it is absolutely fine to ignore the model coefficients.
 
 On the other hand, the model coefficients are learned from the realistic power traces: the "learning" algorithm searches for the best-fitted model, in terms of producing closer outputs compared with the realistic traces. Cross-validation results show that such a model is indeed a valid simulation model for power consumption.  That is to say, if the user's goal is by any chance, a quantitative one, using these model coefficients would be a better idea. This includes but not limited to: attacks, power consumption estimation, information theory-based evaluation, etc.
+
+
+## Additional Features
+The following extensions have been added in the last a couple of years:
+### Models from another M0 core (NXP LPC1114)
+We have rebuilt ELMO's power model with another M0 core and compared the similarities and differences between the NXP one and the ST one. [Presentation on ARM Research Summit 2018](Modeling M0 leakage generically.pdf). The resultant [model coefficient file](coeffs_LPC.txt) can be found in the repository. ELMO will produce traces using this model, if the users renaming this file as "coeffs.txt" or changing the *COEFFSFILE* macro in *elmodefines.h* to  "coeffs_LPC.txt"
+
+### Statistic inference
+As TVLA did not explicitly explain the required number of traces, we added a feature that further explains the statistic result. Originally, it was designed to automatically decide the number of traces and execute T-test that way. However, in practice, it might be tricky for users, as the desired statistical power sometimes comes with an unbearable workload. The current setup is, the last line in the coefficient file represents the standardised effect size, which defines what differences will be regarded as "leaking". More details about effect size can be found in Dr. Whitnall's paper(https://eprint.iacr.org/2019/1013.pdf). The current value in the coefficient file is 0.2 (a.k.a. "small"). Users can still select their own number of traces: in that specfic setup, ELMO will output the power of the test in the end of a fix v.s. random test.  Larger this value is, the more likely a larger or equal to 0.2 leakage will be found in our test. 
+
+Alternatively, we have also added a small extension which can change the number of traces without re-compling the ARM binary (.bin file). To achieve this, one needs to write
+`LoadNForTVLA(&N)`
+then use *N* as number of traces. This API will read from ELMO's command line, the value after
+`-autotvla`
+will be written to *N*
+
+### Model extension
+As said in the basic power model section, there are a few potentially leaking components that do not exist in the current ELMO power model. Those terms are most-likely core-dependent, so adding them to the basic model can be tricky. 
+
+Our experiment with our [assembly based masked AES implementation](https://github.com/sca-research/ASM_MaskedAES) explains some of these concerns. The [ROSITA paper](https://arxiv.org/pdf/1912.05183v1.pdf) also reflects similar issues on another M0 core (although not neccessarily in exactly the same form). If one is looking for some conservative advices on implementing masked ciphers, we do recommend to read those first so that he or she will not be easily trapped by ELMO's limitation on a specific core.
+
+On the other hand, if one knows in priori what leakage term should be included, it is also possible to add an extension in ELMO. For instance, we can always adding some terms and rebuild the whole model. Note that the statistical inference is this approach could be quite tricky: it might be better to have a statistic expert who can supervise this process. Meanwhile, if our goal is completely "qualitative", we can also ignore the model building effort and directly adding this term into the overall power consumption. The following shows how this can be done with a memory extension:
+- Assuming there are one bus/buffer for read bus and one for write. None of these will be cleared until the next memory access.
+- Two 32-bit variables have been added to ELMO's data flow *data_flow* (*elmodefine.h*), representing the current read/write bus
+- In *elmo.c*, all load/store instructions will update the corresponding variables in the data flow. For any other instructions, these two variables are copied from the previous instruction.
+- A hamming distance term is added in  *elmopowermodel*(*powermodel.h*). This term will be zero for all the non-load/store instructions. The coefficient here is simply borrowed from one of the previous HD coefficients: readers can change it to to any non-zero value they want, as long as they won't be using the resultant traces "quantitatively".
+- Eventually, a new macro called "MEMORY_EXTENSION" is added in *elmodefine.h*. When defined, ELMO will consider the contribution from the memory system.
+Any further extension can follow similar steps. Note that the memory extension is usually quite core-depepent: if the memory manufacturer uses the same bus/buffer for the read/write buses, the leakage will be completely different. The address/data buses might have similar issues. Moreover, the bytewise load/store can be implemented in various ways. Therefore, users should at least have some confidence (whether through acquisition+statistic or learning the perhaps private designing details) before adding these extensions. 
 
