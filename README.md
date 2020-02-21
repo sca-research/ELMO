@@ -61,5 +61,6 @@ On the other hand, if one knows in priori what leakage term should be included, 
 - In *elmo.c*, all load/store instructions will update the corresponding variables in the data flow. For any other instructions, these two variables are copied from the previous instruction.
 - A hamming distance term is added in  *elmopowermodel*(*powermodel.h*). This term will be zero for all the non-load/store instructions. The coefficient here is simply borrowed from one of the previous HD coefficients: readers can change it to to any non-zero value they want, as long as they won't be using the resultant traces "quantitatively".
 - Eventually, a new macro called "MEMORY_EXTENSION" is added in *elmodefine.h*. When defined, ELMO will consider the contribution from the memory system.
+
 Any further extension can follow similar steps. Note that the memory extension is usually quite core-depepent: if the memory manufacturer uses the same bus/buffer for the read/write buses, the leakage will be completely different. The address/data buses might have similar issues. Moreover, the bytewise load/store can be implemented in various ways. Therefore, users should at least have some confidence (whether through acquisition+statistic or learning the perhaps private designing details) before adding these extensions. 
 
