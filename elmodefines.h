@@ -107,13 +107,13 @@ unsigned long systick_ints;
 
 /*******************************************************************************************/
 /*ELMO*/
-
+#define MEMORY_EXTENSION//memory extension that keeps track of the read/write bus
 #define FIXEDVSRANDOM
 //#define MASKFLOW
 //#define ENERGYMODEL
 
 //#define DIFFTRACELENGTH
-#define BINARYTRACES
+//#define BINARYTRACES
 //#define MEANCENTRE
 //#define POWERTRACES
 //#define POWERMODEL_HW
@@ -173,6 +173,8 @@ unsigned long systick_ints;
 #define EFFECTIVESIZE 0.01
 #define TVLA_BETA 0.1
 #define NUMTRACES 200
+
+
 FILE *randdata, *uartout, *indexesfile, *datafile, *asmoutput, *maskflow;
 
 unsigned int t;
@@ -234,6 +236,10 @@ struct data_flow {
     bit32_maskflow op1_maskflow;
     bit32_maskflow op2_maskflow;
     double power;
+#ifdef MEMORY_EXTENSION
+    unsigned int readbus;
+    unsigned int writebus;
+#endif
     struct data_flow *next;
     
 };

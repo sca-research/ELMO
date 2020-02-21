@@ -182,7 +182,9 @@ void elmopowermodel(){
     
     int hw_op1, hw_op2, hd_op1, hd_op2, instructiontype, i, j, count, index = 1;
     double PrvInstr_data = 0, SubInstr_data = 0, Operand1_data = 0, Operand2_data = 0, BitFlip1_data = 0, BitFlip2_data = 0, HWOp1PrvInstr_data = 0, HWOp2PrvInstr_data = 0, HDOp1PrvInstr_data = 0, HDOp2PrvInstr_data = 0, HWOp1SubInstr_data = 0, HWOp2SubInstr_data = 0, HDOp1SubInstr_data = 0, HDOp2SubInstr_data = 0, Operand1_bitinteractions_data = 0, Operand2_bitinteractions_data = 0, BitFlip1_bitinteractions_data = 0, BitFlip2_bitinteractions_data = 0;
-    
+    #ifdef MEMORY_EXTENSION
+    double Memory_data=0;
+    #endif
     previous = start;
     current = start->next;
     subsequent = start->next->next;
@@ -302,11 +304,19 @@ void elmopowermodel(){
                 }
             }
         }
+	// Memory Extension:using the HD op1's coefficient
+    #ifdef MEMORY_EXTENSION
+    Memory_data=HDOp1PrvInstr[0][instructiontype]*hdistance(previous->readbus, current->readbus)+HDOp1PrvInstr[0][instructiontype]*hdistance(previous->writebus, current->writebus);
+
+    #endif
 
         // Modelled differential voltage is total of different factors
 
         differentialvoltage = constant[instructiontype] + PrvInstr_data + SubInstr_data + Operand1_data + Operand2_data + BitFlip1_data + BitFlip2_data + HWOp1PrvInstr_data + HWOp2PrvInstr_data + HDOp1PrvInstr_data + HDOp2PrvInstr_data + HWOp1SubInstr_data + HWOp2SubInstr_data + HDOp1SubInstr_data + HDOp2SubInstr_data + Operand1_bitinteractions_data + Operand2_bitinteractions_data + BitFlip1_bitinteractions_data + BitFlip2_bitinteractions_data;
 
+    #ifdef MEMORY_EXTENSION
+    differentialvoltage=differentialvoltage+Memory_data;
+    #endif
         // Convert from differential voltage to power
 
 #ifdef POWERTRACES

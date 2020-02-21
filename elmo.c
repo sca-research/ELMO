@@ -142,6 +142,17 @@ double TVLA_power()
 }
 // Linked list functions for maskflow
 
+#ifdef MEMORY_EXTENSION
+void update_memorybus(dataflow *item, unsigned int readvalue, bool read, unsigned int writevalue, bool write)
+{
+    if(read)
+	item->readbus=readvalue;
+
+    if(write)
+	item->writebus=writevalue;
+
+}
+#endif
 #ifdef MASKFLOW
 
 void initialise_dataflow(dataflow *item){
@@ -154,7 +165,10 @@ void initialise_dataflow(dataflow *item){
         item -> instruction_type[i] = 0;
     item -> op1_maskflow = zero_maskflow32();
     item -> op2_maskflow = zero_maskflow32();
-    
+    #ifdef MEMORY_EXTENSION
+    item -> readbus=0;
+    item -> writebus=0;
+    #endif
 }
 
 dataflow *create_dataflow(dataflow *item){
@@ -162,12 +176,21 @@ dataflow *create_dataflow(dataflow *item){
     int i;
     
     item -> next = malloc(sizeof(dataflow));
+    #ifdef MEMORY_EXTENSION
+    prev_read=item -> readbus;
+    prev_write=item -> writebus;
+    #endif
     item = item -> next;
     initialise_dataflow(item);
     item -> next = NULL;
+    #ifdef MEMORY_EXTENSION
+    item -> readbus=prev_read;
+    item -> writebus=prev_write;
+    #endif
     return item;
     
 }
+
 
 dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, unsigned int instruction_type, bit32_maskflow op1_maskflow, bit32_maskflow op2_maskflow){
     
@@ -244,15 +267,27 @@ void initialise_dataflow(dataflow *item){
     item -> op2 = 0;
     for(i=0;i<6;i++)
         item -> instruction_type[i] = 0;
+    #ifdef MEMORY_EXTENSION
+    item -> readbus=0;
+    item -> writebus=0;
+    #endif
     
 }
 
 dataflow *create_dataflow(dataflow *item){
     
     item -> next = malloc(sizeof(dataflow));
+    #ifdef MEMORY_EXTENSION
+    unsigned int prev_read=item -> readbus;
+    unsigned int prev_write=item -> writebus;
+    #endif
     item = item -> next;
     initialise_dataflow(item);
     item -> next = NULL;
+    #ifdef MEMORY_EXTENSION
+    item -> readbus=prev_read;
+    item -> writebus=prev_write;
+    #endif
     return item;
     
 }
@@ -306,8 +341,17 @@ dataflow *update_dataflow(dataflow *item, unsigned int op1, unsigned int op2, un
 	  printf("Trace Length Difference! Check your code...\n");
     }
     else{
+    #ifdef MEMORY_EXTENSION
+    unsigned int prev_read=item -> readbus;
+    unsigned int prev_write=item -> writebus;
+    #endif
         item = item->next;
         initialise_dataflow(item);
+    #ifdef MEMORY_EXTENSION
+    item -> readbus=prev_read;
+    item -> writebus=prev_write;
+    #endif
+
     }
     
 #endif
@@ -2130,6 +2174,9 @@ if(output_vcd)
             }
         }
         
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2162,6 +2209,9 @@ if(output_vcd)
                 fprintf(asmoutput,"ldr r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2197,7 +2247,9 @@ if(output_vcd)
                 fprintf(asmoutput,"ldr r%u,[PC+#0x%X]\n",rd,rb);
             }
         }
-        
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2235,6 +2287,9 @@ if(output_vcd)
                 fprintf(asmoutput,"ldr r%u,[SP+#0x%X]\n",rd,rb);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2298,6 +2353,9 @@ if(output_vcd)
                 fprintf(asmoutput,"ldrb r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2343,7 +2401,9 @@ if(output_vcd)
         write_register_maskflow(rd, rc_maskflow);
         op1_maskflow = read_register_maskflow(rd); op2_maskflow = rc_maskflow;
 #endif
-        
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"ldrb r%u,[r%u,r%u]\n",rd,rn,rm);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -2383,7 +2443,9 @@ if(output_vcd)
                 fprintf(asmoutput,"ldrh r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
-        
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2416,7 +2478,9 @@ if(output_vcd)
                 fprintf(asmoutput,"ldrh r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
-        
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 3, op1_maskflow, op2_maskflow);
 #else
@@ -2467,7 +2531,9 @@ if(output_vcd)
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ldrsb r%u,[r%u,r%u]\n",rd,rn,rm);
-
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
@@ -2503,6 +2569,9 @@ if(output_vcd)
 #endif
 
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)) fprintf(asmoutput,"ldrsh r%u,[r%u,r%u]\n",rd,rn,rm);
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, rc, true, 0, false);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 5, op1_maskflow, op2_maskflow);
 #else
@@ -3397,7 +3466,9 @@ if(output_vcd)
                 fprintf(asmoutput,"str r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
-        
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
@@ -3433,6 +3504,9 @@ if(output_vcd)
                 fprintf(asmoutput,"str r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
@@ -3467,6 +3541,9 @@ if(output_vcd)
                 fprintf(asmoutput,"str r%u,[SP,#0x%X]\n",rd,rb);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
@@ -3535,6 +3612,9 @@ if(output_vcd)
                 fprintf(asmoutput,"strb r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
@@ -3597,7 +3677,9 @@ if(output_vcd)
         op1_maskflow = zero_maskflow32(); op2_maskflow = rc_maskflow;
 
 #endif
-        
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
         if(registerdataflow && ((t==1)||PRINTALLASMTRACES)){ fprintf(asmoutput,"strb r%u,[r%u,r%u]\n",rd,rn,rm);
             if(CYCLEACCURATE){
                 fprintf(asmoutput,"--- 0x%08X: 0x%04X ",(pc-4),inst);
@@ -3640,6 +3722,9 @@ if(output_vcd)
                 fprintf(asmoutput,"strh r%u,[r%u,#0x%X]\n",rd,rn,rb);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
@@ -3674,6 +3759,9 @@ if(output_vcd)
                 fprintf(asmoutput,"strh r%u,[r%u,r%u]\n",rd,rn,rm);
             }
         }
+    #ifdef MEMORY_EXTENSION
+    update_memorybus(dataptr, 0, false, rc, true);
+    #endif
 #ifdef MASKFLOW
         if(registerdataflow) dataptr = update_dataflow(dataptr,op1,op2, 2, op1_maskflow, op2_maskflow);
 #else
