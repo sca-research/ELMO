@@ -19,13 +19,13 @@ For most users, we believe it is sufficient to follow the exact workflow provide
 ## Basic power model
 In general, the following leakages might be captured with ELMO's power model:
 - The weighted Hamming weight/distance on the data bus for operand  1 /operand 2 in the ALU (3-instruction time window)
-- Second-order bit-interaction between adjacent bits/bitflips (only for shift instructions and multiplications)
+- Second-order bit-interaction between bits/bitflips within the same operand (only for shift instructions and multiplications)
 
 Depending on the previous and the following instructions, such leakage combined with one another according to the model coefficients, which in the end, becomes the final power consumption.  The following terms are not included in the basic model, mainly because they failed to cause enough statistical significance in the original model building attempt:
 
 - The bitflip of the target register (although this is by chance, duplicated by the bitflip of a certain operand bus)
 - The leakage of the memory system (not significant in the dataset)
-- Bit-interaction of non-adjacent bits (not significant enough in the dataset)
+- Bit-interaction of more than two bits (not significant enough in the dataset)
 Note that the latter two are actually quite core-dependent: sometimes even [the same manufacturer may change micro-architectures in their product lines](https://github.com/sca-research/ShareSlicing_AES).
 
 ## Model coefficients
