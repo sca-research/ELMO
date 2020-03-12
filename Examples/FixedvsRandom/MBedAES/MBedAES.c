@@ -83,15 +83,15 @@ int main(void) {
 
      // Random Traces
     
-    for(i=0;i<2*N;i++){
+    for(i=0;i<N;i++){
         
 	//Switch from Fix to Random (Only do it once)
-        if(i==N){
+        if(i==N/2){
 		for(j=0;j<16;j++)
            	  output[j] = 0x00;
 	}
         for(j=0;j<16;j++){
-            if(i<N){
+            if(i<N/2){
 		input[j] = fixedinput[j]; // Fixed Traces
 	    }
 	    else{

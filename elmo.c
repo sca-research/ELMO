@@ -820,7 +820,7 @@ unsigned int read32 ( unsigned int addr )
                 case 0xE1000010://New ELMO library function: LoadNForTVLA(&N), return the automatically determined number of traces for one Fix-vs-Random Ttest
                 {
                     //data=getsamplesize_standardTVLA();
-		    data=N/2;
+		    data=N;
                     free(str);
                     return(data);
 
