@@ -425,17 +425,18 @@ void dump_counters ( void )
 #ifdef ENERGYMODEL
     printf("total energy consumption %0.20f\n",energy);
 #endif
-#ifdef AUTOTVLA
+//#ifdef AUTOTVLA
     Statistical_beta=TVLA_power();
     printf("User provided traces: %d\n",N);
     printf("alpha=%0.5f, standardised effect size=%0.5f\n",Statistical_alpha,EffectiveSize);
     printf("Power of the test=%0.5f\n",1-Statistical_beta);
-#endif
+//#endif
     printf("first order fixed vs random fail instructions/cycles %d\n",leakyinstructionno);
+#ifdef MASKFLOW
     printf("second order fixed vs random instructions/cycles\n");
     for(unsigned int i=0;i<no_masks;i++)
         printf("mask %d: %d\n",i, maskfixedvsrandomfail[i]);
-
+#endif
 }
 
 //-------------------------------------------------------------------
@@ -556,7 +557,7 @@ void write32 ( unsigned int addr, unsigned int data )
 {
 
 char str[500], filepath[500];
-    
+
 if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data);
     switch(addr&0xF0000000)
     {
@@ -588,7 +589,7 @@ if(registerdataflow && DBUG) fprintf(stderr,"write32(0x%08X,0x%08X)\n",addr,data
             case 0xE0000004:{ // trigger
                 
                 registerdataflow = (data & 0x01);
-                
+
                 if((t<tracestart)){
                     
                     if(registerdataflow){
@@ -4241,12 +4242,14 @@ int main ( int argc, char *argv[] )
         if(strcmp(argv[ra],"-starttraceghost")==0){
             sscanf(argv[ra+1], "%d", &tracestart);
         }
-        //Setting the parameters for automatically determining the sample size for TVLA
-         if(strcmp(argv[ra],"-autotvla")==0){
+        //Load the number of traces
+#ifdef NTRACE
+         if(strcmp(argv[ra],"-Ntrace")==0){
             sscanf(argv[ra+1], "%d", &N);
             //sscanf(argv[ra+2], "%lf", &Statistical_alpha);
             //sscanf(argv[ra+3], "%lf", &Statistical_beta);
         }
+#endif
     }
     fp=fopen(argv[1],"rb");
     if(fp==NULL)
@@ -4325,9 +4328,8 @@ int main ( int argc, char *argv[] )
     readcoeffs(BitFlip1_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip2_bitinteractions,fpcoeffs, 496);
 
-    #ifdef AUTOTVLA// read the extra variance estimation in the coefficient file
+    // read the extra variance estimation in the coefficient file
     EffectiveSize=readeffectivesize(fpcoeffs);
-    #endif
 
     fclose(fpcoeffs);
     

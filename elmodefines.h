@@ -122,7 +122,7 @@ unsigned long systick_ints;
 #define PRINTALLASMTRACES 0
 #define PRINTALLNONPROFILEDTRACES 0
 #define CYCLEACCURATE 1
-#define AUTOTVLA// Determine the sample size of TLVA automatically, require an extra variance estimation in the coefficient file
+#define NTRACE //Load number of traces from the command line arguments
 
 #define FIXEDVSRANDOMFAIL 4.5
 #define PRINTTRACENOINTERVAL 1

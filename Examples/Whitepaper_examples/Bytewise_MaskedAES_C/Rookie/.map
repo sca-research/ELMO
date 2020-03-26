@@ -1,0 +1,476 @@
+Archive member included to satisfy reference by file (symbol)
+
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+                              byte_mask_aes.o (malloc)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o) (_malloc_r)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o) (__malloc_lock)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o) (_sbrk_r)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o) (_free_r)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o) (_impure_ptr)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o) (__retarget_lock_acquire_recursive)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o) (errno)
+/home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+                              /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o) (_sbrk)
+
+Allocating common symbols
+Common symbol       size              file
+
+__lock___atexit_recursive_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___arc4random_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+errno               0x4               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+__lock___env_recursive_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___sinit_recursive_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___malloc_recursive_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___at_quick_exit_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___dd_hash_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___tz_mutex   0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+__lock___sfp_recursive_mutex
+                    0x1               /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 vector.o
+ .data          0x0000000000000000        0x0 vector.o
+ .bss           0x0000000000000000        0x0 vector.o
+ .text          0x0000000000000000        0x0 byte_mask_aes.o
+ .data          0x0000000000000000        0x0 byte_mask_aes.o
+ .bss           0x0000000000000000        0x0 byte_mask_aes.o
+ .text.subBytes_masked
+                0x0000000000000000        0x8 byte_mask_aes.o
+ .data          0x0000000000000000        0x0 elmoasmfunctions.o
+ .bss           0x0000000000000000        0x0 elmoasmfunctions.o
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+ .text.free     0x0000000000000000       0x14 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+ .rodata._global_impure_ptr
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_init
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_init_recursive
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_close
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_close_recursive
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_acquire
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_try_acquire
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_try_acquire_recursive
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text.__retarget_lock_release
+                0x0000000000000000        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .text.cleanup_glue
+                0x0000000000000000       0x1c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .text._reclaim_reent
+                0x0000000000000000       0x94 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .text          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+ .data          0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+ .bss           0x0000000000000000        0x0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x0000000008000000 0x0000000000010000 xr
+ram              0x0000000020000000 0x0000000000002000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD vector.o
+LOAD byte_mask_aes.o
+LOAD elmoasmfunctions.o
+START GROUP
+LOAD /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a
+LOAD /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/thumb/v6-m/nofp/libgcc.a
+LOAD /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a
+END GROUP
+START GROUP
+LOAD /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/thumb/v6-m/nofp/libgcc.a
+LOAD /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a
+END GROUP
+
+.text           0x0000000008000000     0x1310
+ *(.vectors)
+ .vectors       0x0000000008000000       0xc0 vector.o
+                0x0000000008000000                vector_table
+ *(.text*)
+ .text.blocking_handler
+                0x00000000080000c0        0x2 vector.o
+                0x00000000080000c0                rtc_isr
+                0x00000000080000c0                tim7_isr
+                0x00000000080000c0                blocking_handler
+                0x00000000080000c0                tsc_isr
+                0x00000000080000c0                spi1_isr
+                0x00000000080000c0                i2c1_isr
+                0x00000000080000c0                tim17_isr
+                0x00000000080000c0                i2c2_isr
+                0x00000000080000c0                usart1_isr
+                0x00000000080000c0                usart3_4_isr
+                0x00000000080000c0                tim1_cc_isr
+                0x00000000080000c0                exti2_3_isr
+                0x00000000080000c0                tim16_isr
+                0x00000000080000c0                pvd_isr
+                0x00000000080000c0                rcc_isr
+                0x00000000080000c0                flash_isr
+                0x00000000080000c0                hard_fault_handler
+                0x00000000080000c0                tim14_isr
+                0x00000000080000c0                spi2_isr
+                0x00000000080000c0                usb_isr
+                0x00000000080000c0                tim15_isr
+                0x00000000080000c0                tim3_isr
+                0x00000000080000c0                usart2_isr
+                0x00000000080000c0                adc_comp_isr
+                0x00000000080000c0                dma1_channel1_isr
+                0x00000000080000c0                tim6_dac_isr
+                0x00000000080000c0                tim1_brk_up_trg_com_isr
+                0x00000000080000c0                dma1_channel2_3_isr
+                0x00000000080000c0                exti4_15_isr
+                0x00000000080000c0                cec_can_isr
+                0x00000000080000c0                wwdg_isr
+                0x00000000080000c0                tim2_isr
+                0x00000000080000c0                dma1_channel4_5_isr
+                0x00000000080000c0                exti0_1_isr
+ .text.null_handler
+                0x00000000080000c2        0x2 vector.o
+                0x00000000080000c2                null_handler
+                0x00000000080000c2                sv_call_handler
+                0x00000000080000c2                pend_sv_handler
+                0x00000000080000c2                sys_tick_handler
+                0x00000000080000c2                nmi_handler
+ .text.reset_handler
+                0x00000000080000c4       0x7c vector.o
+                0x00000000080000c4                reset_handler
+ .text.KeyExpansion
+                0x0000000008000140       0x94 byte_mask_aes.o
+                0x0000000008000140                KeyExpansion
+ .text.mixColumns
+                0x00000000080001d4       0x68 byte_mask_aes.o
+                0x00000000080001d4                mixColumns
+ .text.shiftRows
+                0x000000000800023c       0x32 byte_mask_aes.o
+                0x000000000800023c                shiftRows
+ *fill*         0x000000000800026e        0x2 
+ .text.addRoundKey_masked
+                0x0000000008000270       0x20 byte_mask_aes.o
+                0x0000000008000270                addRoundKey_masked
+ .text.masked   0x0000000008000290       0x18 byte_mask_aes.o
+                0x0000000008000290                masked
+ .text.remask   0x00000000080002a8       0x4e byte_mask_aes.o
+                0x00000000080002a8                remask
+ *fill*         0x00000000080002f6        0x2 
+ .text.calcMixColMask
+                0x00000000080002f8       0x60 byte_mask_aes.o
+                0x00000000080002f8                calcMixColMask
+ .text.calcSbox_masked
+                0x0000000008000358       0x30 byte_mask_aes.o
+                0x0000000008000358                calcSbox_masked
+ .text.init_masked_round_keys
+                0x0000000008000388       0x54 byte_mask_aes.o
+                0x0000000008000388                init_masked_round_keys
+ .text.copy_key
+                0x00000000080003dc       0x2c byte_mask_aes.o
+                0x00000000080003dc                copy_key
+ .text.init_masking
+                0x0000000008000408       0x14 byte_mask_aes.o
+                0x0000000008000408                init_masking
+ .text.aes128   0x000000000800041c       0xac byte_mask_aes.o
+                0x000000000800041c                aes128
+ .text.startup.main
+                0x00000000080004c8       0xbc byte_mask_aes.o
+                0x00000000080004c8                main
+ .text          0x0000000008000584       0xda elmoasmfunctions.o
+                0x0000000008000584                starttrigger
+                0x0000000008000596                endtrigger
+                0x00000000080005a8                readbyte
+                0x00000000080005b6                LoadN
+                0x00000000080005c8                randbyte
+                0x00000000080005da                getstart
+                0x00000000080005ec                getruncount
+                0x00000000080005fe                printbyte
+                0x000000000800060c                endprogram
+                0x000000000800061a                initialisemaskflow
+                0x000000000800062a                resetmaskflow
+                0x000000000800063c                setmaskflowstart
+                0x000000000800064c                resetdatafile
+ *fill*         0x000000000800065e        0x2 
+ .text.malloc   0x0000000008000660       0x14 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+                0x0000000008000660                malloc
+ .text._malloc_r
+                0x0000000008000674      0x598 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000008000674                _malloc_r
+ .text.__malloc_lock
+                0x0000000008000c0c       0x10 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+                0x0000000008000c0c                __malloc_lock
+ .text.__malloc_unlock
+                0x0000000008000c1c       0x10 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+                0x0000000008000c1c                __malloc_unlock
+ .text._sbrk_r  0x0000000008000c2c       0x24 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+                0x0000000008000c2c                _sbrk_r
+ .text._malloc_trim_r
+                0x0000000008000c50       0xa0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+                0x0000000008000c50                _malloc_trim_r
+ .text._free_r  0x0000000008000cf0      0x1dc /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+                0x0000000008000cf0                _free_r
+ .text.__retarget_lock_acquire_recursive
+                0x0000000008000ecc        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+                0x0000000008000ecc                __retarget_lock_acquire_recursive
+ .text.__retarget_lock_release_recursive
+                0x0000000008000ed0        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+                0x0000000008000ed0                __retarget_lock_release_recursive
+ .text._sbrk    0x0000000008000ed4       0x1c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+                0x0000000008000ed4                _sbrk
+                0x0000000008000ef0                . = ALIGN (0x4)
+ *(.rodata*)
+ .rodata.Rcon   0x0000000008000ef0       0xff byte_mask_aes.o
+ .rodata.fixedinput.6023
+                0x0000000008000fef       0x10 byte_mask_aes.o
+ .rodata.fixedkey.6022
+                0x0000000008000fff       0x10 byte_mask_aes.o
+ .rodata.mul_02
+                0x000000000800100f      0x100 byte_mask_aes.o
+                0x000000000800100f                mul_02
+ .rodata.mul_03
+                0x000000000800110f      0x100 byte_mask_aes.o
+                0x000000000800110f                mul_03
+ .rodata.sbox   0x000000000800120f      0x100 byte_mask_aes.o
+                0x000000000800120f                sbox
+                0x0000000008001310                . = ALIGN (0x4)
+ *fill*         0x000000000800130f        0x1 
+
+.glue_7         0x0000000008001310        0x0
+ .glue_7        0x0000000008001310        0x0 linker stubs
+
+.glue_7t        0x0000000008001310        0x0
+ .glue_7t       0x0000000008001310        0x0 linker stubs
+
+.vfp11_veneer   0x0000000008001310        0x0
+ .vfp11_veneer  0x0000000008001310        0x0 linker stubs
+
+.v4_bx          0x0000000008001310        0x0
+ .v4_bx         0x0000000008001310        0x0 linker stubs
+
+.iplt           0x0000000008001310        0x0
+ .iplt          0x0000000008001310        0x0 vector.o
+
+.rel.dyn        0x0000000008001310        0x0
+ .rel.iplt      0x0000000008001310        0x0 vector.o
+
+.preinit_array  0x0000000008001310        0x0
+                0x0000000008001310                . = ALIGN (0x4)
+                0x0000000008001310                __preinit_array_start = .
+ *(.preinit_array)
+                0x0000000008001310                __preinit_array_end = .
+
+.init_array     0x0000000008001310        0x0
+                0x0000000008001310                . = ALIGN (0x4)
+                0x0000000008001310                __init_array_start = .
+ *(SORT_BY_NAME(.init_array.*))
+ *(.init_array)
+                0x0000000008001310                __init_array_end = .
+
+.fini_array     0x0000000008001310        0x0
+                0x0000000008001310                . = ALIGN (0x4)
+                0x0000000008001310                __fini_array_start = .
+ *(.fini_array)
+ *(SORT_BY_NAME(.fini_array.*))
+                0x0000000008001310                __fini_array_end = .
+
+.ARM.extab
+ *(.ARM.extab*)
+
+.ARM.exidx      0x0000000008001310        0x0
+                0x0000000008001310                __exidx_start = .
+ *(.ARM.exidx*)
+                0x0000000008001310                __exidx_end = .
+                0x0000000008001310                . = ALIGN (0x4)
+                0x0000000008001310                _etext = .
+
+.data           0x0000000020000000      0x840 load address 0x0000000008001310
+                0x0000000020000000                _data = .
+ *(.data*)
+ .data.__malloc_av_
+                0x0000000020000000      0x408 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000020000000                __malloc_av_
+ .data.__malloc_sbrk_base
+                0x0000000020000408        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000020000408                __malloc_sbrk_base
+ .data.__malloc_trim_threshold
+                0x000000002000040c        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x000000002000040c                __malloc_trim_threshold
+ .data._impure_ptr
+                0x0000000020000410        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+                0x0000000020000410                _impure_ptr
+ *fill*         0x0000000020000414        0x4 
+ .data.impure_data
+                0x0000000020000418      0x428 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+                0x0000000020000840                . = ALIGN (0x4)
+                0x0000000020000840                _edata = .
+                0x0000000008001310                _data_loadaddr = LOADADDR (.data)
+
+.igot.plt       0x0000000020000840        0x0 load address 0x0000000008001b50
+ .igot.plt      0x0000000020000840        0x0 vector.o
+
+.bss            0x0000000020000840      0x2cc load address 0x0000000008001b50
+ *(.bss*)
+ .bss.Mask      0x0000000020000840        0xa byte_mask_aes.o
+                0x0000000020000840                Mask
+ .bss.RoundKey_masked
+                0x000000002000084a       0xb0 byte_mask_aes.o
+                0x000000002000084a                RoundKey_masked
+ .bss.Sbox_masked
+                0x00000000200008fa      0x100 byte_mask_aes.o
+                0x00000000200008fa                Sbox_masked
+ .bss.roundKey  0x00000000200009fa       0xb0 byte_mask_aes.o
+                0x00000000200009fa                roundKey
+ *fill*         0x0000000020000aaa        0x2 
+ .bss.__malloc_current_mallinfo
+                0x0000000020000aac       0x28 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000020000aac                __malloc_current_mallinfo
+ .bss.__malloc_max_sbrked_mem
+                0x0000000020000ad4        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000020000ad4                __malloc_max_sbrked_mem
+ .bss.__malloc_max_total_mem
+                0x0000000020000ad8        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000020000ad8                __malloc_max_total_mem
+ .bss.__malloc_top_pad
+                0x0000000020000adc        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+                0x0000000020000adc                __malloc_top_pad
+ .bss.heap_end.4194
+                0x0000000020000ae0        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+ *(COMMON)
+ COMMON         0x0000000020000ae4       0x21 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+                0x0000000020000ae4                __lock___atexit_recursive_mutex
+                0x0000000020000ae8                __lock___arc4random_mutex
+                0x0000000020000aec                __lock___env_recursive_mutex
+                0x0000000020000af0                __lock___sinit_recursive_mutex
+                0x0000000020000af4                __lock___malloc_recursive_mutex
+                0x0000000020000af8                __lock___at_quick_exit_mutex
+                0x0000000020000afc                __lock___dd_hash_mutex
+                0x0000000020000b00                __lock___tz_mutex
+                0x0000000020000b04                __lock___sfp_recursive_mutex
+ *fill*         0x0000000020000b05        0x3 
+ COMMON         0x0000000020000b08        0x4 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+                0x0000000020000b08                errno
+                0x0000000020000b0c                . = ALIGN (0x4)
+                0x0000000020000b0c                _ebss = .
+
+/DISCARD/
+ *(.eh_frame)
+                0x0000000020000b0c                . = ALIGN (0x4)
+                0x0000000020000b0c                end = .
+                0x0000000020002000                PROVIDE (_stack = (ORIGIN (ram) + LENGTH (ram)))
+OUTPUT(byte_mask_aes.elf elf32-littlearm)
+
+.debug_info     0x0000000000000000     0x1516
+ .debug_info    0x0000000000000000      0x2d1 vector.o
+ .debug_info    0x00000000000002d1     0x1245 byte_mask_aes.o
+
+.debug_abbrev   0x0000000000000000      0x552
+ .debug_abbrev  0x0000000000000000      0x12a vector.o
+ .debug_abbrev  0x000000000000012a      0x428 byte_mask_aes.o
+
+.debug_loc      0x0000000000000000      0x8a9
+ .debug_loc     0x0000000000000000       0xee vector.o
+ .debug_loc     0x00000000000000ee      0x7bb byte_mask_aes.o
+
+.debug_aranges  0x0000000000000000       0xb0
+ .debug_aranges
+                0x0000000000000000       0x30 vector.o
+ .debug_aranges
+                0x0000000000000030       0x80 byte_mask_aes.o
+
+.debug_ranges   0x0000000000000000       0xd0
+ .debug_ranges  0x0000000000000000       0x20 vector.o
+ .debug_ranges  0x0000000000000020       0xb0 byte_mask_aes.o
+
+.debug_line     0x0000000000000000      0xa24
+ .debug_line    0x0000000000000000       0xf9 vector.o
+ .debug_line    0x00000000000000f9      0x92b byte_mask_aes.o
+
+.debug_str      0x0000000000000000      0x8a7
+ .debug_str     0x0000000000000000      0x285 vector.o
+                                        0x2be (size before relaxing)
+ .debug_str     0x0000000000000285      0x622 byte_mask_aes.o
+                                        0x721 (size before relaxing)
+
+.comment        0x0000000000000000       0xe6
+ .comment       0x0000000000000000       0x70 vector.o
+                                         0x71 (size before relaxing)
+ .comment       0x0000000000000070       0x76 byte_mask_aes.o
+                                         0x77 (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x2f
+ .ARM.attributes
+                0x0000000000000000       0x31 vector.o
+ .ARM.attributes
+                0x0000000000000031       0x2c byte_mask_aes.o
+ .ARM.attributes
+                0x000000000000005d       0x21 elmoasmfunctions.o
+ .ARM.attributes
+                0x000000000000007e       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+ .ARM.attributes
+                0x00000000000000aa       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+ .ARM.attributes
+                0x00000000000000d6       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+ .ARM.attributes
+                0x0000000000000102       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+ .ARM.attributes
+                0x000000000000012e       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+ .ARM.attributes
+                0x000000000000015a       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-impure.o)
+ .ARM.attributes
+                0x0000000000000186       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .ARM.attributes
+                0x00000000000001b2       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .ARM.attributes
+                0x00000000000001de       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)
+
+.debug_frame    0x0000000000000000      0x434
+ .debug_frame   0x0000000000000000       0x40 vector.o
+ .debug_frame   0x0000000000000040      0x19c byte_mask_aes.o
+ .debug_frame   0x00000000000001dc       0x40 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-malloc.o)
+ .debug_frame   0x000000000000021c       0x3c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mallocr.o)
+ .debug_frame   0x0000000000000258       0x40 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-mlock.o)
+ .debug_frame   0x0000000000000298       0x2c /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x00000000000002c4       0x58 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-freer.o)
+ .debug_frame   0x000000000000031c       0xb0 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-lock.o)
+ .debug_frame   0x00000000000003cc       0x48 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc.a(lib_a-reent.o)
+ .debug_frame   0x0000000000000414       0x20 /home/gs/Documents/gcc-arm-none-eabi-8-2019-q3-update/bin/../lib/gcc/arm-none-eabi/8.3.1/../../../../arm-none-eabi/lib/thumb/v6-m/nofp/libnosys.a(sbrk.o)

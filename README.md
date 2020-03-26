@@ -65,4 +65,11 @@ Finding ways of automatically reverse engineering a specific bus architecture wi
 - Eventually, a new macro called "MEMORY_EXTENSION" is added in *elmodefine.h*. When defined, ELMO will consider the contribution from the memory system.
 
 
+## Revsion Log
+March 26th 2020, Si Gao
+- Marco for changing the number of traces in ELMO command-line arguments renaming: AUTOTVLA---> NTRACE
+- ELMO command line argument renaming: '-autotvla'  ---> 'Ntrace'
+- Renaming the corresponding ELMO library function: 'LoadNForTVLA()' --->'LoadN()' 
+- Now ELMO will always reads the effect size from the model (last line of "coeffs.txt") and outputs the power of the test
+- Adding examples used in the REASSURE whitepaper
 
