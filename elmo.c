@@ -4132,14 +4132,14 @@ int run ( void )
 void readcoeffs(double varaddress[][5], FILE *fp, int number){
     
     int i, j;
-    char line[128];
+    char line[256];
     const char s[2] = " ";
     char *token;
     
     for (i=0;i<number;i++){
         
         fgets(line, sizeof line, fp);
-        
+        //printf("%s\n",line);
         token = strtok(line, s);
         
         for(j=0; j<5; j++){
@@ -4149,6 +4149,7 @@ void readcoeffs(double varaddress[][5], FILE *fp, int number){
             
         }
     }
+ 
 }
 //-------------------------------------------------------------------
 //Read standalised effect size from the coefficient file
@@ -4170,7 +4171,7 @@ int main ( int argc, char *argv[] )
     time_t timet;
 
     unsigned int ra, j, fvr_only;
-    char line[128];
+    char line[256];
     const char s[2] = " ";
     char *token;
     
@@ -4323,11 +4324,12 @@ int main ( int argc, char *argv[] )
     readcoeffs(HWOp2SubInstr,fpcoeffs, 4);
     readcoeffs(HDOp1SubInstr,fpcoeffs, 4);
     readcoeffs(HDOp2SubInstr,fpcoeffs, 4);
+
     readcoeffs(Operand1_bitinteractions,fpcoeffs, 496);
     readcoeffs(Operand2_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip1_bitinteractions,fpcoeffs, 496);
     readcoeffs(BitFlip2_bitinteractions,fpcoeffs, 496);
-
+ 
     // read the extra variance estimation in the coefficient file
     EffectiveSize=readeffectivesize(fpcoeffs);
 

@@ -1,0 +1,6 @@
+*.trs
+*.mat
+*.bin
+*.elf
+*.hex
+*.map

@@ -1,1 +1,8 @@
 output/**
+*.elf
+*.bin
+*.map
+*.hex
+*.list
+*.d
+*.o

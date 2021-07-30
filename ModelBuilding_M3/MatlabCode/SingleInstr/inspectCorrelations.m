@@ -18,7 +18,7 @@
 
 % Load trace data (note that our example set isn't very good; ideally input
 % a better one):
-load('SingleInstr_add.mat');
+load('SingleInstr_eor.mat');
 % Mean-centre:
 traces = traces-repmat(mean(traces,2),1,size(traces,2));
 % Count the number of traces:
@@ -97,4 +97,4 @@ newaxis = axis;
 newaxis(2) = size(traces,2);
 axis(newaxis);
 % Re-size figure (still needs to be manually rearranged unfortunately):
-figure_format_size(gcf,10,20)
+%figure_format_size(gcf,10,20)
