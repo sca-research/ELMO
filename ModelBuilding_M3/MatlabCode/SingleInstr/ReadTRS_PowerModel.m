@@ -104,25 +104,25 @@ fclose(fid);
 clear mark fid floatflag HeaderEnd address len i temp;
 
 % Rename to fit with inspectCorrelations.m
-% input1= reshape(input, size(input));
-% for i=1:1:23
-%     traces=fulltraces((i-1)*5000+1:i*5000,:);
-%     output{1}=input1{1}((i-1)*5000+1:i*5000,2);
-%     output{2}=result((i-1)*5000+1:i*5000);
-%     output{3}=input1{3}((i-1)*5000+1:i*5000,2);
-%     input{1}=input1{1}((i-1)*5000+1:i*5000,:);
-%     input{2}=input1{2}((i-1)*5000+1:i*5000,:);
-%     input{3}=input1{3}((i-1)*5000+1:i*5000,:);
-%     oplabels{1}='mov';
-%     oplabels{2}=oplist{opcodes((i-1)*5000+1,2)};
-%     oplabels{3}='mov';
-%     filename="SingleInstr_"+oplabels{2}+".mat";
-%     save(filename,'traces','output','input','oplabels');
-% end
+input1= reshape(input, size(input));
+for i=1:1:1
+    traces=fulltraces((i-1)*5000+1:i*5000,:);
+    output{1}=input1{1}((i-1)*5000+1:i*5000,2);
+    output{2}=result((i-1)*5000+1:i*5000);
+    output{3}=input1{3}((i-1)*5000+1:i*5000,2);
+    input{1}=input1{1}((i-1)*5000+1:i*5000,:);
+    input{2}=input1{2}((i-1)*5000+1:i*5000,:);
+    input{3}=input1{3}((i-1)*5000+1:i*5000,:);
+    oplabels{1}='mov';
+    oplabels{2}=oplist{opcodes((i-1)*5000+1,2)};
+    oplabels{3}='mov';
+    filename="SingleInstr_"+oplabels{2}+".mat";
+    save(filename,'traces','output','input','oplabels');
+end
 
 %After finding the POI in inspectCorrelations.m, compress each cycle to 1
 %sample
 % oplist must be loaded seperatly, as load('oplist.mat')
-POI=floor(27+[0:1:15]*62.5);
-reducedtraces=fulltraces(:,POI);
-save('SingleInstr_Reduced.mat','reducedtraces','oplist','opcodes','input');
+%POI=floor(27+[0:1:15]*62.5);
+%reducedtraces=fulltraces(:,POI);
+%save('SingleInstr_Reduced.mat','reducedtraces','oplist','opcodes','input');

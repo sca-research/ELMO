@@ -100,7 +100,6 @@ end
 % Mean-adjusted traces (to get rid of drift over the course of the
 % acquisition):
 fulltraces = bsxfun(@minus, fulltraces, mean(fulltraces,2));
-%fulltraces=fulltraces(:,2001:9000);
 fclose(fid);
 clear mark fid floatflag HeaderEnd address len i temp;
 
@@ -108,13 +107,13 @@ clear mark fid floatflag HeaderEnd address len i temp;
 %After finding the POI in inspectCorrelations.m, compress each cycle to 1
 %sample
 % oplist must be loaded seperatly, as load('oplist.mat')
-POI=33+floor([0:15]*62.5);
-reducedtraces=fulltraces(:,POI);
-save('FullModel_Reduced.mat','reducedtraces','oplist','opcodes','input');
+%POI=33+floor([0:15]*62.5);
+%reducedtraces=fulltraces(:,POI);
+%save('FullModel_Reduced.mat','reducedtraces','oplist','opcodes','input');
 
 % Rename to fit with ReleaseModelMethod.m
 %After finding the POI in inspectRsquared.m, compress the whole trace to 1
 %sample
-POI_cycle=7;
-traces=reducedtraces(:,POI_cycle);
-save('FullModel_POIselected.mat','traces','oplist','opcodes','input');
+%POI_cycle=7;
+%traces=reducedtraces(:,POI_cycle);
+%save('FullModel_POIselected.mat','traces','oplist','opcodes','input');

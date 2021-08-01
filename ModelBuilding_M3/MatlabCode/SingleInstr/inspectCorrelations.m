@@ -18,7 +18,7 @@
 
 % Load trace data (note that our example set isn't very good; ideally input
 % a better one):
-load('SingleInstr_eor.mat');
+load('SingleInstr_add.mat');
 % Mean-centre:
 traces = traces-repmat(mean(traces,2),1,size(traces,2));
 % Count the number of traces:
