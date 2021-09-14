@@ -142,7 +142,7 @@ unsigned long systick_ints;
 #endif
 #endif
 
-#define COEFFSFILE "coeffs.txt"
+#define COEFFSFILE "coeffs_M3.txt"
 
 #define OUTPUTFOLDER "output"
 #define TRACEFOLDER "output/traces/"
